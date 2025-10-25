@@ -1,0 +1,558 @@
+/* SeatManagement.css */
+:root {
+  --deep-brown: #4B3B2B;
+  --red-brown: #A0522D;
+  --earth-orange: #D2691E;
+  --beige: #F5F0E6;
+  --olive-green: #708238;
+  --light-beige: #FAF7F0;
+  --light-gray: #E8E2D6;
+  --white: #FFFFFF;
+  --red: #DC2626;
+  --green: #16A34A;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--beige);
+  color: var(--deep-brown);
+}
+
+.dashboard {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background: linear-gradient(180deg, var(--deep-brown) 0%, var(--red-brown) 100%);
+  color: var(--beige);
+  padding: 20px 0;
+}
+
+.sidebar-header {
+  padding: 0 20px 20px;
+  border-bottom: 1px solid rgba(245, 240, 230, 0.2);
+  margin-bottom: 20px;
+}
+
+.sidebar-header h1 {
+  font-family: 'Georgia', serif;
+  font-size: 1.5rem;
+  margin-bottom: 5px;
+}
+
+.sidebar-header p {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.sidebar-nav ul {
+  list-style: none;
+  padding: 0 10px;
+}
+
+.sidebar-nav li {
+  margin: 5px 0;
+}
+
+.sidebar-nav a {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  color: var(--beige);
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.sidebar-nav a:hover,
+.sidebar-nav a.active {
+  background-color: rgba(245, 240, 230, 0.1);
+  border-left: 4px solid var(--earth-orange);
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  padding: 20px;
+  background-color: var(--light-beige);
+}
+
+/* Header */
+.content-header {
+  background-color: var(--white);
+  padding: 25px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+  box-shadow: 0 2px 10px rgba(75, 59, 43, 0.08);
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.header-top h2 {
+  font-family: 'Georgia', serif;
+  color: var(--deep-brown);
+  font-size: 1.8rem;
+}
+
+.date-time {
+  color: var(--red-brown);
+  font-weight: 500;
+}
+
+.header-actions {
+  display: flex;
+  gap: 15px;
+}
+
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary {
+  background-color: var(--red-brown);
+  color: var(--white);
+}
+
+.btn-primary:hover {
+  background-color: var(--earth-orange);
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background-color: var(--light-beige);
+  color: var(--deep-brown);
+  border: 2px solid var(--light-gray);
+}
+
+.btn-secondary:hover {
+  background-color: var(--light-gray);
+  border-color: var(--earth-orange);
+}
+
+/* Seat Management Layout */
+.seat-management {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 25px;
+}
+
+/* Seat Map */
+.seat-map-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+}
+
+.seat-map {
+  position: relative;
+  width: 100%;
+  max-width: 780px;
+  aspect-ratio: 780 / 500;
+  transform-origin: top left;
+}
+
+/* Seat Dots */
+.seat-dot {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: grab;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  color: white;
+  font-weight: bold;
+  user-select: none;
+}
+
+.seat-dot:active {
+  cursor: grabbing;
+}
+
+.seat-dot.available {
+  background-color: var(--green);
+  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.3);
+}
+
+.seat-dot.unavailable {
+  background-color: var(--red);
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+}
+
+.seat-dot.reserve {
+  background-color: var(--earth-orange);
+  box-shadow: 0 2px 8px rgba(210, 105, 30, 0.3);
+}
+
+.seat-dot:hover {
+  transform: scale(1.2);
+  z-index: 10;
+}
+
+/* Control Panel */
+.control-panel {
+  background-color: var(--white);
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(75, 59, 43, 0.08);
+  height: fit-content;
+}
+
+.panel-section {
+  margin-bottom: 25px;
+}
+
+.panel-section h3 {
+  font-family: 'Georgia', serif;
+  color: var(--deep-brown);
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--light-gray);
+}
+
+/* Legend */
+.legend {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  background-color: var(--light-beige);
+  border-radius: 8px;
+}
+
+.legend-color {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+}
+
+.legend-color.available {
+  background-color: var(--green);
+}
+
+.legend-color.occupied {
+  background-color: var(--red);
+}
+
+.legend-color.reserved {
+  background-color: var(--earth-orange);
+}
+
+/* Quick Actions */
+.quick-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.action-btn {
+  padding: 12px;
+  border: 2px solid var(--light-gray);
+  background-color: var(--light-beige);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  font-weight: 500;
+}
+
+.action-btn:hover {
+  border-color: var(--earth-orange);
+  background-color: var(--white);
+  transform: translateY(-2px);
+}
+
+/* Seat Info */
+.seat-info {
+  background-color: var(--light-beige);
+  padding: 20px;
+  border-radius: 8px;
+  border-left: 4px solid var(--olive-green);
+}
+
+.seat-info h4 {
+  margin-bottom: 10px;
+  color: var(--deep-brown);
+}
+
+.seat-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.9rem;
+}
+
+/* Statistics */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.stat-item {
+  text-align: center;
+  padding: 15px;
+  background-color: var(--light-beige);
+  border-radius: 8px;
+}
+
+.stat-number {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.stat-number.available {
+  color: var(--green);
+}
+
+.stat-number.occupied {
+  color: var(--red);
+}
+
+.stat-number.total {
+  color: var(--deep-brown);
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: var(--deep-brown);
+  opacity: 0.8;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .seat-management {
+    grid-template-columns: 1fr;
+  }
+  
+  .sidebar {
+    width: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 100%;
+  }
+  
+  .header-top {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+  
+  .quick-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Các thành phần phòng */
+.room-element {
+  position: absolute;
+  border: 2px solid var(--deep-brown);
+  background-color: rgba(245, 240, 230, 0.5);
+  z-index: 1;
+}
+
+.reception-desk {
+  background: linear-gradient(135deg, var(--red-brown) 0%, var(--earth-orange) 100%);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(75, 59, 43, 0.2);
+}
+
+.door {
+  background-color: var(--deep-brown);
+  color: var(--beige);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 0.8rem;
+}
+
+.window {
+  background: linear-gradient(135deg, rgba(112, 130, 56, 0.3) 0%, rgba(160, 82, 45, 0.2) 100%);
+  border: 2px dashed var(--olive-green);
+}
+
+.walkway {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--light-beige),
+    var(--light-beige) 10px,
+    var(--light-gray) 10px,
+    var(--light-gray) 20px
+  );
+  border: 1px solid var(--light-gray);
+}
+
+.entrance {
+  background: linear-gradient(45deg, var(--light-beige) 0%, var(--beige) 100%);
+  border: 3px double var(--earth-orange);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: var(--deep-brown);
+  font-size: 0.9rem;
+}
+
+.table {
+  background-color: var(--deep-brown);
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(75, 59, 43, 0.3);
+}
+
+.table.circle {
+  border-radius: 50%;
+}
+
+/* Legend mở rộng */
+.legend-color.reception {
+  background: linear-gradient(135deg, var(--red-brown) 0%, var(--earth-orange) 100%);
+}
+
+.legend-color.door {
+  background-color: var(--deep-brown);
+}
+
+.legend-color.window {
+  background: linear-gradient(135deg, rgba(112, 130, 56, 0.3) 0%, rgba(160, 82, 45, 0.2) 100%);
+  border: 1px dashed var(--olive-green);
+}
+
+.legend-color.walkway {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--light-beige),
+    var(--light-beige) 4px,
+    var(--light-gray) 4px,
+    var(--light-gray) 8px
+  );
+}
+
+.legend-color.entrance {
+  background: var(--light-beige);
+  border: 2px double var(--earth-orange);
+}
+
+.legend-color.table {
+  background-color: var(--deep-brown);
+}
+
+/* Grid layout cho bàn */
+.table-grid {
+  position: absolute;
+  display: grid;
+  gap: 10px;
+}
+
+.table-grid-2x2 {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+
+.table-grid-1x4 {
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr;
+}
+
+/* Container cho nhóm chỗ ngồi */
+.seat-group {
+  position: absolute;
+}
+
+.seat-group .seat-dot {
+  position: relative;
+  transform: none;
+}
+
+.seat-group .seat-dot:hover {
+  transform: scale(1.2);
+}
+
+/* Zone labels */
+.zone-label {
+  position: absolute;
+  background-color: rgba(245, 240, 230, 0.9);
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: var(--deep-brown);
+  border: 1px solid var(--light-gray);
+  z-index: 2;
+}
+
+/* Control panel mở rộng */
+.element-controls {
+  margin-top: 15px;
+}
+
+.element-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.element-btn {
+  padding: 8px;
+  border: 1px solid var(--light-gray);
+  background-color: var(--light-beige);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.element-btn:hover {
+  border-color: var(--earth-orange);
+  background-color: var(--white);
+}

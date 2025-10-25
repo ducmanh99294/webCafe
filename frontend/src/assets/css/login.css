@@ -1,0 +1,159 @@
+/* Login.css */
+.login-container {
+  min-height: 100vh;
+  background-color: #F5F0E6; /* Beige */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 20px;
+}
+
+.login-box {
+  background-color: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(75, 59, 43, 0.1);
+  width: 100%;
+  max-width: 400px;
+  border: 1px solid rgba(75, 59, 43, 0.1);
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.login-title {
+  color: #4B3B2B; /* Nâu đậm */
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.login-subtitle {
+  color: #A0522D; /* Nâu đỏ */
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-label {
+  color: #4B3B2B; /* Nâu đậm */
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.form-input {
+  padding: 12px 16px;
+  border: 1px solid rgba(75, 59, 43, 0.2);
+  border-radius: 8px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  background-color: #FDFDFD;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #D2691E; /* Cam đất */
+  box-shadow: 0 0 0 2px rgba(210, 105, 30, 0.1);
+}
+
+.form-input::placeholder {
+  color: rgba(75, 59, 43, 0.4);
+}
+
+.login-button {
+  background-color: #A0522D; /* Nâu đỏ */
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+.login-button:hover {
+  background-color: #D2691E; /* Cam đất */
+  transform: translateY(-1px);
+}
+
+.login-button:active {
+  transform: translateY(0);
+}
+
+.login-footer {
+  text-align: center;
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(75, 59, 43, 0.1);
+}
+
+.forgot-password {
+  color: #708238; /* Xanh olive */
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.3s ease;
+}
+
+.forgot-password:hover {
+  color: #4B3B2B; /* Nâu đậm */
+  text-decoration: underline;
+}
+
+.signup-link {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #4B3B2B; /* Nâu đậm */
+}
+
+.signup-link a {
+  color: #A0522D; /* Nâu đỏ */
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.signup-link a:hover {
+  text-decoration: underline;
+}
+
+/* Hiệu ứng tinh tế */
+.login-box {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .login-box {
+    padding: 30px 20px;
+  }
+  
+  .login-title {
+    font-size: 24px;
+  }
+}

@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  # 1. Dịch vụ Backend (Spring Boot)
+  backend:
+    build:
+      context: ./backend # Đường dẫn đến thư mục chứa Dockerfile
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/webcafe
+    depends_on:
+      - mongo # Khởi động mongo trước khi khởi động backend
+
+  # 2. Dịch vụ Frontend (React + Nginx)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:80" # Ánh xạ cổng 5173 (bạn hay dùng) vào cổng 80 của Nginx
+    depends_on:
+      - backend # Khởi động backend trước khi khởi động frontend
+
+  # 3. Dịch vụ Database (MongoDB)
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db 
+
+volumes:
+  mongo-data: # Định nghĩa volume

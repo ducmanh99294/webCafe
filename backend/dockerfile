@@ -1,0 +1,21 @@
+# Build ứng dụng (dùng JDK)
+FROM eclipse-temurin:17-jdk-jammy AS build
+WORKDIR /workspace
+
+# Copy toàn bộ source code của backend vào
+COPY . .
+
+# Build ứng dụng
+RUN ./gradlew build --no-daemon
+
+# Chạy ứng dụng (chỉ dùng JRE, nhẹ hơn)
+FROM eclipse-temurin:17-jre-jammy
+WORKDIR /app
+
+# Copy file .jar đã build từ stage 1
+COPY --from=build /workspace/build/libs/*.jar app.jar
+
+EXPOSE 8080
+
+# Chạy ứng dụng
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]

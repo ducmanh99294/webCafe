@@ -1,0 +1,217 @@
+/* Register.css */
+.register-container {
+  min-height: 100vh;
+  background-color: #F5F0E6; /* Beige */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 20px;
+}
+
+.register-box {
+  background-color: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(75, 59, 43, 0.1);
+  width: 100%;
+  max-width: 450px;
+  border: 1px solid rgba(75, 59, 43, 0.1);
+}
+
+.register-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.register-title {
+  color: #4B3B2B; /* Nâu đậm */
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.register-subtitle {
+  color: #A0522D; /* Nâu đỏ */
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+.form-label {
+  color: #4B3B2B; /* Nâu đậm */
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.form-input {
+  padding: 12px 16px;
+  border: 1px solid rgba(75, 59, 43, 0.2);
+  border-radius: 8px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  background-color: #FDFDFD;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #D2691E; /* Cam đất */
+  box-shadow: 0 0 0 2px rgba(210, 105, 30, 0.1);
+}
+
+.form-input::placeholder {
+  color: rgba(75, 59, 43, 0.4);
+}
+
+.password-requirements {
+  font-size: 12px;
+  color: #708238; /* Xanh olive */
+  margin-top: 4px;
+}
+
+.terms-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.terms-checkbox {
+  margin-top: 2px;
+  accent-color: #A0522D; /* Nâu đỏ */
+}
+
+.terms-label {
+  font-size: 14px;
+  color: #4B3B2B; /* Nâu đậm */
+  line-height: 1.4;
+}
+
+.terms-label a {
+  color: #A0522D; /* Nâu đỏ */
+  text-decoration: none;
+}
+
+.terms-label a:hover {
+  text-decoration: underline;
+}
+
+.register-button {
+  background-color: #A0522D; /* Nâu đỏ */
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+.register-button:hover {
+  background-color: #D2691E; /* Cam đất */
+  transform: translateY(-1px);
+}
+
+.register-button:active {
+  transform: translateY(0);
+}
+
+.register-button:disabled {
+  background-color: rgba(75, 59, 43, 0.3);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.register-footer {
+  text-align: center;
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(75, 59, 43, 0.1);
+}
+
+.login-link {
+  font-size: 14px;
+  color: #4B3B2B; /* Nâu đậm */
+}
+
+.login-link a {
+  color: #A0522D; /* Nâu đỏ */
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.login-link a:hover {
+  text-decoration: underline;
+}
+
+.error {
+  color: red;
+}
+/* Hiệu ứng tinh tế */
+.register-box {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .register-box {
+    padding: 30px 20px;
+  }
+  
+  .register-title {
+    font-size: 24px;
+  }
+  
+  .form-row {
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+/* Validation styles */
+.form-input.error {
+  border-color: #dc3545;
+}
+
+.form-input.success {
+  border-color: #708238; /* Xanh olive */
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 12px;
+  margin-top: 4px;
+}
