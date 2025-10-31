@@ -21,7 +21,7 @@ const AdminProducts: React.FC = () => {
     rating: 0,
     image: '',
   });
-  const api = ''
+  const api = 'http://localhost:8080'
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
 

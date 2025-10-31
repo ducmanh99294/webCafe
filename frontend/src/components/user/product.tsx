@@ -17,7 +17,7 @@ const Products: React.FC = () => {
   const [showDetail, setShowDetail] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const api = ''
+  const api = 'http://localhost:8080'
   const userId = localStorage.getItem("userId");
 
   useEffect(()=>{

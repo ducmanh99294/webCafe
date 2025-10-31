@@ -8,27 +8,35 @@ const Cart = () => {
   const [hasArrived, setHasArrived] = useState<any>(null);
   const [cart, setCart] = useState<any[]>([]);
   const [tables, setTables] = useState<any[]>([]);
+  const [roomElements, setRoomElements] = useState<any[]>([]);
+
   const [selectedTable, setSelectedTable] = useState<any>(null);
-  const [selectedTime, setSelectedTime] = useState<string>('');
   const [selectedPayment, setSelectedPayment] = useState<string>('');
   const [specialRequests, setSpecialRequests] = useState('');
 
-  const api = ''
+  const api = 'http://localhost:8080'
   const userId = localStorage.getItem("userId");
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    // In real app, this would come from context or localStorage
+        const initialRoomElements = [
+      { id: 'reception1', type: 'reception', x: 50, y: 30, width: 200, height: 60, label: 'QUẦY LỄ TÂN' },
+      { id: 'window1', type: 'window', x: 0, y: 110, width: 15, height: 200 },
+      { id: 'window2', type: 'window', x: 400, y: 480, width: 180, height: 15 },
+      { id: 'window3', type: 'window', x: 100, y: 480, width: 180, height: 15 },
+      { id: 'window4', type: 'window', x: 760, y: 110, width: 15, height: 200 },
+      { id: 'mainWalkway1', type: 'walkway', x: 340, y: 60, width: 20, height: 430 },
+      { id: 'mainWalkway2', type: 'walkway', x: 690, y: 360, width: 20, height: 130 },
+      { id: 'sideWalkway1', type: 'walkway', x: 0, y: 350, width: 780, height: 20 },
+      { id: 'sideWalkway2', type: 'walkway', x: 250, y: 50, width: 530, height: 20 },
+      { id: 'entrance1', type: 'entrance', x: 650, y: 460, width: 100, height: 30, label: 'Lối vào' },
+    ];
+
+    setRoomElements(initialRoomElements);
+    fetchTable();
+
     fetchCart();
   }, []);
-
-  const timeSlots = [
-    'Ngay bây giờ',
-    '30 phút nữa',
-    '1 tiếng nữa',
-    '1.5 tiếng nữa',
-    '2 tiếng nữa'
-  ];
 
   const paymentMethods = [
     {
@@ -44,11 +52,6 @@ const Cart = () => {
       icon: '💳'
     },
   ];
-
-  useEffect(() => {
-    fetchCart();
-    fetchTable();
-  }, [userId]);
 
   const fetchCart = async () => {
     try {
@@ -145,8 +148,8 @@ const Cart = () => {
         return;
       }
 
-      if (!hasArrived && (!selectedTable || !selectedTime)) {
-        alert("Vui lòng chọn bàn và thời gian đến");
+      if (!hasArrived && !selectedTable) {
+        alert("Vui lòng chọn bàn");
         return;
       }
       try {
@@ -161,7 +164,7 @@ const Cart = () => {
             items: cart,
             total: getTotal(),
             paymentMethod: selectedPayment,
-            tableId: selectedTable,
+            tableId: selectedTable.id,
           }),
         });
  
@@ -196,7 +199,7 @@ const Cart = () => {
     );
   }
 
-  // console.log(cart);
+  // console.log(tables);  
   return (
     <div className="cart-container">
       <div className="cart-header">
@@ -302,48 +305,60 @@ const Cart = () => {
             {/* Additional Options for Not Arrived */}
  
               <section className="additional-options">
-                <div className="options-grid">
-                  {/* Table Selection */}
-                  <div className="option-group">
+                <div className="option-group">
                     <h3 className="option-group-title">
                       <span>🪑</span>
-                      {hasArrived ? "Hãy chọn bàn đang ngồi" : "Chọn Bàn"}
+                      {selectedTable
+                        ? `Bàn đang chọn ${selectedTable.number}`
+                        : hasArrived
+                          ? "Hãy chọn bàn đang ngồi"
+                          : "Chọn Bàn"}
                     </h3>
-                    <div className="tables-grid">
-                      {tables.map((table: any) => (
-                        <div
-                          key={table.id}
-                          className={`table-item ${selectedTable === table.id ? 'selected' : ''} ${table.status ? 'available' : 'unavailable'}`}
-                          onClick={() => table.status === 'available' && setSelectedTable(table.id)}
-                        >
-                          {table.number}
-                          {table.status === "unavailable" && <div style={{fontSize: '0.7rem', marginTop: '2px'}}>🔴</div>}
-                          {table.status === "reserve" && <div style={{fontSize: '0.7rem', marginTop: '2px'}}>🔴</div>}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                </div>
+                <div className="seat-map-container">
+                  <div 
+                    className="seat-map"
+                    onDragOver={(e) => e.preventDefault()}
+                  >
+                    {/* Các thành phần phòng */}
+                    {roomElements.map(element => (
+                      <div
+                        key={element.id}
+                        className={`room-element ${element.type} ${element.shape || ''}`}
+                        style={{
+                          left: `${element.x}px`,
+                          top: `${element.y}px`,
+                          width: `${element.width}px`,
+                          height: `${element.height}px`,
+                        }}
+                        title={element.label || element.type}
+                      >
+                        {element.label}
+                      </div>
+                    ))}
 
-                  {/* Time Selection */}
-                  {!hasArrived && (
-                  <div className="option-group">
-                    <h3 className="option-group-title">
-                      <span>⏰</span>
-                      Thời Gian Đến
-                    </h3>
-                    <div className="time-options">
-                      {timeSlots.map((time, index) => (
-                        <button
-                          key={index}
-                          className={`time-option ${selectedTime === time ? 'selected' : ''}`}
-                          onClick={() => setSelectedTime(time)}
-                        >
-                          {time}
-                        </button>
-                      ))}
+                    {/* Các chỗ ngồi */}
+                    <div className="tables-grid">
+                    {tables.map(seat => (
+                      <div
+                        key={seat.id}
+                        className={`seat-dot ${seat.status} ${selectedTable?.id === seat.id ? 'selected' : ''}`}
+                        style={{ left: `${seat.x}px`, top: `${seat.y}px` }}
+                        onClick={() => {
+                          if (seat.status === 'available') {
+                            setSelectedTable(seat);
+                          } else {
+                            alert('bàn này đã có người hoặc đã được đặt trước')
+                          }
+                        }}
+                        title={`${seat.number} - ${seat.status === 'available' ? 'Còn trống' : seat.status === 'unavailable' ? 'Đã có người' : 'Đã đặt trước'}`}
+                      >
+                        {seat.number}
+                      </div>
+                    ))}
                     </div>
+
                   </div>
-                )}
                 </div>
               </section>
             

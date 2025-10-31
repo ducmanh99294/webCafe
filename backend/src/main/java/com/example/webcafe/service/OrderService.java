@@ -132,15 +132,6 @@ public class OrderService {
         order.setStatus(status);
         order.setUpdatedAt(java.time.LocalDateTime.now());
 
-//        if (tableId != null && !tableId.isEmpty()) {
-//            Table table = tableRepository.findById(tableId)
-//                    .orElseThrow(() -> new RuntimeException("Không tìm thấy bàn"));
-//            if(order.getTableId() == "completed") {
-//                table.setStatus(Table.Status.available);
-//                tableRepository.save(table);
-//            }
-//        }
-
         return orderRepository.save(order);
 
     }

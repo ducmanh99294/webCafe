@@ -12,7 +12,7 @@ const Profile = () => {
     image: ''
   });
   const userId = localStorage.getItem("userId");
-  const api = ''
+  const api = 'http://localhost:8080'
   const token = localStorage.getItem("token");
 
   useEffect(() => {

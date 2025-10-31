@@ -11,14 +11,14 @@ const Home: React.FC = () => {
   const [_loading, setLoading] = useState(false);
   const [products, setProducts] = useState<any>([])
 
-  const api = ''
+  const api = 'http://localhost:8080'
   const userId = localStorage.getItem("userId");
 
   const slides = [
     {
       id: 1,
       image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      title: 'Café Mộc - Không Gian Thư Giãn',
+      title: 'Café - Không Gian Thư Giãn',
       subtitle: 'Nơi hương vị cà phê hòa quyện cùng không gian ấm cúng, mang đến những giây phút thư giãn tuyệt vời',
       buttonText: 'Khám Phá Ngay'
     },
@@ -235,6 +235,7 @@ const Home: React.FC = () => {
     };
     }, [products]);
 
+    // console.log(formatPrice(products.product.sizePrices[0].price))
   return (
     <div className="home-container">
       {/* Hero Slider Section */}
@@ -300,15 +301,15 @@ const Home: React.FC = () => {
                 <p className="product-description">{product.description}</p>
                 <div className="product-price">
                   <div>
-                    {product.discount ? (
+                    {product.discount > 0? (
                       <>
-                    <span className="price">{formatPrice(product.discount)}</span>
-                    {product.price && (
-                      <span className="original-price">{product.price}</span>
+                    <span className="price">{formatPrice(product.sizePrices[0].price * (100 - product.discount)/100)}</span>
+                    {product.sizePrices[0].price && (
+                      <span className="original-price">{formatPrice(product.sizePrices[0].price)}</span>
                     )}                      
                       </>
                     ) : (
-                    <span className="price">{formatPrice(product.price)}</span>
+                    <span className="price">{formatPrice(product.sizePrices[0].price)}</span>
                     )}
 
                   </div>

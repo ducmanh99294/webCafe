@@ -21,7 +21,7 @@ public class Cart {
         this.items = new ArrayList<>();
     }
 
-    // ✅ Embedded class cho sản phẩm trong giỏ
+    // Embedded class cho sản phẩm trong giỏ
     public static class Item {
         private String productId;
         private String name;

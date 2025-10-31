@@ -14,7 +14,7 @@ import java.util.function.Function;
 public class JwtUtil {
 
     private static final String SECRET_KEY = "THIS_IS_A_SECRET_KEY_FOR_WEBCAFE_2025_SPRINGBOOT_JWT_TOKEN";
-    private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 10; // 10 giờ
+    private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 10;
 
     private final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
 

@@ -7,7 +7,7 @@ const Orders: React.FC = () => {
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [orders, setOrders] = useState<any>([]);
 
-  const api = ''
+  const api = 'http://localhost:8080'
   const userId = localStorage.getItem("userId");
   const token = localStorage.getItem("token");
 

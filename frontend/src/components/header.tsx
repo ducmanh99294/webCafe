@@ -10,7 +10,7 @@ const Header: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const api = ''
+  const api = 'http://localhost:8080'
   const userId = localStorage.getItem("userId");
 
   // Simulate login state - in real app, this would come from context or store
@@ -74,7 +74,7 @@ const Header: React.FC = () => {
         {/* Logo */}
         <Link to="/" className="logo" onClick={closeMobileMenu}>
           <span className="logo-icon">☕</span>
-          <span className="logo-text">Cafe Mộc</span>
+          <span className="logo-text">Cafe</span>
         </Link>
 
         {/* Navigation */}

@@ -7,37 +7,6 @@ import '../../assets/css/user/about.css';
 
 const About: React.FC = () => {
   gsap.registerPlugin(ScrollTrigger)
-  const teamMembers = [
-    {
-      id: 1,
-      name: 'Nguyễn Minh Anh',
-      position: 'Founder & CEO',
-      bio: 'Với hơn 10 năm kinh nghiệm trong ngành F&B và đam mê bất tận với cà phê, Minh Anh đã sáng lập Café Mộc với mong muốn mang đến không gian thư giãn lý tưởng cho cộng đồng.',
-      image: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
-    },
-    {
-      id: 2,
-      name: 'Trần Quốc Bảo',
-      position: 'Head Barista',
-      bio: 'Quốc Bảo là bậc thầy pha chế với nhiều giải thưởng quốc tế. Anh luôn tìm tòi và sáng tạo những công thức cà phê độc đáo.',
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
-    },
-    {
-      id: 3,
-      name: 'Lê Thị Hương',
-      position: 'Quản lý Chuỗi',
-      bio: 'Với kinh nghiệm quản lý nhiều chuỗi cafe lớn, Hương đảm bảo mọi chi nhánh của Café Mộc đều duy trì chất lượng dịch vụ tốt nhất.',
-      image: 'https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
-    },
-    {
-      id: 4,
-      name: 'Phạm Văn Cường',
-      position: 'Chuyên gia Rang xay',
-      bio: 'Cường có hơn 15 năm kinh nghiệm trong việc lựa chọn và rang xay cà phê. Anh là người tạo nên hương vị đặc trưng của Café Mộc.',
-      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
-    }
-  ];
-
   const milestones = [
     {
       year: '2015',
@@ -273,32 +242,6 @@ tl.fromTo(
               </div>
               <h3 className="value-title">{value.title}</h3>
               <p className="value-description">{value.description}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Team Section */}
-      <section className="team-section">
-        <div className="section-header">
-          <h2 className="section-title">Đội Ngũ Của Chúng Tôi</h2>
-          <p className="section-subtitle">
-            Những con người đam mê tạo nên thương hiệu Café Mộc
-          </p>
-        </div>
-
-        <div className="team-grid">
-          {teamMembers.map((member) => (
-            <div key={member.id} className="team-card">
-              <div 
-                className="team-image"
-                style={{ backgroundImage: `url(${member.image})` }}
-              />
-              <div className="team-content">
-                <h3 className="team-name">{member.name}</h3>
-                <p className="team-position">{member.position}</p>
-                <p className="team-bio">{member.bio}</p>
-              </div>
             </div>
           ))}
         </div>

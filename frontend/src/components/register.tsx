@@ -17,7 +17,7 @@ const Register: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  const api = '';
+  const api = 'http://localhost:8080';
 
   const handleChange = (e: any) => {
     const { name, value } = e.target;

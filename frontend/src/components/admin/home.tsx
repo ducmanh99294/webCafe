@@ -19,7 +19,7 @@ const Home: React.FC = () => {
   const [tables, setTables] = useState<any[]>([]);
   
 
-  const api = ''
+  const api = 'http://localhost:8080'
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
   // Sample data for dashboard

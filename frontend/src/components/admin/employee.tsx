@@ -19,7 +19,7 @@ const AdminEmployee: React.FC = () => {
     updateAt : new Date(),
   })
 
-  const api = ''
+  const api = 'http://localhost:8080'
   const token = localStorage.getItem("token");
   const rolee = localStorage.getItem("role");
 

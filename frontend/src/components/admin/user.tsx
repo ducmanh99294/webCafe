@@ -13,7 +13,7 @@ const AdminUsers: React.FC = () => {
     status: 'all',
     search: ''
   });
-  const api = ''
+  const api = 'http://localhost:8080'
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
 

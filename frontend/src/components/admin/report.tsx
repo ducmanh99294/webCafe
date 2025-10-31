@@ -10,7 +10,7 @@ const AdminReports = () => {
   const [monthReports, setMonthReports] = useState<any>([]);
   const [compareReports, setCompareReports] = useState<any>([]);
   const [productReport, setProductReport] = useState<any>([]);
-  const api = ''
+  const api = 'http://localhost:8080'
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role")
 
