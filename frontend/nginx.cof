@@ -2,20 +2,14 @@ server {
     listen 80;
     server_name localhost;
 
-    # 1. Phục vụ các file React (HTML, CSS, JS)
-    location / {
-        root   /usr/share/nginx/html;
-        index  index.html;
-        try_files $uri $uri/ /index.html; 
-    }
-
-    # 2. KHỐI PROXY ĐÃ SỬA LẠI
-    # Chuyển tiếp (proxy) tất cả các lệnh gọi /api/ đến backend
-    location /api/ {
-        # SỬA LỖI: Bỏ dấu / ở cuối URL
+    # 1. KHỐI QUAN TRỌNG NHẤT (ĐÃ SỬA VỚI REGEX)
+    # Chuyển tiếp (proxy) tất cả các lệnh gọi BẮT ĐẦU BẰNG /api/
+    # Dấu ~ (tilde) và ^ (caret) sẽ ép Nginx ưu tiên khối này
+    location ~ ^/api/ {
+        # Dán URL backend CỦA BẠN vào đây (KHÔNG CÓ / Ở CUỐI)
         proxy_pass https://webcafe-backend.onrender.com; 
         
-        # Các headers còn lại
+        # Các headers
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -23,5 +17,13 @@ server {
         proxy_redirect off;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
+    }
+
+    # 2. Phục vụ các file React (HTML, CSS, JS)
+    # Khối này sẽ xử lý MỌI THỨ CÒN LẠI không khớp với /api/
+    location / {
+        root   /usr/share/nginx/html;
+        index  index.html;
+        try_files $uri $uri/ /index.html; 
     }
 }
