@@ -57,7 +57,7 @@ public class WebSecurityConfig {
                 .cors(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/api/users/login", "/api/users/register", "/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/users/login", "/api/users/register").permitAll() 
                         .requestMatchers(
                                 "/api/orders/admin",
                                 "/api/products/admin",
