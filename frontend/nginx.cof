@@ -25,5 +25,7 @@ server {
         root   /usr/share/nginx/html;
         index  index.html;
         try_files $uri $uri/ /index.html; 
+
+        add_header X-Canary-Test "NGINX_IS_LIVE_v2";
     }
 }
