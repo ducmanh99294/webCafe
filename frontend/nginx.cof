@@ -2,13 +2,17 @@ server {
     listen 80;
     server_name localhost;
 
+    # 1. Phục vụ các file React (HTML, CSS, JS)
     location / {
         root   /usr/share/nginx/html;
         index  index.html;
         try_files $uri $uri/ /index.html; 
     }
 
+    # 2. KHỐI PROXY ĐÃ SỬA LẠI
+    # Chuyển tiếp (proxy) tất cả các lệnh gọi /api/ đến backend
     location /api/ {
+        # SỬA LỖI: Bỏ dấu / ở cuối URL
         proxy_pass https://webcafe-backend.onrender.com; 
         
         # Các headers còn lại
