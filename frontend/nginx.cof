@@ -2,23 +2,20 @@ server {
     listen 80;
     server_name localhost;
 
-    # 1. Phục vụ các file React (HTML, CSS, JS)
     location / {
         root   /usr/share/nginx/html;
         index  index.html;
-        # Dòng này quan trọng để React Router hoạt động
         try_files $uri $uri/ /index.html; 
     }
 
-    # Chuyển tiếp (proxy) tất cả các lệnh gọi /api/ đến backend
     location /api/ {
-        proxy_pass https://webcafe-backend.onrender.com/; 
+        proxy_pass https://webcafe-backend.onrender.com; 
         
+        # Các headers còn lại
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-        
         proxy_redirect off;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
