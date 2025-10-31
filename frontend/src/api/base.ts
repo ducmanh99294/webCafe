@@ -1,21 +1,22 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api/v1';
+const API_BASE_URL = import.meta.env.VITE_APP_API_URL;
 
-export const fetcher = async<T>(
-    endpoint: string,
-    options?: RequestInit,
-    token?: string
-): Promise<T> => {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-        ...options,
-        headers: {
-            'Content-Type':'application/json',
-            ...options?.headers,
-            Authorization: `Bearer ${token}`,       
-        },
-    });
-    if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Fetch failed');
-    }
-    return await response.json();
+export async function apiFetch(endpoint: string, options: RequestInit = {}) {
+  const fullUrl = `${API_BASE_URL}${endpoint.startsWith('/') ? endpoint : '/' + endpoint}`;
+
+  // 3. Cấu hình headers mặc định
+  const defaultHeaders: HeadersInit = {
+    "Content-Type": "application/json",
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  };
+
+  // 4. Gộp (merge) headers
+  const finalOptions: RequestInit = {
+    ...options, 
+    headers: {
+      ...defaultHeaders,
+      ...(options.headers || {}), 
+    },
+  };
+
+  return fetch(fullUrl, finalOptions);
 }

@@ -1,9 +1,9 @@
-# Build ứng dụng (dùng JDK)
 FROM eclipse-temurin:17-jdk-jammy AS build
 WORKDIR /workspace
 
-# Copy toàn bộ source code của backend vào
 COPY . .
+
+RUN chmod +x ./gradlew
 
 # Build ứng dụng
 RUN ./gradlew build --no-daemon

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import '../../assets/css/user/home.css';
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { apiFetch } from '../../api/base'; 
 
 const Home: React.FC = () => {
   gsap.registerPlugin(ScrollTrigger);
@@ -11,7 +12,7 @@ const Home: React.FC = () => {
   const [_loading, setLoading] = useState(false);
   const [products, setProducts] = useState<any>([])
 
-  const api = 'http://localhost:8080'
+  // const api = 'http://localhost:8080'
   const userId = localStorage.getItem("userId");
 
   const slides = [
@@ -71,7 +72,7 @@ const Home: React.FC = () => {
   const fetchProduct = async () => {
     setLoading(true)
     try {
-      const res = await fetch(`${api}/api/products`);
+      const res = await apiFetch(`/api/products`);
       const data = await res.json();
       setProducts(data);
     } catch (err) {
@@ -83,7 +84,7 @@ const Home: React.FC = () => {
 
   const addToCart = async (product: any, quantity: any) => {
     try {
-        const res = await fetch(`${api}/api/carts/${userId}/add`, {
+        const res = await apiFetch(`/api/carts/${userId}/add`, {
         method: "POST",
         headers: { 
           "Content-Type": "application/json" ,

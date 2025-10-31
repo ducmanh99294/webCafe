@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import '../assets/css/register.css';
 import { useNavigate } from 'react-router-dom';
+import { apiFetch } from '../api/base';
 
 const Register: React.FC = () => {
   const [formData, setFormData] = useState<any>({
@@ -17,7 +18,7 @@ const Register: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  const api = 'http://localhost:8080';
+  // const api = 'http://localhost:8080';
 
   const handleChange = (e: any) => {
     const { name, value } = e.target;
@@ -42,7 +43,7 @@ const handleSubmit = async (e: any) => {
   }
 
   try {
-    const res = await fetch(`${api}/api/users/register`, {
+    const res = await apiFetch(`/api/users/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import '../assets/css/header.css';
+import { apiFetch } from '../api/base';
 
 const Header: React.FC = () => {
   const [showDropdown, setShowDropdown] = useState(false);
@@ -10,7 +11,7 @@ const Header: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const api = 'http://localhost:8080'
+  // const api = 'http://localhost:8080'
   const userId = localStorage.getItem("userId");
 
   // Simulate login state - in real app, this would come from context or store
@@ -23,7 +24,7 @@ const Header: React.FC = () => {
   const fetchCart = async () => {
     if (!userId) return;
     try {
-      const res = await fetch(`${api}/api/carts/${userId}`,{
+      const res = await apiFetch(`/api/carts/${userId}`,{
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,

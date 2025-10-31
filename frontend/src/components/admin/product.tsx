@@ -1,7 +1,7 @@
 // AdminProducts.js
 import React, { useState, useEffect } from 'react';
 import '../../assets/css/admin/product.css';
-
+import { apiFetch } from '../../api/base'; 
 
 const AdminProducts: React.FC = () => {
   const [products, setProducts] = useState<any[]>([]);
@@ -21,7 +21,7 @@ const AdminProducts: React.FC = () => {
     rating: 0,
     image: '',
   });
-  const api = 'http://localhost:8080'
+  // const api = 'http://localhost:8080'
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
 
@@ -41,12 +41,7 @@ const AdminProducts: React.FC = () => {
   // lấy dữ liệu
   const fetchProducts = async () => {
     try {
-      const res = await fetch(`${api}/api/products`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await apiFetch(`/api/products`);
 
       if (!res.ok) throw new Error('Không thể tải danh sách sản phẩm');
       const data = await res.json();
@@ -59,12 +54,7 @@ const AdminProducts: React.FC = () => {
 
   const fetchCategories = async () => {
     try {
-      const res = await fetch(`${api}/api/categories`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await apiFetch(`/api/categories`);
 
       if (!res.ok) throw new Error('Không thể tải danh sách sản phẩm');
       const data = await res.json();
@@ -78,12 +68,8 @@ const AdminProducts: React.FC = () => {
     e.preventDefault()
     console.log(JSON.stringify(formData,null,2))
     try {
-      const res = await fetch(`${api}/api/products/admin`,{
+      const res = await apiFetch(`/api/products/admin`,{
         method: 'POST',
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
         body: JSON.stringify(formData)
       });
       if(res.ok) {
@@ -100,12 +86,8 @@ const AdminProducts: React.FC = () => {
     e.preventDefault()
     console.log(JSON.stringify(formData,null,2))
     try {
-      const res = await fetch(`${api}/api/products/admin/${editingProduct.id}`,{
+      const res = await apiFetch(`/api/products/admin/${editingProduct.id}`,{
         method: 'PUT',
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
         body: JSON.stringify(formData)
       });
       if(res.ok) {
@@ -120,7 +102,7 @@ const AdminProducts: React.FC = () => {
 
   const handleDeleteProduct = async (id: any) => {
     try {
-      const res = await fetch(`${api}/api/products/admin/${id}`, {
+      const res = await apiFetch(`/api/products/admin/${id}`, {
         method: 'DELETE',
         headers: {
           "Content-Type": "application/json",
@@ -140,7 +122,7 @@ const AdminProducts: React.FC = () => {
   const handleUpdateProductStatus = async (product: any) => {
     try {
       const newStatus = !product.available;
-      const res = await fetch(`${api}/api/products/admin/available/${product.id}`, {
+      const res = await apiFetch(`/api/products/admin/available/${product.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

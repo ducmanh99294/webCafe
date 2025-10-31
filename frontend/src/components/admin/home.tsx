@@ -8,6 +8,7 @@ import AdminTables from './table';
 import AdminReport from './report';
 import AdminEmployee from './employee';
 import AdminManagerUser from './user';
+import { apiFetch } from '../../api/base'; 
 
 const Home: React.FC = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -18,11 +19,10 @@ const Home: React.FC = () => {
   const [employees, setEmployees] = useState<any>([]);
   const [tables, setTables] = useState<any[]>([]);
   
-
-  const api = 'http://localhost:8080'
+  // const api = 'http://localhost:8080'
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
-  // Sample data for dashboard
+
   const dashboardStats = {
     totalRevenue: 38450000,
     totalOrders: 1247,
@@ -63,12 +63,7 @@ const Home: React.FC = () => {
 
   const fetchOrders = async () => {
     try {
-      const res = await fetch(`${api}/api/orders/admin`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await apiFetch(`/api/orders/admin`);
 
       if (!res.ok) throw new Error("Không thể tải danh sách đơn hàng");
 
@@ -81,12 +76,7 @@ const Home: React.FC = () => {
 
   const fetchProducts = async () => {
     try {
-      const res = await fetch(`${api}/api/products`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await apiFetch(`/api/products`);
 
       if (!res.ok) throw new Error("Không thể tải danh sách đơn hàng");
 
@@ -99,12 +89,7 @@ const Home: React.FC = () => {
 
   const fetchUsers = async () => {
     try {
-      const res = await fetch(`${api}/api/users/admin`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await apiFetch(`/api/users/admin`);
 
       if (!res.ok) throw new Error("Không thể tải danh sách đơn hàng");
 
@@ -117,7 +102,7 @@ const Home: React.FC = () => {
 
   const fetchTables = async () => {
     try {
-      const res = await fetch(`${api}/api/tables`);
+      const res = await apiFetch(`/api/tables`);
       if (res.ok) {
         const data = await res.json();
         console.log('Tables:', data);
@@ -130,12 +115,7 @@ const Home: React.FC = () => {
 
   const fetchEmployee = async () => {
     try {
-      const res = await fetch(`${api}/api/employees/admin`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      const res = await apiFetch(`/api/employees/admin`)
       const data = await res.json();
       if(data) {
         setEmployees(data);

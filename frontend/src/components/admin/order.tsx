@@ -1,7 +1,7 @@
 // AdminOrders.js
 import { useState, useEffect } from 'react';
 import '../../assets/css/admin/order.css';
-
+import { apiFetch } from '../../api/base'; 
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState<any[]>([]);
@@ -17,7 +17,7 @@ const AdminOrders = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const ordersPerPage = 10;
 
-  const api = 'http://localhost:8080'
+  // const api = 'http://localhost:8080'
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
 
@@ -32,12 +32,7 @@ const AdminOrders = () => {
   const fetchOrders = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${api}/api/orders/admin`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await apiFetch(`/api/orders/admin`)
       if (!res.ok) throw new Error("Không thể tải danh sách đơn hàng");
       const data = await res.json();
       setOrders(data);
@@ -83,12 +78,8 @@ const AdminOrders = () => {
   const updateOrderStatus = async (orderId: string, newStatus: string) => {
     try {
         console.log(JSON.stringify({ status: newStatus }))
-      const res = await fetch(`${api}/api/orders/admin/${orderId}/status`, {
+      const res = await apiFetch(`/api/orders/admin/${orderId}/status`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
         body: JSON.stringify({ status: newStatus }),
       });
 

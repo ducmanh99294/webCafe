@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import '../assets/css/login.css';
 import { useNavigate } from 'react-router-dom';
+import { apiFetch } from '../api/base';
 
 const Login: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -11,7 +12,7 @@ const Login: React.FC = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)
 
-  const api = 'http://localhost:8080'
+  // const api = 'http://localhost:8080'
   const navigate = useNavigate()
   
   const handleChange = (e: any) => {
@@ -26,12 +27,8 @@ const handleSubmit = async (e: any) => {
   e.preventDefault();
   setLoading(true);
   try {
-    const res = await fetch(`${api}/api/users/login`, {
+    const res = await apiFetch(`/api/users/login`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        
-      },
       body: JSON.stringify(formData),
     });
 

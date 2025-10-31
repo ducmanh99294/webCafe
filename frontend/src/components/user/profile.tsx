@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import '../../assets/css/user/profile.css';
+import { apiFetch } from '../../api/base'; 
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState('personal');
@@ -12,7 +13,7 @@ const Profile = () => {
     image: ''
   });
   const userId = localStorage.getItem("userId");
-  const api = 'http://localhost:8080'
+  // const api = 'http://localhost:8080'
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -27,7 +28,7 @@ const Profile = () => {
 
   const fetchuser = async () => {
     try{
-      const res = await fetch(`${api}/api/users/${userId}`,{
+      const res = await apiFetch(`/api/users/${userId}`,{
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -62,7 +63,7 @@ const Profile = () => {
   const handleUpdate = async () => {
     console.log(JSON.stringify(formData, null, 2));
     try {
-      const res = await fetch(`${api}/api/users/${userId}`, {
+      const res = await apiFetch(`/api/users/${userId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

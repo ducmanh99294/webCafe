@@ -2,12 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../../assets/css/user/order.css';
+import { apiFetch } from '../../api/base'; 
 
 const Orders: React.FC = () => {
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [orders, setOrders] = useState<any>([]);
 
-  const api = 'http://localhost:8080'
+  // const api = 'http://localhost:8080'
   const userId = localStorage.getItem("userId");
   const token = localStorage.getItem("token");
 
@@ -33,7 +34,7 @@ const Orders: React.FC = () => {
 
   const fetchOrder = async () => {
     try {
-    const res = await fetch(`${api}/api/orders/${userId}`,{
+    const res = await apiFetch(`/api/orders/${userId}`,{
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`
@@ -89,7 +90,7 @@ const Orders: React.FC = () => {
 
   const handleDeleteOrder = async (orderId: any) => {
     try {
-      const res = await fetch(`${api}/api/orders/${orderId}/status`, {
+      const res = await apiFetch(`/api/orders/${orderId}/status`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

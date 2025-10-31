@@ -1,6 +1,7 @@
 // EmployeeManagement.js
 import React, { useEffect, useState } from 'react';
 import '../../assets/css/admin/employee.css';
+import { apiFetch } from '../../api/base'; 
 
 const AdminEmployee: React.FC = () => {
   const [employees, setEmployees] = useState<any>([]);
@@ -19,7 +20,7 @@ const AdminEmployee: React.FC = () => {
     updateAt : new Date(),
   })
 
-  const api = 'http://localhost:8080'
+  // const api = 'http://localhost:8080'
   const token = localStorage.getItem("token");
   const rolee = localStorage.getItem("role");
 
@@ -49,12 +50,7 @@ const AdminEmployee: React.FC = () => {
 
   const fetchEmployee = async () => {
     try {
-      const res = await fetch(`${api}/api/employees/admin`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      const res = await apiFetch(`/api/employees/admin`)
       const data = await res.json();
       if(data) {
         setEmployees(data);
@@ -97,12 +93,8 @@ const AdminEmployee: React.FC = () => {
     e.preventDefault();
     console.log(JSON.stringify(formData ,null, 2))
     try {
-      const res = await fetch(`${api}/api/employees/admin`, {
+      const res = await apiFetch(`/api/employees/admin`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
         body: JSON.stringify(formData)
       });
       if(res.ok) {
@@ -119,12 +111,8 @@ const AdminEmployee: React.FC = () => {
     e.preventDefault();
     console.log(JSON.stringify(formData ,null, 2))
     try {
-      const res = await fetch(`${api}/api/employees/admin/${editingEmployee.id}`, {
+      const res = await apiFetch(`/api/employees/admin/${editingEmployee.id}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
         body: JSON.stringify(formData)
       });
       if (res.ok) {
@@ -146,7 +134,7 @@ const AdminEmployee: React.FC = () => {
   const handleDelete = async (id: any) => {
     window.confirm('Bạn có chắc muốn xóa nhân viên này?')
     try {
-      const res = await fetch(`${api}/api/employees/admin/${id}`, {
+      const res = await apiFetch(`/api/employees/admin/${id}`, {
         method: 'DELETE',
          headers: {
           "Content-Type": "application/json",

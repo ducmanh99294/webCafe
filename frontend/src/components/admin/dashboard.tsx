@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../../assets/css/admin/dashboard.css';
+import { apiFetch } from '../../api/base'; 
 
 const AdminDashboard = () => {
   const [monthReports, setMonthReports] = useState<any>([]);
@@ -11,7 +12,7 @@ const AdminDashboard = () => {
   
   const totalMonthlyRevenue = monthReports.reduce((sum: any, day: any) => sum + day.totalRevenue, 0);
   const newestOrder = orders.slice(-5).reverse();
-  const api = 'http://localhost:8080'
+  // const api = 'http://localhost:8080'
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
 
@@ -37,12 +38,7 @@ const AdminDashboard = () => {
     const year = date.getFullYear();
     const month = date.getMonth() + 1
     try {
-      const res = await fetch(`${api}/api/report/admin/${year}/${month}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      const res = await apiFetch(`/api/report/admin/${year}/${month}`)
       if(res.ok) {
         const data = await res.json()
         setMonthReports(data)
@@ -54,7 +50,7 @@ const AdminDashboard = () => {
 
   const fetchTopSellProduct = async () => {
     try {
-      const res = await fetch(`${api}/api/products/sellCount`)
+      const res = await apiFetch(`/api/products/sellCount`)
       if(res.ok) {
         const data = await res.json()
         setProductReport(data)      
@@ -66,12 +62,7 @@ const AdminDashboard = () => {
 
     const fetchOrders = async () => {
     try {
-      const res = await fetch(`${api}/api/orders/admin`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await apiFetch(`/api/orders/admin`);
       if (!res.ok) throw new Error("Không thể tải danh sách đơn hàng");
       const data = await res.json();
       setOrders(data);

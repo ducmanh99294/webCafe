@@ -1,7 +1,7 @@
 // SeatManagement.js - Bổ sung thêm
 import { useState, useEffect } from 'react';
 import '../../assets/css/admin/table.css';
-
+import { apiFetch } from '../../api/base'; 
 
 const SeatManagement = () => {
   const [roomElements, setRoomElements] = useState<any[]>([]);
@@ -17,7 +17,7 @@ const SeatManagement = () => {
     y: 0,
   });
 
-  const api = 'http://localhost:8080'
+  // const api = 'http://localhost:8080'
   const token = localStorage.getItem('token');
   const role = localStorage.getItem("role");
 
@@ -56,7 +56,7 @@ const SeatManagement = () => {
 
   const fetchTables = async () => {
     try {
-      const res = await fetch(`${api}/api/tables`);
+      const res = await apiFetch(`/api/tables`);
       if (res.ok) {
         const data = await res.json();
         setTables(data);
@@ -68,12 +68,8 @@ const SeatManagement = () => {
 
   const handleAddTable = async () => {
     try {
-      const res = await fetch(`${api}/api/admin/tables`, {
+      const res = await apiFetch(`/api/admin/tables`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
         body: JSON.stringify(formData),
       });
       if (res.ok) {
@@ -88,12 +84,8 @@ const SeatManagement = () => {
   const handleUpdateTable = async (table: any) => {
 
     try {
-      const res = await fetch(`${api}/api/tables/${table.id}`, {
+      const res = await apiFetch(`/api/tables/${table.id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
         body: JSON.stringify({
           number: table.number,
           seats: table.seats,
@@ -118,12 +110,8 @@ const SeatManagement = () => {
           x: table.x,
           y: table.y  },null,2))
     try {
-      const res = await fetch(`${api}/api/tables/${table.id}`, {
+      const res = await apiFetch(`/api/tables/${table.id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
         body: JSON.stringify({           
           number: table.number,
           seats: table.seats,
@@ -144,12 +132,8 @@ const SeatManagement = () => {
   const handleDeleteTable = async (table: any) => {
     console.log(table)
     try {
-      const res = await fetch(`${api}/api/tables/admin/${table.id}`, {
+      const res = await apiFetch(`/api/tables/admin/${table.id}`, {
         method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
       });
       if (res.ok) {
         setTables((prev) => prev.filter((t) => t.id !== table.id));

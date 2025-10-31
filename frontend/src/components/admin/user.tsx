@@ -1,7 +1,7 @@
 // AdminUsers.js
 import React, { useState, useEffect } from 'react';
 import '../../assets/css/admin/user.css';
-
+import { apiFetch } from '../../api/base'; 
 
 const AdminUsers: React.FC = () => {
   const [users, setUsers] = useState<any>([]);
@@ -13,7 +13,7 @@ const AdminUsers: React.FC = () => {
     status: 'all',
     search: ''
   });
-  const api = 'http://localhost:8080'
+  // const api = 'http://localhost:8080'
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
 
@@ -61,12 +61,7 @@ const AdminUsers: React.FC = () => {
 
   const fetchUser = async () => {
     try {
-    const res = await fetch(`${api}/api/users/admin`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+    const res = await apiFetch(`/api/users/admin`);
     const data = await res.json();
     if(data) {
       setUsers(data);
@@ -115,7 +110,7 @@ const AdminUsers: React.FC = () => {
   const handleAddUser = async (e: any) => {
     e.preventDefault();
     try {
-      const res = await fetch(`${api}/api/users/register`,{
+      const res = await apiFetch(`/api/users/register`,{
         method: "POST",
         headers: {
         "Content-Type": "application/json",
@@ -135,7 +130,7 @@ const AdminUsers: React.FC = () => {
     const handleUpdateUser = async (e: any) => {
     e.preventDefault();
     try {
-      const res = await fetch(`${api}/api/users/admin/${editingUser.id}`,{
+      const res = await apiFetch(`/api/users/admin/${editingUser.id}`,{
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -184,7 +179,7 @@ const AdminUsers: React.FC = () => {
 
   const handleBanUser = async (id: any) => {
     try {
-      const res = await fetch(`${api}/api/users/admin/${id}`,{
+      const res = await apiFetch(`/api/users/admin/${id}`,{
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -207,7 +202,7 @@ const AdminUsers: React.FC = () => {
 
   const handleUnbanUser = async (id: any) => {
     try {
-      const res = await fetch(`${api}/api/users/admin/${id}`,{
+      const res = await apiFetch(`/api/users/admin/${id}`,{
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -231,7 +226,7 @@ const AdminUsers: React.FC = () => {
   const handleDeleteUser = async (id: any) => {
     window.confirm('Bạn có chắc muốn xóa tài khoản này?')
     try {
-      const res = await fetch(`${api}/api/users/admin/${id}`, {
+      const res = await apiFetch(`/api/users/admin/${id}`, {
         method: 'DELETE',
          headers: {
           "Content-Type": "application/json",

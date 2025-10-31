@@ -1,6 +1,7 @@
 // Menu.js
 import React, { useState, useEffect } from 'react';
 import '../../assets/css/user/product.css';
+import { apiFetch } from '../../api/base'; 
 
 const Products: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('Tất Cả');
@@ -17,7 +18,7 @@ const Products: React.FC = () => {
   const [showDetail, setShowDetail] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const api = 'http://localhost:8080'
+  // const api = 'http://localhost:8080'
   const userId = localStorage.getItem("userId");
 
   useEffect(()=>{
@@ -28,7 +29,7 @@ const Products: React.FC = () => {
   const fetchCategory = async () => {
     setLoading(true)
     try {
-      const res = await fetch(`${api}/api/categories`);
+      const res = await apiFetch(`/api/categories`);
       const data = await res.json();
       setCategories(data);
     } catch (err) {
@@ -41,7 +42,7 @@ const Products: React.FC = () => {
   const fetchProduct = async () => {
     setLoading(true)
     try {
-      const res = await fetch(`${api}/api/products`);
+      const res = await apiFetch(`/api/products`);
       const data = await res.json();
       setProducts(data);
     } catch (err) {
@@ -114,7 +115,7 @@ const Products: React.FC = () => {
       selectedSize: defaultSize
     };
     try {
-        const res = await fetch(`${api}/api/carts/${userId}/add`, {
+        const res = await apiFetch(`/api/carts/${userId}/add`, {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -152,7 +153,7 @@ const Products: React.FC = () => {
     };
 
     try {
-      const res = await fetch(`${api}/api/carts/${userId}/add`, {
+      const res = await apiFetch(`/api/carts/${userId}/add`, {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",

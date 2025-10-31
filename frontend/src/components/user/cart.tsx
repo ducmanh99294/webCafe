@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../../assets/css/user/cart.css';
+import { apiFetch } from '../../api/base'; 
 
 const Cart = () => {
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ const Cart = () => {
   const [selectedPayment, setSelectedPayment] = useState<string>('');
   const [specialRequests, setSpecialRequests] = useState('');
 
-  const api = 'http://localhost:8080'
+  // const api = 'http://localhost:8080'
   const userId = localStorage.getItem("userId");
   const token = localStorage.getItem("token");
 
@@ -55,7 +56,7 @@ const Cart = () => {
 
   const fetchCart = async () => {
     try {
-      const res = await fetch(`${api}/api/carts/${userId}`, {
+      const res = await apiFetch(`/api/carts/${userId}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -71,7 +72,7 @@ const Cart = () => {
 
   const fetchTable = async () => {
     try {
-      const res = await fetch(`${api}/api/tables`);
+      const res = await apiFetch(`/api/tables`);
       if (!res.ok) throw new Error("Không thể lấy ds bàn");
       const data = await res.json();
       setTables(data || []);
@@ -82,7 +83,7 @@ const Cart = () => {
 
   const updateQuantity = async (productId: any, newQuantity: any) => {
     try {
-      const res = await fetch(`${api}/api/carts/${userId}/update`, {
+      const res = await apiFetch(`/api/carts/${userId}/update`, {
         method: "PUT",
         headers: { 
           "Content-Type": "application/json",
@@ -100,7 +101,7 @@ const Cart = () => {
 
   const removeFromCart = async (productId: any) => {
     try {
-      const res = await fetch(`${api}/api/carts/${userId}/remove`, {
+      const res = await apiFetch(`/api/carts/${userId}/remove`, {
         method: "DELETE",
         headers: { 
           "Content-Type": "application/json", 
@@ -153,7 +154,7 @@ const Cart = () => {
         return;
       }
       try {
-        const res = await fetch(`${api}/api/orders/${userId}/confirm`, {
+        const res = await apiFetch(`/api/orders/${userId}/confirm`, {
           method: "POST",
           headers: { 
             "Content-Type": "application/json",
