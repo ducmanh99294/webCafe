@@ -5,11 +5,14 @@ const API_BASE_URL = LOCAL_API_URL || "";
 export async function apiFetch(endpoint: string, options: RequestInit = {}) {
   const fullUrl = `${API_BASE_URL}${endpoint.startsWith('/') ? endpoint : '/' + endpoint}`;
 
-  // 3. Cấu hình headers mặc định (Code của bạn đã đúng)
-  const defaultHeaders: HeadersInit = {
+  const defaultHeaders: Record<string, string> = {
     "Content-Type": "application/json",
-    'Authorization': `Bearer ${localStorage.getItem('token')}`
   };
+  
+  const token = localStorage.getItem('token');
+  if (token) {
+    defaultHeaders['Authorization'] = `Bearer ${token}`;
+  }
 
   const finalOptions: RequestInit = {
     ...options, 

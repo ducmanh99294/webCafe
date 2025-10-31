@@ -57,7 +57,8 @@ public class WebSecurityConfig {
                 .cors(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers(HttpMethod.POST, "/api/users/login", "/api/users/register").permitAll() 
+                        .requestMatchers(HttpMethod.POST, "/api/users/login", "/api/users/register").permitAll()
+                        .requestMatchers("/auth/**").permitAll() // Giữ nguyên dòng này nếu có
                         .requestMatchers(
                                 "/api/orders/admin",
                                 "/api/products/admin",
@@ -83,7 +84,7 @@ public class WebSecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:5173",
-                "https://webcafe-frontend.onrender.com"
+                "https://webcafe-frontend.onrender.com" // Đã thêm URL production
         ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
