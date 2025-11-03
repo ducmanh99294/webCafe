@@ -2,7 +2,7 @@
 
 def acrName = "mywebappregistry123" 
 def acrLoginServer = "mywebappregistry123.azurecr.io" 
-def githubRepoUrl = "https://github.com/ducmanh99294/webCafe" // SỬA LẠI ĐÚNG LINK GIT
+def githubRepoUrl = "https://github.com/ducmanh99294/webCafe"
 
 // Tên cho ứng dụng frontend
 def frontendAppName = "webcafe-frontend"
@@ -11,7 +11,6 @@ def frontendDeploymentName = "webcafe-frontend-deployment" // Tên K8s deploymen
 // Tên cho ứng dụng backend
 def backendAppName = "webcafe-backend"
 def backendDeploymentName = "webcafe-backend-deployment" // Tên K8s deployment cho backend
-// --- ⬆️ (1) SỬA LẠI CHỖ NÀY ⬆️ ---
 
 pipeline {
     agent {
@@ -27,7 +26,7 @@ pipeline {
             }
             containerTemplate {
                 name 'tools'
-                image 'mcr.microsoft.com/az-cli-with-kubectl'
+                image 'mcr.microsoft.com/azure-cli'
                 command 'sleep'
                 args '99d'
                 ttyEnabled true
