@@ -1,29 +1,19 @@
-// File: Jenkinsfile (Phiên bản cho Frontend/Backend)
-
-def acrName = "mywebappregistry123" 
-def acrLoginServer = "mywebappregistry123.azurecr.io" 
-def githubRepoUrl = "https://github.com/ducmanh99294/webCafe"
+def acrName = "mywebappregistry123" // Tên ACR đã tạo
+def acrLoginServer = "mywebappregistry123.azurecr.io" // Sửa nếu tên khác
+def githubRepoUrl = "https://github.com/ducmanh99294/webCafe" // SỬA LẠI ĐÚNG LINK GIT
 
 // Tên cho ứng dụng frontend
 def frontendAppName = "webcafe-frontend"
-def frontendDeploymentName = "webcafe-frontend-deployment" // Tên K8s deployment cho frontend
+def frontendDeploymentName = "webcafe-frontend-deployment" 
 
 // Tên cho ứng dụng backend
 def backendAppName = "webcafe-backend"
-def backendDeploymentName = "webcafe-backend-deployment" // Tên K8s deployment cho backend
+def backendDeploymentName = "webcafe-backend-deployment" 
 
 pipeline {
     agent {
         kubernetes {
             label 'jenkins-agent'
-            containerTemplate {
-                name 'dind'
-                image 'docker:dind'
-                command 'sleep'
-                args '99d'
-                ttyEnabled true
-                privileged true
-            }
             containerTemplate {
                 name 'tools'
                 image 'mcr.microsoft.com/azure-cli'
@@ -37,32 +27,42 @@ pipeline {
     stages {
         stage('1. Checkout Code') {
             steps {
-                git credentialsId: 'github-credentials', url: githubRepoUrl, branch: 'main'
+                container('tools') {
+                    git credentialsId: 'github-credentials', url: githubRepoUrl, branch: 'main'
+                }
             }
         }
         
-        stage('2. Build & Push Images') {
+        stage('2. Build & Push Images (Dùng ACR Build)') {
             steps {
                 // Chạy song song cả hai build
                 parallel(
                     "Build Frontend": {
-                        container('dind') {
+                        container('tools') {
                             sh 'az login --identity'
-                            sh "az acr login --name ${acrName}"
                             
-                            // Build image frontend (chỉ định thư mục frontend)
-                            sh "docker build -t ${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER} ./frontend"
-                            sh "docker push ${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER}"
+                            // Yêu cầu ACR tự build từ thư mục 'frontend'
+                            sh """
+                            az acr build \\
+                              --registry ${acrName} \\
+                              --image ${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER} \\
+                              --context . \\
+                              --file ./frontend/Dockerfile
+                            """
                         }
                     },
                     "Build Backend": {
-                        container('dind') {
+                        container('tools') {
                             sh 'az login --identity'
-                            sh "az acr login --name ${acrName}"
                             
-                            // Build image backend (chỉ định thư mục backend)
-                            sh "docker build -t ${acrLoginServer}/${backendAppName}:${env.BUILD_NUMBER} ./backend"
-                            sh "docker push ${acrLoginServer}/${backendAppName}:${env.BUILD_NUMBER}"
+                            // Yêu cầu ACR tự build từ thư mục 'backend'
+                            sh """
+                            az acr build \\
+                              --registry ${acrName} \\
+                              --image ${acrLoginServer}/${backendAppName}:${env.BUILD_NUMBER} \\
+                              --context . \\
+                              --file ./backend/Dockerfile
+                            """
                         }
                     }
                 )
