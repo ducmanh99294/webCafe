@@ -1,6 +1,6 @@
-def acrName = "mywebappregistry123" // Tên ACR đã tạo
-def acrLoginServer = "mywebappregistry123.azurecr.io" // Sửa nếu tên khác
-def githubRepoUrl = "https://github.com/ducmanh99294/webCafe" // SỬA LẠI ĐÚNG LINK GIT
+def acrName = "mywebappregistry123" 
+def acrLoginServer = "mywebappregistry123.azurecr.io" 
+def githubRepoUrl = "https://github.com/ducmanh99294/webCafe"
 
 // Tên cho ứng dụng frontend
 def frontendAppName = "webcafe-frontend"
@@ -16,7 +16,7 @@ pipeline {
             label 'jenkins-agent'
             containerTemplate {
                 name 'tools'
-                image 'mcr.microsoft.com/azure-cli'
+                image 'mcr.microsoft.com/azure-cli' 
                 command 'sleep'
                 args '99d'
                 ttyEnabled true
