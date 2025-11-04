@@ -1,6 +1,6 @@
 def acrName = "mywebappregistry123" 
 def acrLoginServer = "mywebappregistry123.azurecr.io" 
-def githubRepoUrl = "https://github.com/ducmanh99294/webCafe"
+def githubRepoUrl = "https://github.com/ducmanh99294/webCafe.git"
 
 // Tên cho ứng dụng frontend
 def frontendAppName = "webcafe-frontend"
@@ -35,19 +35,17 @@ pipeline {
         
         stage('2. Build & Push Images (Dùng ACR Build)') {
             steps {
-                // Chạy song song cả hai build
                 parallel(
                     "Build Frontend": {
                         container('tools') {
                             sh 'az login --identity'
                             
-                            // Yêu cầu ACR tự build từ thư mục 'frontend'
                             sh """
                             az acr build \\
                               --registry ${acrName} \\
                               --image ${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER} \\
-                              --context . \\
-                              --file ./frontend/Dockerfile
+                              --file ./frontend/Dockerfile \\
+                              .
                             """
                         }
                     },
@@ -55,13 +53,12 @@ pipeline {
                         container('tools') {
                             sh 'az login --identity'
                             
-                            // Yêu cầu ACR tự build từ thư mục 'backend'
                             sh """
                             az acr build \\
                               --registry ${acrName} \\
                               --image ${acrLoginServer}/${backendAppName}:${env.BUILD_NUMBER} \\
-                              --context . \\
-                              --file ./backend/Dockerfile
+                              --file ./backend/Dockerfile \\
+                              .
                             """
                         }
                     }
