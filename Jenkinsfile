@@ -1,7 +1,6 @@
-def acrName = "mywebappregistry123"
-def acrLoginServer = "mywebappregistry123.azurecr.io"
-def resourceGroup = "aks-production-group" 
-def githubRepoUrl = "https://github.com/ducmanh99294/webCafe.git"
+def acrName = "mywebappregistry123" 
+def acrLoginServer = "mywebappregistry123.azurecr.io" 
+def githubRepoUrl = "https://github.com/ducmanh99294/webCafe.git" 
 
 // Tên cho ứng dụng frontend
 def frontendAppName = "webcafe-frontend"
@@ -16,8 +15,16 @@ pipeline {
         kubernetes {
             label 'jenkins-agent'
             containerTemplate {
+                name 'dind'
+                image 'docker:dind'
+                command 'sleep'
+                args '99d'
+                ttyEnabled true
+                privileged true 
+            }
+            containerTemplate {
                 name 'tools'
-                image 'mcr.microsoft.com/azure-cli' 
+                image 'mcr.microsoft.com/azure-cli'
                 command 'sleep'
                 args '99d'
                 ttyEnabled true
@@ -34,35 +41,27 @@ pipeline {
             }
         }
         
-        stage('2. Build & Push Images (Dùng ACR Build)') {
+        stage('2. Build & Push Images (Dùng Docker Build)') {
             steps {
                 parallel(
                     "Build Frontend": {
-                        container('tools') {
+                        container('dind') {
                             sh 'az login --identity'
-
-                            sh """
-                            az acr build \\
-                              --registry ${acrName} \\
-                              --resource-group ${resourceGroup} \\
-                              --image ${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER} \\
-                              --file ./frontend/Dockerfile \\
-                              .
-                            """
+                            sh "az acr login --name ${acrName}"
+                            
+                            // Build image frontend
+                            sh "docker build -t ${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER} ./frontend"
+                            sh "docker push ${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER}"
                         }
                     },
                     "Build Backend": {
-                        container('tools') {
+                        container('dind') {
                             sh 'az login --identity'
+                            sh "az acr login --name ${acrName}"
                             
-                            sh """
-                            az acr build \\
-                              --registry ${acrName} \\
-                              --resource-group ${resourceGroup} \\
-                              --image ${acrLoginServer}/${backendAppName}:${env.BUILD_NUMBER} \\
-                              --file ./backend/Dockerfile \\
-                              .
-                            """
+                            // Build image backend
+                            sh "docker build -t ${acrLoginServer}/${backendAppName}:${env.BUILD_NUMBER} ./backend"
+                            sh "docker push ${acrLoginServer}/${backendAppName}:${env.BUILD_NUMBER}"
                         }
                     }
                 )
@@ -73,7 +72,7 @@ pipeline {
             steps {
                 container('tools') {
                     sh 'az login --identity'
-                    sh "az aks get-credentials --resource-group ${resourceGroup} --name my-aks-cluster --overwrite-existing"
+                    sh 'az aks get-credentials --resource-group aks-production-group --name my-aks-cluster --overwrite-existing'
                     
                     // Cập nhật image cho Frontend
                     sh "kubectl set image deployment/${frontendDeploymentName} ${frontendAppName}=${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER}"
