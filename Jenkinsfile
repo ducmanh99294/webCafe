@@ -1,5 +1,6 @@
-def acrName = "mywebappregistry123" 
-def acrLoginServer = "mywebappregistry123.azurecr.io" 
+def acrName = "mywebappregistry123"
+def acrLoginServer = "mywebappregistry123.azurecr.io"
+def resourceGroup = "aks-production-group" 
 def githubRepoUrl = "https://github.com/ducmanh99294/webCafe.git"
 
 // Tên cho ứng dụng frontend
@@ -39,10 +40,11 @@ pipeline {
                     "Build Frontend": {
                         container('tools') {
                             sh 'az login --identity'
-                            
+
                             sh """
                             az acr build \\
                               --registry ${acrName} \\
+                              --resource-group ${resourceGroup} \\
                               --image ${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER} \\
                               --file ./frontend/Dockerfile \\
                               .
@@ -56,6 +58,7 @@ pipeline {
                             sh """
                             az acr build \\
                               --registry ${acrName} \\
+                              --resource-group ${resourceGroup} \\
                               --image ${acrLoginServer}/${backendAppName}:${env.BUILD_NUMBER} \\
                               --file ./backend/Dockerfile \\
                               .
@@ -70,7 +73,7 @@ pipeline {
             steps {
                 container('tools') {
                     sh 'az login --identity'
-                    sh 'az aks get-credentials --resource-group aks-production-group --name my-aks-cluster --overwrite-existing'
+                    sh "az aks get-credentials --resource-group ${resourceGroup} --name my-aks-cluster --overwrite-existing"
                     
                     // Cập nhật image cho Frontend
                     sh "kubectl set image deployment/${frontendDeploymentName} ${frontendAppName}=${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER}"
