@@ -31,6 +31,7 @@ spec:
 
     - name: jnlp
       image: jenkins/inbound-agent:latest
+
   volumes:
     - name: docker-sock
       hostPath:
@@ -54,16 +55,15 @@ spec:
 
         stage('Frontend') {
           steps {
+            // Login to azure ACR (Run az login once)
             container('tools') {
               sh 'az login --identity'
-              sh "az acr login --name ${acrName}"
             }
 
             container('docker') {
               sh """
-docker login ${acrLoginServer} \
-  -u 00000000-0000-0000-0000-000000000000 \
-  -p \$(az acr login --name ${acrName} --expose-token --query refreshToken -o tsv)
+TOKEN=\$(az acr login --name ${acrName} --expose-token --query accessToken -o tsv)
+echo \$TOKEN | docker login ${acrLoginServer} --username 00000000-0000-0000-0000-000000000000 --password-stdin
 
 docker build -t ${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER} ./frontend
 docker push ${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER}
@@ -76,14 +76,12 @@ docker push ${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER}
           steps {
             container('tools') {
               sh 'az login --identity'
-              sh "az acr login --name ${acrName}"
             }
 
             container('docker') {
               sh """
-docker login ${acrLoginServer} \
-  -u 00000000-0000-0000-0000-000000000000 \
-  -p \$(az acr login --name ${acrName} --expose-token --query refreshToken -o tsv)
+TOKEN=\$(az acr login --name ${acrName} --expose-token --query accessToken -o tsv)
+echo \$TOKEN | docker login ${acrLoginServer} --username 00000000-0000-0000-0000-000000000000 --password-stdin
 
 docker build -t ${acrLoginServer}/${backendAppName}:${env.BUILD_NUMBER} ./backend
 docker push ${acrLoginServer}/${backendAppName}:${env.BUILD_NUMBER}
