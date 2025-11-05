@@ -51,58 +51,43 @@ spec:
     }
 
     stage('2. Build & Push Images') {
-      parallel {
+        parallel {
 
-    stage('Frontend') {
-        steps {
-            // Login to Azure
-            container('tools') {
-            sh 'az login --identity'
-            sh """
-        TOKEN=\$(az acr login --name ${acrName} --expose-token --query accessToken -o tsv)
-        echo \$TOKEN > acr_token.txt
-        """
+            stage('Frontend') {
+            steps {
+                container('docker') {
+
+                withCredentials([usernamePassword(credentialsId: 'acr-credentials', usernameVariable: 'ACR_USER', passwordVariable: 'ACR_PASS')]) {
+                    sh """
+                    docker login ${acrLoginServer} -u $ACR_USER -p $ACR_PASS
+                    docker build -t ${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER} ./frontend
+                    docker push ${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER}
+                    """
+                }
+
+                }
+            }
             }
 
-            container('docker') {
-            sh """
-        docker login ${acrLoginServer} \
-        --username 00000000-0000-0000-0000-000000000000 \
-        --password-stdin < acr_token.txt
+            stage('Backend') {
+            steps {
+                container('docker') {
 
-        docker build -t ${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER} ./frontend
-        docker push ${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER}
-        """
+                withCredentials([usernamePassword(credentialsId: 'acr-credentials', usernameVariable: 'ACR_USER', passwordVariable: 'ACR_PASS')]) {
+                    sh """
+                    docker login ${acrLoginServer} -u $ACR_USER -p $ACR_PASS
+                    docker build -t ${acrLoginServer}/${backendAppName}:${env.BUILD_NUMBER} ./backend
+                    docker push ${acrLoginServer}/${backendAppName}:${env.BUILD_NUMBER}
+                    """
+                }
+
+                }
             }
+            }
+
         }
     }
 
-    stage('Backend') {
-        steps {
-            container('tools') {
-            sh 'az login --identity'
-            sh """
-        TOKEN=\$(az acr login --name ${acrName} --expose-token --query accessToken -o tsv)
-        echo \$TOKEN > acr_token.txt
-        """
-            }
-
-            container('docker') {
-            sh """
-        docker login ${acrLoginServer} \
-        --username 00000000-0000-0000-0000-000000000000 \
-        --password-stdin < acr_token.txt
-
-        docker build -t ${acrLoginServer}/${backendAppName}:${env.BUILD_NUMBER} ./backend
-        docker push ${acrLoginServer}/${backendAppName}:${env.BUILD_NUMBER}
-        """
-            }
-        }
-    }
-
-
-      }
-    }
 
     stage('3. Deploy to Kubernetes') {
       steps {
