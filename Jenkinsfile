@@ -53,42 +53,53 @@ spec:
     stage('2. Build & Push Images') {
       parallel {
 
-        stage('Frontend') {
-          steps {
-            // Login to azure ACR (Run az login once)
+    stage('Frontend') {
+        steps {
+            // Login to Azure
             container('tools') {
-              sh 'az login --identity'
+            sh 'az login --identity'
+            sh """
+        TOKEN=\$(az acr login --name ${acrName} --expose-token --query accessToken -o tsv)
+        echo \$TOKEN > acr_token.txt
+        """
             }
 
             container('docker') {
-              sh """
-TOKEN=\$(az acr login --name ${acrName} --expose-token --query accessToken -o tsv)
-echo \$TOKEN | docker login ${acrLoginServer} --username 00000000-0000-0000-0000-000000000000 --password-stdin
+            sh """
+        docker login ${acrLoginServer} \
+        --username 00000000-0000-0000-0000-000000000000 \
+        --password-stdin < acr_token.txt
 
-docker build -t ${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER} ./frontend
-docker push ${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER}
-"""
+        docker build -t ${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER} ./frontend
+        docker push ${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER}
+        """
             }
-          }
         }
+    }
 
-        stage('Backend') {
-          steps {
+    stage('Backend') {
+        steps {
             container('tools') {
-              sh 'az login --identity'
+            sh 'az login --identity'
+            sh """
+        TOKEN=\$(az acr login --name ${acrName} --expose-token --query accessToken -o tsv)
+        echo \$TOKEN > acr_token.txt
+        """
             }
 
             container('docker') {
-              sh """
-TOKEN=\$(az acr login --name ${acrName} --expose-token --query accessToken -o tsv)
-echo \$TOKEN | docker login ${acrLoginServer} --username 00000000-0000-0000-0000-000000000000 --password-stdin
+            sh """
+        docker login ${acrLoginServer} \
+        --username 00000000-0000-0000-0000-000000000000 \
+        --password-stdin < acr_token.txt
 
-docker build -t ${acrLoginServer}/${backendAppName}:${env.BUILD_NUMBER} ./backend
-docker push ${acrLoginServer}/${backendAppName}:${env.BUILD_NUMBER}
-"""
+        docker build -t ${acrLoginServer}/${backendAppName}:${env.BUILD_NUMBER} ./backend
+        docker push ${acrLoginServer}/${backendAppName}:${env.BUILD_NUMBER}
+        """
             }
-          }
         }
+    }
+
 
       }
     }
