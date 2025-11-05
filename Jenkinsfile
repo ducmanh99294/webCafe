@@ -16,6 +16,8 @@ spec:
   containers:
     - name: docker
       image: docker:24.0
+      securityContext:
+        privileged: true
       command: ['cat']
       tty: true
       volumeMounts:
@@ -29,7 +31,6 @@ spec:
 
     - name: jnlp
       image: jenkins/inbound-agent:latest
-      args: ['\$(JENKINS_SECRET)', '\$(JENKINS_NAME)']
   volumes:
     - name: docker-sock
       hostPath:
@@ -55,16 +56,18 @@ spec:
           steps {
             container('tools') {
               sh 'az login --identity'
-              sh """
-TOKEN=\$(az acr login --name ${acrName} --expose-token --output tsv --query accessToken)
-echo "\$TOKEN" > /home/jenkins/agent/acr_token
-"""
+              sh "az acr login --name ${acrName}"
             }
 
             container('docker') {
-              sh "docker login ${acrLoginServer} -u 00000000-0000-0000-0000-000000000000 -p \$(cat /home/jenkins/agent/acr_token)"
-              sh "docker build -t ${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER} ./frontend"
-              sh "docker push ${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER}"
+              sh """
+docker login ${acrLoginServer} \
+  -u 00000000-0000-0000-0000-000000000000 \
+  -p \$(az acr login --name ${acrName} --expose-token --query refreshToken -o tsv)
+
+docker build -t ${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER} ./frontend
+docker push ${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER}
+"""
             }
           }
         }
@@ -73,16 +76,18 @@ echo "\$TOKEN" > /home/jenkins/agent/acr_token
           steps {
             container('tools') {
               sh 'az login --identity'
-              sh """
-TOKEN=\$(az acr login --name ${acrName} --expose-token --output tsv --query accessToken)
-echo "\$TOKEN" > /home/jenkins/agent/acr_token
-"""
+              sh "az acr login --name ${acrName}"
             }
 
             container('docker') {
-              sh "docker login ${acrLoginServer} -u 00000000-0000-0000-0000-000000000000 -p \$(cat /home/jenkins/agent/acr_token)"
-              sh "docker build -t ${acrLoginServer}/${backendAppName}:${env.BUILD_NUMBER} ./backend"
-              sh "docker push ${acrLoginServer}/${backendAppName}:${env.BUILD_NUMBER}"
+              sh """
+docker login ${acrLoginServer} \
+  -u 00000000-0000-0000-0000-000000000000 \
+  -p \$(az acr login --name ${acrName} --expose-token --query refreshToken -o tsv)
+
+docker build -t ${acrLoginServer}/${backendAppName}:${env.BUILD_NUMBER} ./backend
+docker push ${acrLoginServer}/${backendAppName}:${env.BUILD_NUMBER}
+"""
             }
           }
         }
