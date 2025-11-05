@@ -49,36 +49,43 @@ spec:
     }
 
     stage('2. Build & Push Images') {
-      parallel {
+    parallel {
 
         stage('Frontend') {
-          steps {
+        steps {
+            // Login ACR trong tools (chỉ lấy token)
             container('tools') {
-              sh 'az login --identity'
-              sh "az acr login --name ${acrName}"
+            sh 'az login --identity'
+            sh "TOKEN=$(az acr login --name ${acrName} --expose-token --output tsv --query accessToken) && echo $TOKEN > /home/jenkins/agent/acr_token"
             }
+
+            // Build + push trong docker container
             container('docker') {
-              sh "docker build -t ${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER} ./frontend"
-              sh "docker push ${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER}"
+            sh "docker login ${acrLoginServer} -u 00000000-0000-0000-0000-000000000000 -p $(cat /home/jenkins/agent/acr_token)"
+            sh "docker build -t ${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER} ./frontend"
+            sh "docker push ${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER}"
             }
-          }
+        }
         }
 
         stage('Backend') {
-          steps {
+        steps {
             container('tools') {
-              sh 'az login --identity'
-              sh "az acr login --name ${acrName}"
+            sh 'az login --identity'
+            sh "TOKEN=$(az acr login --name ${acrName} --expose-token --output tsv --query accessToken) && echo $TOKEN > /home/jenkins/agent/acr_token"
             }
+
             container('docker') {
-              sh "docker build -t ${acrLoginServer}/${backendAppName}:${env.BUILD_NUMBER} ./backend"
-              sh "docker push ${acrLoginServer}/${backendAppName}:${env.BUILD_NUMBER}"
+            sh "docker login ${acrLoginServer} -u 00000000-0000-0000-0000-000000000000 -p $(cat /home/jenkins/agent/acr_token)"
+            sh "docker build -t ${acrLoginServer}/${backendAppName}:${env.BUILD_NUMBER} ./backend"
+            sh "docker push ${acrLoginServer}/${backendAppName}:${env.BUILD_NUMBER}"
             }
-          }
+        }
         }
 
-      }
     }
+    }
+
 
     stage('3. Deploy to Kubernetes') {
       steps {
