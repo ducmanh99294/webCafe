@@ -1,6 +1,6 @@
-def acrName = "mywebappregistry123" 
-def acrLoginServer = "mywebappregistry123.azurecr.io" 
-def githubRepoUrl = "https://github.com/ducmanh99294/webCafe.git" 
+def acrName = "mywebappregistry123"
+def acrLoginServer = "mywebappregistry123.azurecr.io"
+def githubRepoUrl = "https://github.com/ducmanh99294/webCafe.git"
 
 def frontendAppName = "webcafe-frontend"
 def backendAppName = "webcafe-backend"
@@ -50,26 +50,33 @@ spec:
 
     stage('2. Build & Push Images') {
       parallel {
+
         stage('Frontend') {
           steps {
-            container('docker') {
+            container('tools') {
               sh 'az login --identity'
               sh "az acr login --name ${acrName}"
+            }
+            container('docker') {
               sh "docker build -t ${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER} ./frontend"
               sh "docker push ${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER}"
             }
           }
         }
+
         stage('Backend') {
           steps {
-            container('docker') {
+            container('tools') {
               sh 'az login --identity'
               sh "az acr login --name ${acrName}"
+            }
+            container('docker') {
               sh "docker build -t ${acrLoginServer}/${backendAppName}:${env.BUILD_NUMBER} ./backend"
               sh "docker push ${acrLoginServer}/${backendAppName}:${env.BUILD_NUMBER}"
             }
           }
         }
+
       }
     }
 
