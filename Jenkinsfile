@@ -1,4 +1,4 @@
-// File: Jenkinsfile (Phiên bản DIND + PRIVILEGED - CHÍNH XÁC)
+// File: Jenkinsfile (Phiên bản DIND + PRIVILEGED)
 
 // --- ⬇️ (1) SỬA LẠI CHỖ NÀY ⬇️ ---
 def acrName = "mywebappregistry123" // Tên ACR bạn đã tạo
@@ -38,7 +38,7 @@ pipeline {
             }
         }
     }
-    
+
     stages {
         stage('1. Checkout Code') {
             steps {
@@ -47,7 +47,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage('2. Build & Push Images (Dùng Docker Build)') {
             steps {
                 parallel(
@@ -55,7 +55,7 @@ pipeline {
                         container('dind') { // DÙNG CONTAINER DIND
                             sh 'az login --identity'
                             sh "az acr login --name ${acrName}"
-                            
+
                             // Build image frontend
                             sh "docker build -t ${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER} ./frontend"
                             sh "docker push ${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER}"
@@ -65,7 +65,7 @@ pipeline {
                         container('dind') { // DÙNG CONTAINER DIND
                             sh 'az login --identity'
                             sh "az acr login --name ${acrName}"
-                            
+
                             // Build image backend
                             sh "docker build -t ${acrLoginServer}/${backendAppName}:${env.BUILD_NUMBER} ./backend"
                             sh "docker push ${acrLoginServer}/${backendAppName}:${env.BUILD_NUMBER}"
@@ -80,10 +80,10 @@ pipeline {
                 container('tools') {
                     sh 'az login --identity'
                     sh 'az aks get-credentials --resource-group aks-production-group --name my-aks-cluster --overwrite-existing'
-                    
+
                     // Cập nhật image cho Frontend
                     sh "kubectl set image deployment/${frontendDeploymentName} ${frontendAppName}=${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER}"
-                    
+
                     // Cập nhật image cho Backend
                     sh "kubectl set image deployment/${backendDeploymentName} ${backendAppName}=${acrLoginServer}/${backendAppName}:${env.BUILD_NUMBER}"
                 }
