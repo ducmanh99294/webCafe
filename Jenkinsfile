@@ -54,22 +54,23 @@ spec:
       }
     }
 
-    stage("2. Docker Login & Build & Push") {
-      steps {
-        container('tools') {
-          sh "az login --identity"
-          sh "az acr login --name ${acrName}"
-        }
+    stage('2. Build & Push Images (Dùng Docker Build)') {
+        steps {
+            container('dind') { // ✅ PHẢI DÙNG DIND
+                sh 'az login --identity'
+                sh "az acr login --name ${acrName}"
 
-        container('dind') {
-          sh "docker build -t ${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER} frontend/"
-          sh "docker push ${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER}"
+                // Build & push frontend
+                sh "docker build -t ${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER} ./frontend"
+                sh "docker push ${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER}"
 
-          sh "docker build -t ${acrLoginServer}/${backendAppName}:${env.BUILD_NUMBER} backend/"
-          sh "docker push ${acrLoginServer}/${backendAppName}:${env.BUILD_NUMBER}"
+                // Build & push backend
+                sh "docker build -t ${acrLoginServer}/${backendAppName}:${env.BUILD_NUMBER} ./backend"
+                sh "docker push ${acrLoginServer}/${backendAppName}:${env.BUILD_NUMBER}"
+            }
         }
-      }
     }
+
 
     stage("3. Deploy to AKS") {
       steps {
