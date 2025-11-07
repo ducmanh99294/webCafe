@@ -61,7 +61,6 @@ pipeline {
 
     stage('Docker Login & Push') {
       steps {
-        // Sử dụng biến Credentials tự động được Jenkins cung cấp
         sh """
           echo ${DOCKERHUB_CRED_PSW} | docker login -u ${DOCKERHUB_CRED_USR} --password-stdin
           
@@ -71,15 +70,19 @@ pipeline {
           docker push ${IMAGE_FRONTEND}:${env.BUILD_NUMBER}
           docker push ${IMAGE_FRONTEND}:latest
           echo "Đã đẩy thành công!"
+          
+          // !!! THÊM LỆNH LOGOUT VÀO CUỐI STAGE NÀY !!!
+          docker logout || true 
         """
       }
     }
-  }
+  } // Kết thúc stages
   
   post {
     always {
-      echo 'Thao tác dọn dẹp và Logout Docker'
-      sh 'docker logout || true' // Đảm bảo logout kể cả khi push lỗi
+      // LOẠI BỎ LỆNH 'sh' GÂY LỖI KHỎI POST BLOCK
+      echo 'Thao tác dọn dẹp đã hoàn tất.' 
+      // Giữ lại các lệnh echo thông báo
     }
     success {
       echo "Pipeline CI/CD thành công. Images đã có trên DockerHub."
