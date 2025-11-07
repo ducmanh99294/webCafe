@@ -1,88 +1,91 @@
-// --- CONFIG ---
-def acrName = "mywebappregistry123"
-def acrLoginServer = "${acrName}.azurecr.io"
-def githubRepoUrl = "https://github.com/ducmanh99294/webCafe.git"
-
-def frontendAppName = "webcafe-frontend"
-def frontendDeploymentName = "webcafe-frontend-deployment"
-
-def backendAppName = "webcafe-backend"
-def backendDeploymentName = "webcafe-backend-deployment"
-// ---------------
 
 pipeline {
-  agent {
-    kubernetes {
-      label "jenkins-agent"
-      yaml """
-apiVersion: v1
-kind: Pod
-spec:
-  containers:
-  - name: dind
-    image: docker:24.0-dind
-    securityContext:
-      privileged: true
-    command: [ "dockerd-entrypoint.sh" ]
-    args: [ "--host=tcp://0.0.0.0:2375" ]
-    ports:
-      - name: dockerd
-        containerPort: 2375
-    volumeMounts:
-      - mountPath: /var/lib/docker
-        name: docker-graph-storage
+  agent any
+  
+  environment {
+    DOCKERHUB_CRED = credentials('dockerhub-creds') 
+    
+    IMAGE_BACKEND = "ducsmanh/backend-webcafe" 
+    IMAGE_FRONTEND = "ducsmanh/frontend-webcafe"
+  }
+  
+  stages {
+    stage('Checkout Source Code') {
+      steps {
+        // Lấy mã nguồn từ Git Repository
+        checkout scm
+      }
+    }
 
-  - name: tools
-    image: mcr.microsoft.com/azure-cli
-    command: ["sleep"]
-    args: ["9999"]
+    stage('Build Backend (Gradle)') {
+      steps {
+        // Chạy build trong thư mục backend
+        dir('backend') {
+          // Cấp quyền và chạy Gradle build
+          sh 'chmod +x ./gradlew' 
+          sh './gradlew build --no-daemon -x test' // -x test để bỏ qua test (nếu cần)
+          sh 'ls -la build/libs'
+        }
+      }
+    }
 
-  volumes:
-    - name: docker-graph-storage
-      emptyDir: {}
-"""
+    stage('Build Frontend (Vite)') {
+      steps {
+        // Chạy build trong thư mục frontend
+        dir('frontend') {
+          sh 'npm install' // Sử dụng 'npm install' thay cho 'npm ci' nếu chưa dùng package-lock.json (hoặc dùng npm ci nếu muốn đảm bảo tính ổn định)
+          sh 'npm run build'
+          sh 'ls -la dist || ls -la build || true' // Kiểm tra thư mục output
+        }
+      }
+    }
+
+    stage('Build Docker Images') {
+      steps {
+        script {
+          // Backend image (Sử dụng Dockerfile Gradle/Multi-stage)
+          // Context là thư mục ./backend
+          sh """
+            docker build -t ${IMAGE_BACKEND}:${env.BUILD_NUMBER} ./backend
+            docker tag ${IMAGE_BACKEND}:${env.BUILD_NUMBER} ${IMAGE_BACKEND}:latest
+          """
+          // Frontend image (Sử dụng Dockerfile Nginx/Multi-stage)
+          // Context là thư mục ./frontend
+          sh """
+            docker build -t ${IMAGE_FRONTEND}:${env.BUILD_NUMBER} ./frontend
+            docker tag ${IMAGE_FRONTEND}:${env.BUILD_NUMBER} ${IMAGE_FRONTEND}:latest
+          """
+        }
+      }
+    }
+
+    stage('Docker Login & Push') {
+      steps {
+        // Sử dụng biến Credentials tự động được Jenkins cung cấp
+        sh """
+          echo ${DOCKERHUB_CRED_PSW} | docker login -u ${DOCKERHUB_CRED_USR} --password-stdin
+          
+          echo "Bắt đầu đẩy images..."
+          docker push ${IMAGE_BACKEND}:${env.BUILD_NUMBER}
+          docker push ${IMAGE_BACKEND}:latest
+          docker push ${IMAGE_FRONTEND}:${env.BUILD_NUMBER}
+          docker push ${IMAGE_FRONTEND}:latest
+          echo "Đã đẩy thành công!"
+        """
+      }
     }
   }
-
-  stages {
-
-    stage("1. Checkout Code") {
-      steps {
-        container('tools') {
-          git credentialsId: 'github-credentials', url: githubRepoUrl, branch: 'main'
-        }
-      }
+  
+  post {
+    always {
+      echo 'Thao tác dọn dẹp và Logout Docker'
+      sh 'docker logout || true' // Đảm bảo logout kể cả khi push lỗi
     }
-
-    stage('2. Build & Push Images (Dùng Docker Build)') {
-        steps {
-            container('dind') { // ✅ PHẢI DÙNG DIND
-                sh 'az login --identity'
-                sh "az acr login --name ${acrName}"
-
-                // Build & push frontend
-                sh "docker build -t ${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER} ./frontend"
-                sh "docker push ${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER}"
-
-                // Build & push backend
-                sh "docker build -t ${acrLoginServer}/${backendAppName}:${env.BUILD_NUMBER} ./backend"
-                sh "docker push ${acrLoginServer}/${backendAppName}:${env.BUILD_NUMBER}"
-            }
-        }
+    success {
+      echo "Pipeline CI/CD thành công. Images đã có trên DockerHub."
     }
-
-
-    stage("3. Deploy to AKS") {
-      steps {
-        container('tools') {
-          sh "az login --identity"
-          sh "az aks get-credentials --resource-group aks-production-group --name my-aks-cluster --overwrite-existing"
-
-          sh "kubectl set image deployment/${frontendDeploymentName} ${frontendAppName}=${acrLoginServer}/${frontendAppName}:${env.BUILD_NUMBER}"
-          sh "kubectl set image deployment/${backendDeploymentName} ${backendAppName}=${acrLoginServer}/${backendAppName}:${env.BUILD_NUMBER}"
-        }
-      }
+    failure {
+      echo "Pipeline thất bại! Vui lòng kiểm tra lỗi build/docker."
     }
-
   }
 }
