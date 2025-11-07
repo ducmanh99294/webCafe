@@ -46,15 +46,3 @@ spec:
             name: webcafe-frontend-service
             port:
               number: 80
-```
-Lưu file.
-
-### 5. Commit các file Manifests và Jenkinsfile
-
-Quay lại thư mục gốc dự án và commit tất cả các file mới tạo (và `Jenkinsfile` đã cập nhật):
-
-```bash
-cd .. # Quay lại thư mục gốc của repo
-git add k8s/ Jenkinsfile
-git commit -m "feat: Add k8s deployment manifests and CD stage"
-git push origin main # Hoặc tên branch của bạn

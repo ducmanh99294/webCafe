@@ -17,10 +17,3 @@ spec:
         image: ducsmanh/backend-webcafe:latest 
         ports:
         - containerPort: 8080
-```
-Lưu file (`Ctrl+O`, `Enter`, `Ctrl+X`).
-
-### 3. Tạo file `frontend-deployment.yml`
-
-```bash
-nano frontend-deployment.yml

@@ -17,10 +17,3 @@ spec:
         image: ducsmanh/frontend-webcafe:latest 
         ports:
         - containerPort: 80
-```
-Lưu file.
-
-### 4. Tạo file `service-and-ingress.yml`
-
-```bash
-nano service-and-ingress.yml
