@@ -3,8 +3,8 @@
 pipeline {
   agent any
   
-  // KHỐI environment CHỈ CHỨA CÁC BIẾN STRING ĐƠN GIẢN (KHÔNG CHỨA credentials())
   environment {
+    // KHÔNG THAY ĐỔI: Đã xác nhận là "ducsmanh"
     IMAGE_BACKEND = "ducsmanh/backend-webcafe" 
     IMAGE_FRONTEND = "ducsmanh/frontend-webcafe"
   }
@@ -20,7 +20,6 @@ pipeline {
       steps {
         dir('backend') {
           sh 'chmod +x ./gradlew' 
-          // Gradle build
           sh './gradlew build --no-daemon -x test' 
           sh 'ls -la build/libs'
         }
@@ -30,7 +29,6 @@ pipeline {
     stage('Build Frontend (Vite)') {
       steps {
         dir('frontend') {
-          // Cài đặt và build Node.js
           sh 'npm install' 
           sh 'npm run build'
           sh 'ls -la dist || ls -la build || true' 
@@ -59,7 +57,7 @@ pipeline {
       steps {
         withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKERHUB_CRED_USR', passwordVariable: 'DOCKERHUB_CRED_PSW')]) {
           sh """
-            # Đăng nhập Docker bằng biến Secret đã được inject
+            # Đăng nhập Docker
             echo ${DOCKERHUB_CRED_PSW} | docker login -u ${DOCKERHUB_CRED_USR} --password-stdin
             
             echo "Bắt đầu đẩy images..."
@@ -75,17 +73,39 @@ pipeline {
         }
       }
     }
-  }
+    
+    // ----------------------------------------------------------------------
+    // !!! STAGE TRIỂN KHAI THIẾU Ở LẦN TRƯỚC !!!
+    // ----------------------------------------------------------------------
+    stage('Deploy to K8s') {
+      steps {
+        // Sử dụng Kubeconfig đã lưu trong Jenkins Credentials
+        withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_FILE_PATH')]) {
+          sh """
+            echo "Bắt đầu triển khai lên Kubernetes..."
+            # Lệnh Deploy
+            kubectl --kubeconfig=${KUBECONFIG_FILE_PATH} apply -f k8s/
+            echo "Đang chờ Deployment ổn định..."
+
+            # Thao tác chờ Deployment hoàn thành ổn định (CD Check)
+            kubectl wait --for condition=Available deployment/webcafe-backend --timeout=300s --kubeconfig=${KUBECONFIG_FILE_PATH}
+            kubectl wait --for condition=Available deployment/webcafe-frontend --timeout=300s --kubeconfig=${KUBECONFIG_FILE_PATH}
+            echo "Triển khai CD hoàn tất!"
+          """
+        }
+      }
+    }
+  } // Kết thúc stages
   
   post {
     always {
       echo 'Thao tác dọn dẹp đã hoàn tất.' 
     }
     success {
-      echo "Pipeline CI/CD thành công. Images đã có trên DockerHub."
+      echo "Pipeline CI/CD hoàn tất! Ứng dụng đã được triển khai lên Kubernetes."
     }
     failure {
-      echo "Pipeline thất bại! Vui lòng kiểm tra lỗi build/docker."
+      echo "Pipeline thất bại! Vui lòng kiểm tra lỗi build/docker/kubectl."
     }
   }
 }

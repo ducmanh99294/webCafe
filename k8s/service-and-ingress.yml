@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: webcafe-backend-service
+spec:
+  selector:
+    app: webcafe-backend
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webcafe-frontend-service
+spec:
+  selector:
+    app: webcafe-frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: webcafe-ingress
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "false" 
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: webcafe-backend-service
+            port:
+              number: 8080
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: webcafe-frontend-service
+            port:
+              number: 80
+```
+Lưu file.
+
+### 5. Commit các file Manifests và Jenkinsfile
+
+Quay lại thư mục gốc dự án và commit tất cả các file mới tạo (và `Jenkinsfile` đã cập nhật):
+
+```bash
+cd .. # Quay lại thư mục gốc của repo
+git add k8s/ Jenkinsfile
+git commit -m "feat: Add k8s deployment manifests and CD stage"
+git push origin main # Hoặc tên branch của bạn

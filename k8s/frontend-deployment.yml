@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webcafe-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webcafe-frontend
+  template:
+    metadata:
+      labels:
+        app: webcafe-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: ducsmanh/frontend-webcafe:latest 
+        ports:
+        - containerPort: 80
+```
+Lưu file.
+
+### 4. Tạo file `service-and-ingress.yml`
+
+```bash
+nano service-and-ingress.yml
