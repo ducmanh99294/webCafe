@@ -21,28 +21,3 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 80
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: webcafe-ingress
-  annotations:
-    ingress.kubernetes.io/ssl-redirect: "false" 
-spec:
-  rules:
-  - http:
-      paths:
-      - path: /api
-        pathType: Prefix
-        backend:
-          service:
-            name: webcafe-backend-service
-            port:
-              number: 8080
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: webcafe-frontend-service
-            port:
-              number: 80
