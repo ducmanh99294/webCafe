@@ -15,7 +15,7 @@ kind: Service
 metadata:
   name: webcafe-frontend-service
 spec:
-  type: NodePort 
+  type: LoadBalancer 
   selector:
     app: webcafe-frontend
   ports:
