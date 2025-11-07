@@ -57,10 +57,9 @@ pipeline {
 
     stage('Docker Login & Push') {
       steps {
-        // Dùng withCredentials để INJECT biến Secret
         withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKERHUB_CRED_USR', passwordVariable: 'DOCKERHUB_CRED_PSW')]) {
           sh """
-            // Đăng nhập Docker bằng biến Secret đã được inject
+            # Đăng nhập Docker bằng biến Secret đã được inject
             echo ${DOCKERHUB_CRED_PSW} | docker login -u ${DOCKERHUB_CRED_USR} --password-stdin
             
             echo "Bắt đầu đẩy images..."
@@ -70,7 +69,7 @@ pipeline {
             docker push ${IMAGE_FRONTEND}:latest
             echo "Đã đẩy thành công!"
             
-            // Logout
+            # Logout
             docker logout || true 
           """
         }
