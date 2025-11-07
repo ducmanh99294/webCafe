@@ -15,6 +15,7 @@ kind: Service
 metadata:
   name: webcafe-frontend-service
 spec:
+  type: NodePort 
   selector:
     app: webcafe-frontend
   ports:
