@@ -58,7 +58,8 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(HttpMethod.POST, "/api/users/login", "/api/users/register").permitAll()
-                        .requestMatchers("/auth/**").permitAll() // Giữ nguyên dòng này nếu có
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/actuator/**").permitAll() 
                         .requestMatchers(
                                 "/api/orders/admin",
                                 "/api/products/admin",
