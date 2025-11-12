@@ -4,7 +4,6 @@ pipeline {
   agent any
   
   environment {
-    // KHÔNG THAY ĐỔI: Đã xác nhận là "ducsmanh"
     IMAGE_BACKEND = "ducsmanh/backend-webcafe" 
     IMAGE_FRONTEND = "ducsmanh/frontend-webcafe"
   }
@@ -74,12 +73,8 @@ pipeline {
       }
     }
     
-    // ----------------------------------------------------------------------
-    // !!! STAGE TRIỂN KHAI THIẾU Ở LẦN TRƯỚC !!!
-    // ----------------------------------------------------------------------
     stage('Deploy to K8s') {
       steps {
-        // Sử dụng Kubeconfig đã lưu trong Jenkins Credentials
         withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_FILE_PATH')]) {
           sh """
             echo "Bắt đầu triển khai lên Kubernetes..."
@@ -95,7 +90,7 @@ pipeline {
         }
       }
     }
-  } // Kết thúc stages
+  } 
   
   post {
     always {
