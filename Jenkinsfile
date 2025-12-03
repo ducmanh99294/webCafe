@@ -75,24 +75,6 @@ pipeline {
                 }
             }
         }
-
-        stage('Deploy to Kubernetes') {
-            steps {
-                withCredentials([
-                    file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_FILE_PATH')
-                ]) {
-
-                    sh """
-                        echo "Triển khai Kubernetes..."
-                        kubectl --kubeconfig=${KUBECONFIG_FILE_PATH} apply -f k8s/
-
-                        # Chờ Deployment ổn định
-                        kubectl --kubeconfig=${KUBECONFIG_FILE_PATH} rollout status deployment/webcafe-backend --timeout=300s
-                        kubectl --kubeconfig=${KUBECONFIG_FILE_PATH} rollout status deployment/webcafe-frontend --timeout=300s
-                    """
-                }
-            }
-        }
     }
 
     post {
