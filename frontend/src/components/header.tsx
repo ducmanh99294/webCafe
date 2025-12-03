@@ -75,7 +75,7 @@ const Header: React.FC = () => {
         {/* Logo */}
         <Link to="/" className="logo" onClick={closeMobileMenu}>
           <span className="logo-icon">☕</span>
-          <span className="logo-text">Cafe</span>
+          <span className="logo-text">Cafe nhóm 6</span>
         </Link>
 
         {/* Navigation */}
