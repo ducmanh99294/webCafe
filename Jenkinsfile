@@ -4,7 +4,7 @@ pipeline {
     environment {
         IMAGE_BACKEND  = "ducsmanh/backend-webcafe"
         IMAGE_FRONTEND = "ducsmanh/frontend-webcafe"
-        DEPLOY_SERVER  = "172.31.25.62"
+        DEPLOY_SERVER  = "15.134.37.124"
     }
 
     stages {
@@ -38,10 +38,14 @@ pipeline {
         stage('Build Docker Images') {
             steps {
                 script {
+                    // Backend
                     sh """
                         docker build -t ${IMAGE_BACKEND}:${env.BUILD_NUMBER} ./backend
                         docker tag ${IMAGE_BACKEND}:${env.BUILD_NUMBER} ${IMAGE_BACKEND}:latest
-                        
+                    """
+
+                    // Frontend
+                    sh """
                         docker build -t ${IMAGE_FRONTEND}:${env.BUILD_NUMBER} ./frontend
                         docker tag ${IMAGE_FRONTEND}:${env.BUILD_NUMBER} ${IMAGE_FRONTEND}:latest
                     """
@@ -83,9 +87,11 @@ pipeline {
                     )
                 ]) {
                     sh """
-                        ssh -i ${SSH_KEY} ${SSH_USER}@${DEPLOY_SERVER} '
+                        ssh -i ${SSH_KEY} -o StrictHostKeyChecking=no ${SSH_USER}@${DEPLOY_SERVER} '
+                        # Tạo network nếu chưa có
                         docker network create webcafe-network || true
 
+                        # Pull image mới
                         docker pull ${IMAGE_BACKEND}:latest
                         docker pull ${IMAGE_FRONTEND}:latest
 
@@ -93,14 +99,14 @@ pipeline {
                         docker rm -f backend-webcafe || true
                         docker rm -f frontend-webcafe || true
 
+                        # Chạy container mới
                         docker run -d --name backend-webcafe --network webcafe-network -p 8081:8080 ${IMAGE_BACKEND}:latest
-                        docker run -d --name frontend-webcafe --network webcafe-network -p 3001:3000 ${IMAGE_FRONTEND}:latest
+                        docker run -d --name frontend-webcafe --network webcafe-network -p 3001:80 ${IMAGE_FRONTEND}:latest
                         '
                     """
                 }
             }
         }
-
     }
 
     post {
