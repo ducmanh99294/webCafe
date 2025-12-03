@@ -1,4 +1,4 @@
-const LOCAL_API_URL = import.meta.env.VITE_APP_API_URL;
+const LOCAL_API_URL = "http://15.134.37.124:8081";
 
 const API_BASE_URL = LOCAL_API_URL || "";
 
