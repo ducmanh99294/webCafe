@@ -83,22 +83,24 @@ pipeline {
                     )
                 ]) {
                     sh """
-                        ssh -i ${SSH_KEY} -o StrictHostKeyChecking=no ${SSH_USER}@${DEPLOY_SERVER} '
+                        ssh -i ${SSH_KEY} ${SSH_USER}@${DEPLOY_SERVER} '
                         docker network create webcafe-network || true
 
                         docker pull ${IMAGE_BACKEND}:latest
                         docker pull ${IMAGE_FRONTEND}:latest
 
+                        # Xóa container cũ nếu có
                         docker rm -f backend-webcafe || true
                         docker rm -f frontend-webcafe || true
 
-                        docker run -d --name backend-webcafe --network webcafe-network -p 8080:8080 ${IMAGE_BACKEND}:latest
-                        docker run -d --name frontend-webcafe --network webcafe-network -p 3000:3000 ${IMAGE_FRONTEND}:latest
+                        docker run -d --name backend-webcafe --network webcafe-network -p 8081:8080 ${IMAGE_BACKEND}:latest
+                        docker run -d --name frontend-webcafe --network webcafe-network -p 3001:3000 ${IMAGE_FRONTEND}:latest
                         '
                     """
                 }
             }
         }
+
     }
 
     post {
