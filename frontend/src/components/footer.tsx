@@ -33,7 +33,7 @@ const Footer: React.FC = () => {
             <div className="footer-section footer-about">
               <Link to="/" className="logo">
                 <span className="logo-icon">☕</span>
-                <span className="logo-text">Cafe Mộc</span>
+                <span className="logo-text">Cafe nhóm 6</span>
               </Link>
               <p>
                 Không gian thư giãn lý tưởng với hương vị cà phê đặc biệt. 
@@ -61,11 +61,10 @@ const Footer: React.FC = () => {
               <h3>Liên kết nhanh</h3>
               <ul>
                 <li><Link to="/">Trang chủ</Link></li>
-                <li><Link to="/menu">Thực đơn</Link></li>
+                <li><Link to="/products">Thực đơn</Link></li>
                 <li><Link to="/about">Về chúng tôi</Link></li>
                 <li><Link to="/contact">Liên hệ</Link></li>
-                <li><Link to="/promotions">Khuyến mãi</Link></li>
-                <li><Link to="/events">Sự kiện</Link></li>
+                <li><Link to="/news">Sự kiện</Link></li>
               </ul>
             </div>
 
@@ -76,23 +75,23 @@ const Footer: React.FC = () => {
                 <div className="contact-item">
                   <span className="contact-icon">📍</span>
                   <span className="contact-text">
-                    123 Đường ABC, Quận 1<br />
-                    TP. Hồ Chí Minh
+                    33 Đường Xô Viết Nghệ Tỉnh<br />
+                    TP. Đà Nẵng
                   </span>
                 </div>
                 <div className="contact-item">
                   <span className="contact-icon">📞</span>
                   <span className="contact-text">
                     <a href="tel:+84912345678" style={{color: 'inherit', textDecoration: 'none'}}>
-                      +84 912 345 678
+                      +84 932 550 957
                     </a>
                   </span>
                 </div>
                 <div className="contact-item">
                   <span className="contact-icon">✉️</span>
                   <span className="contact-text">
-                    <a href="mailto:info@cafemoc.com" style={{color: 'inherit', textDecoration: 'none'}}>
-                      info@cafemoc.com
+                    <a href="mailto:nguyenducmanh1809@gmail.com" style={{color: 'inherit', textDecoration: 'none'}}>
+                      nguyenducmanh1809@gmail.com
                     </a>
                   </span>
                 </div>
