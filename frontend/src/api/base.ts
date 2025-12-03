@@ -1,4 +1,4 @@
-const LOCAL_API_URL = "http://15.134.37.124:8081";
+const LOCAL_API_URL = "https://webcafe-backend.onrender.com";
 
 const API_BASE_URL = LOCAL_API_URL || "";
 
