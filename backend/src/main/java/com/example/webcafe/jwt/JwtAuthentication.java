@@ -29,6 +29,12 @@ public class JwtAuthentication extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain chain) throws ServletException, IOException {
+        
+        if (request.getRequestURI().startsWith("/actuator/prometheus")) {
+            chain.doFilter(request, response);
+            return;
+        }
+        
         final String authHeader = request.getHeader("Authorization");
         String email = null;
         String jwt = null;
