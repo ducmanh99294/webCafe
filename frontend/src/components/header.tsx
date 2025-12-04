@@ -8,19 +8,37 @@ const Header: React.FC = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cart, setCart] = useState([]);
+  const [user, setUser] = useState<any>({});
   const location = useLocation();
   const navigate = useNavigate();
-
+  
   // const api = 'http://localhost:8080'
   const userId = localStorage.getItem("userId");
+  const token = localStorage.getItem("token");
 
-  // Simulate login state - in real app, this would come from context or store
   useEffect(() => {
+    fetchUser();
     fetchCart();
     const interval = setInterval(fetchCart, 2000);
     return () => clearInterval(interval);
   }, [userId]);
 
+    const fetchUser = async () => {
+    try{
+      const res = await apiFetch(`/api/users/${userId}`,{
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const data = await res.json();
+      setUser(data);
+      // setFormData(data);
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
   const fetchCart = async () => {
     if (!userId) return;
     try {
@@ -60,7 +78,7 @@ const Header: React.FC = () => {
 
   const totalQuantity = cart.reduce((sum: any, item: any) => sum + item.quantity, 0);
 
-  const userInitial = 'T'; // This would come from user data
+  const userInitial = user.username[0] || 'T';
 
   const navItems = [
     { path: '/', label: 'Trang chủ' },
