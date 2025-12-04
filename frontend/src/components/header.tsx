@@ -34,6 +34,7 @@ const Header: React.FC = () => {
       });
       const data = await res.json();
       setUser(data);
+      
       // setFormData(data);
     } catch (error) {
       console.error('Error fetching user data:', error);
@@ -78,7 +79,7 @@ const Header: React.FC = () => {
 
   const totalQuantity = cart.reduce((sum: any, item: any) => sum + item.quantity, 0);
 
-  const userInitial = user.username[0] || 'T';
+  const userInitial = (user && user.username) ? user.username[0] : 'T';
 
   const navItems = [
     { path: '/', label: 'Trang chủ' },
