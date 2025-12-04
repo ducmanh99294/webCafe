@@ -124,7 +124,7 @@ const Footer: React.FC = () => {
               </form> */}
               <p>Nguyễn Xuân Kì</p>
               <br />
-              <p>Trần Văn Khải</p>
+              <p>Lê Văn Khải</p>
               <br />
               <p>Nguyễn Đức Mạnh</p>
               <br />              
