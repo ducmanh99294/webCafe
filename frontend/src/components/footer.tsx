@@ -107,7 +107,7 @@ const Footer: React.FC = () => {
 
             {/* Newsletter */}
             <div className="footer-section newsletter">
-              <h3>Đăng ký nhận tin</h3>
+              {/* <h3>Đăng ký nhận tin</h3>
               <p>
                 Đăng ký để nhận thông tin khuyến mãi và sự kiện mới nhất từ Cafe Mộc.
               </p>
@@ -121,7 +121,15 @@ const Footer: React.FC = () => {
                 <button type="submit" className="newsletter-btn">
                   Đăng ký ngay
                 </button>
-              </form>
+              </form> */}
+              <p>Nguyễn Xuân Kì</p>
+              <br />
+              <p>Trần Văn Khải</p>
+              <br />
+              <p>Nguyễn Đức Mạnh</p>
+              <br />              
+              <p>Huỳnh Hữu Nghĩa</p>
+              <br />
             </div>
           </div>
 
