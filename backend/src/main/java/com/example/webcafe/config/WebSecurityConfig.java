@@ -86,7 +86,7 @@ public class WebSecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOriginPatterns(List.of(
                 "http://localhost:*",
-                "https://webcafe-frontend.onrender.com",
+                "https://webcafe-sj34.onrender.com",
                 "http://15.134.37.124:3001"
         ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
