@@ -26,12 +26,5 @@ export async function apiFetch(
     },
   };
 
-  console.log("========== API REQUEST ==========");
-  console.log("URL:", fullUrl);
-  console.log("Method:", options.method || "GET");
-  console.log("Headers:", options.headers);
-  console.log("Body:", options.body);
-  console.log("=================================");
-
   return fetch(fullUrl, finalOptions);
 }
