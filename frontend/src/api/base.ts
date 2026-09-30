@@ -1,32 +1,37 @@
-// const LOCAL_API_URL = "https://webcafe-backend.onrender.com";
-const LOCAL_API_URL = "http://localhost:8080";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "";
 
-const API_BASE_URL = LOCAL_API_URL || "";
-
-export async function apiFetch(endpoint: string, options: RequestInit = {}) {
-  const fullUrl = `${API_BASE_URL}${endpoint.startsWith('/') ? endpoint : '/' + endpoint}`;
+export async function apiFetch(
+  endpoint: string,
+  options: RequestInit = {}
+) {
+  const fullUrl = `${API_BASE_URL}${
+    endpoint.startsWith("/") ? endpoint : "/" + endpoint
+  }`;
 
   const defaultHeaders: Record<string, string> = {
     "Content-Type": "application/json",
   };
-  
-  const token = localStorage.getItem('token');
+
+  const token = localStorage.getItem("token");
+
   if (token) {
-    defaultHeaders['Authorization'] = `Bearer ${token}`;
+    defaultHeaders["Authorization"] = `Bearer ${token}`;
   }
 
   const finalOptions: RequestInit = {
-    ...options, 
+    ...options,
     headers: {
       ...defaultHeaders,
-      ...(options.headers || {}), 
+      ...(options.headers || {}),
     },
   };
-console.log("========== API REQUEST ==========");
-console.log("URL:", fullUrl);
-console.log("Method:", options?.method || "GET");
-console.log("Headers:", options?.headers);
-console.log("Body:", options?.body);
-console.log("=================================");
+
+  console.log("========== API REQUEST ==========");
+  console.log("URL:", fullUrl);
+  console.log("Method:", options.method || "GET");
+  console.log("Headers:", options.headers);
+  console.log("Body:", options.body);
+  console.log("=================================");
+
   return fetch(fullUrl, finalOptions);
 }
