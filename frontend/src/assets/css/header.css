@@ -7,6 +7,23 @@
   z-index: 1000;
 }
 
+.logo-icon {
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.logo-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
 .header-container {
   max-width: 1200px;
   margin: 0 auto;

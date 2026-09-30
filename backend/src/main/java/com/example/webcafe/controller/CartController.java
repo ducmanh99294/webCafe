@@ -38,10 +38,8 @@ public class CartController {
     // Thêm sản phẩm vào giỏ
     @PostMapping("/{userId}/add")
     public ResponseEntity<?> addToCart(
-            @PathVariable String userId,
-            @RequestBody CartRequest cartRequest
-
-            ) {
+            @PathVariable("userId") String userId,
+            @RequestBody CartRequest cartRequest) {
         try {
 
             cartRequest.setUserId(userId);

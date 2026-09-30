@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../assets/css/footer.css';
+import { Facebook, Instagram, MessageCircle } from 'lucide-react';
 
 const Footer: React.FC = () => {
   const [showBackToTop, setShowBackToTop] = useState(false);
@@ -24,139 +25,163 @@ const Footer: React.FC = () => {
 
   const currentYear = new Date().getFullYear();
 
-  return (
-    <>
-      <footer className="footer">
-        <div className="footer-container">
-          <div className="footer-content">
-            {/* About Section */}
-            <div className="footer-section footer-about">
-              <Link to="/" className="logo">
-                <span className="logo-icon">☕</span>
-                <span className="logo-text">Cafe nhóm 6</span>
-              </Link>
-              <p>
-                Không gian thư giãn lý tưởng với hương vị cà phê đặc biệt. 
-                Chúng tôi mang đến những trải nghiệm ấm áp và đáng nhớ 
-                trong không gian mộc mạc, gần gũi với thiên nhiên.
-              </p>
-              <div className="social-links">
-                <a href="#" className="social-link" aria-label="Facebook">
-                  📘
-                </a>
-                <a href="#" className="social-link" aria-label="Instagram">
-                  📷
-                </a>
-                <a href="#" className="social-link" aria-label="Zalo">
-                  💬
-                </a>
-                <a href="#" className="social-link" aria-label="TikTok">
-                  🎵
-                </a>
+return (
+  <>
+    <footer className="footer">
+      <div className="footer-container">
+        <div className="footer-content">
+
+          {/* About Section */}
+          <div className="footer-section footer-about">
+            <Link to="/" className="logo">
+              <span className="logo-icon">☕</span>
+              <span className="logo-text">Cafe</span>
+            </Link>
+
+            <p>
+              A cozy place to relax and enjoy carefully crafted coffee.
+              We create warm and memorable experiences in a comfortable
+              atmosphere where everyone can feel at home.
+            </p>
+
+<div className="social-links">
+  <a
+    href="https://www.facebook.com/ucmanh.986571"
+    className="social-link"
+    aria-label="Facebook"
+  >
+    <Facebook size={22} strokeWidth={2} />
+  </a>
+
+  <a
+    href="https://www.instagram.com/ducsmanh/"
+    className="social-link"
+    aria-label="Instagram"
+  >
+    <Instagram size={22} strokeWidth={2} />
+  </a>
+</div>
+          </div>
+
+          {/* Quick Links */}
+          <div className="footer-section footer-links">
+            <h3>Quick Links</h3>
+
+            <ul>
+              <li>
+                <Link to="/">Home</Link>
+              </li>
+              <li>
+                <Link to="/products">Menu</Link>
+              </li>
+              <li>
+                <Link to="/about">About Us</Link>
+              </li>
+              {/* <li>
+                <Link to="/contact">Contact</Link>
+              </li> */}
+              <li>
+                <Link to="/news">Events</Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Contact Info */}
+          <div className="footer-section footer-contact">
+            <h3>Contact Us</h3>
+
+            <div className="contact-info">
+
+              <div className="contact-item">
+                <span className="contact-icon">📍</span>
+                <span className="contact-text">
+                  33 Xo Viet Nghe Tinh Street
+                  <br />
+                  Da Nang City, Vietnam
+                </span>
               </div>
-            </div>
 
-            {/* Quick Links */}
-            <div className="footer-section footer-links">
-              <h3>Liên kết nhanh</h3>
-              <ul>
-                <li><Link to="/">Trang chủ</Link></li>
-                <li><Link to="/products">Thực đơn</Link></li>
-                <li><Link to="/about">Về chúng tôi</Link></li>
-                <li><Link to="/contact">Liên hệ</Link></li>
-                <li><Link to="/news">Sự kiện</Link></li>
-              </ul>
-            </div>
-
-            {/* Contact Info */}
-            <div className="footer-section footer-contact">
-              <h3>Liên hệ</h3>
-              <div className="contact-info">
-                <div className="contact-item">
-                  <span className="contact-icon">📍</span>
-                  <span className="contact-text">
-                    33 Đường Xô Viết Nghệ Tỉnh<br />
-                    TP. Đà Nẵng
-                  </span>
-                </div>
-                <div className="contact-item">
-                  <span className="contact-icon">📞</span>
-                  <span className="contact-text">
-                    <a href="tel:+84912345678" style={{color: 'inherit', textDecoration: 'none'}}>
-                      +84 932 550 957
-                    </a>
-                  </span>
-                </div>
-                <div className="contact-item">
-                  <span className="contact-icon">✉️</span>
-                  <span className="contact-text">
-                    <a href="mailto:nguyenducmanh1809@gmail.com" style={{color: 'inherit', textDecoration: 'none'}}>
-                      nguyenducmanh1809@gmail.com
-                    </a>
-                  </span>
-                </div>
-                <div className="contact-item">
-                  <span className="contact-icon">🕒</span>
-                  <span className="contact-text">
-                    Thứ 2 - Chủ Nhật<br />
-                    7:00 - 22:00
-                  </span>
-                </div>
+              <div className="contact-item">
+                <span className="contact-icon">📞</span>
+                <span className="contact-text">
+                  <a
+                    href="tel:+84932550957"
+                    style={{
+                      color: 'inherit',
+                      textDecoration: 'none'
+                    }}
+                  >
+                    +84 932 550 957
+                  </a>
+                </span>
               </div>
-            </div>
 
-            {/* Newsletter */}
-            <div className="footer-section newsletter">
-              {/* <h3>Đăng ký nhận tin</h3>
-              <p>
-                Đăng ký để nhận thông tin khuyến mãi và sự kiện mới nhất từ Cafe Mộc.
-              </p>
-              <form className="newsletter-form">
-                <input
-                  type="email"
-                  placeholder="Nhập email của bạn"
-                  className="newsletter-input"
-                  required
-                />
-                <button type="submit" className="newsletter-btn">
-                  Đăng ký ngay
-                </button>
-              </form> */}
-              <p>Nguyễn Xuân Kì</p>
-              <br />
-              <p>Lê Văn Khải</p>
-              <br />
-              <p>Nguyễn Đức Mạnh</p>
-              <br />              
-              <p>Huỳnh Hữu Nghĩa</p>
-              <br />
+              <div className="contact-item">
+                <span className="contact-icon">✉️</span>
+                <span className="contact-text">
+                  <a
+                    href="mailto:nguyenducmanh1809@gmail.com"
+                    style={{
+                      color: 'inherit',
+                      textDecoration: 'none'
+                    }}
+                  >
+                    nguyenducmanh1809@gmail.com
+                  </a>
+                </span>
+              </div>
+
+              <div className="contact-item">
+                <span className="contact-icon">🕒</span>
+                <span className="contact-text">
+                  Monday - Sunday
+                  <br />
+                  7:00 AM - 10:00 PM
+                </span>
+              </div>
+
             </div>
           </div>
 
-          {/* Footer Bottom */}
-          <div className="footer-bottom">
-            <div className="copyright">
-              © {currentYear} Cafe Mộc. Tất cả quyền được bảo lưu.
-            </div>
-            <div className="footer-bottom-links">
-              <a href="/privacy">Chính sách bảo mật</a>
-              <a href="/terms">Điều khoản sử dụng</a>
-              <a href="/sitemap">Sitemap</a>
-            </div>
+          {/* Additional Information */}
+          <div className="footer-section newsletter">
+            <p>
+              <strong>Created by</strong>
+            </p>
+            <p>Nguyen Duc Manh</p>
           </div>
+
         </div>
-      </footer>
 
-      {/* Back to Top Button */}
-      <button 
-        className={`back-to-top ${showBackToTop ? 'visible' : ''}`}
-        onClick={scrollToTop}
-        aria-label="Back to top"
-      >
-        ↑
-      </button>
-    </>
-  );
+        {/* Footer Bottom */}
+        <div className="footer-bottom">
+
+          <div className="copyright">
+            © {currentYear} Cafe. All rights reserved.
+          </div>
+
+          <div className="footer-bottom-links">
+            <a href="/privacy">Privacy Policy</a>
+            <a href="/terms">Terms of Service</a>
+            <a href="/sitemap">Sitemap</a>
+          </div>
+
+        </div>
+      </div>
+    </footer>
+
+    {/* Back to Top Button */}
+    <button
+      className={`back-to-top ${
+        showBackToTop ? 'visible' : ''
+      }`}
+      onClick={scrollToTop}
+      aria-label="Back to top"
+    >
+      ↑
+    </button>
+  </>
+);
 };
 
 export default Footer;

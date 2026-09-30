@@ -219,335 +219,551 @@ const Products: React.FC = () => {
       : (100 - selectedProduct.discount) / 100 * selectedSize.price;
     return basePrice * quantity;
   };
-  return (
-    <div className="menu-container">
-      <div className="menu-header">
-        <h1 className="menu-title">Thực Đơn</h1>
-        <p className="menu-subtitle">
-          Khám phá những thức uống và món ăn đặc biệt được chế biến tỉ mỉ tại Café Mộc
-        </p>
-      </div>
+return (
+  <div className="menu-container">
+    <div className="menu-header">
+      <h1 className="menu-title">Menu</h1>
+      <p className="menu-subtitle">
+        Discover our carefully crafted drinks and delicious treats.
+      </p>
+    </div>
 
-      <div className="menu-layout">
-        {/* Sidebar Filters */}
-        <aside className="menu-sidebar">
-          {/* Categories */}
-          <div className="filter-section">
-            <h3 className="filter-title">Danh Mục</h3>
-            <div className="category-list">
-              {categories.map((category: any) => (
-                <div
-                  key={category.id}
-                  className={`category-item ${selectedCategory === category.name ? 'active' : ''}`}
-                  onClick={() => setSelectedCategory(category.name)}
-                >
-                  <span className="category-icon">{category.imageUrl}</span>
-                  <span className="category-name">{category.name}</span>
-                  {/* <span className="category-count">{category.count}</span> */}
-                </div>
-              ))}
-            </div>
+    <div className="menu-layout">
+
+      {/* Sidebar Filters */}
+      <aside className="menu-sidebar">
+
+        {/* Categories */}
+        <div className="filter-section">
+          <h3 className="filter-title">Categories</h3>
+
+          <div className="category-list">
+            {categories.map((category: any) => (
+              <div
+                key={category.id}
+                className={`category-item ${
+                  selectedCategory === category.name ? 'active' : ''
+                }`}
+                onClick={() => setSelectedCategory(category.name)}
+              >
+                <span className="category-icon">
+                  {category.imageUrl}
+                </span>
+
+                <span className="category-name">
+                  {category.name}
+                </span>
+              </div>
+            ))}
           </div>
+        </div>
 
-          {/* Price Filter */}
-          <div className="filter-section">
-            <h3 className="filter-title">Khoảng Giá</h3>
-            <div className="price-filter">
-              <div className="price-inputs">
-                <input
-                  type="number"
-                  className="price-input"
-                  placeholder="Từ"
-                  value={priceRange[0]}
-                  onChange={(e) => setPriceRange([parseInt(e.target.value) || 0, priceRange[1]])}
-                />
-                <input
-                  type="number"
-                  className="price-input"
-                  placeholder="Đến"
-                  value={priceRange[1]}
-                  onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value) || 200000])}
-                />
-              </div>
-              <div className="price-slider">
-                <div
-                  className="price-slider-fill"
-                  style={{
-                    left: `${(priceRange[0] / 200000) * 100}%`,
-                    width: `${((priceRange[1] - priceRange[0]) / 200000) * 100}%`
-                  }}
-                />
-              </div>
-              <div className="price-labels">
-                <span>0đ</span>
-                <span>200.000đ</span>
-              </div>
-            </div>
-          </div>
-        </aside>
+        {/* Price Filter */}
+        <div className="filter-section">
+          <h3 className="filter-title">Price Range</h3>
 
-        {/* Main Content */}
-        <main className="menu-main">
-          {/* Toolbar */}
-          <div className="menu-toolbar">
-            <div className="search-box">
+          <div className="price-filter">
+            <div className="price-inputs">
+
               <input
-                type="text"
-                className="search-input"
-                placeholder="Tìm kiếm sản phẩm..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                type="number"
+                className="price-input"
+                placeholder="Min"
+                value={priceRange[0]}
+                onChange={(e) =>
+                  setPriceRange([
+                    parseInt(e.target.value) || 0,
+                    priceRange[1]
+                  ])
+                }
               />
-              <span className="search-icon">🔍</span>
+
+              <input
+                type="number"
+                className="price-input"
+                placeholder="Max"
+                value={priceRange[1]}
+                onChange={(e) =>
+                  setPriceRange([
+                    priceRange[0],
+                    parseInt(e.target.value) || 200000
+                  ])
+                }
+              />
+
             </div>
-            <select
-              className="sort-select"
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-            >
-              <option value="name">Sắp xếp theo tên</option>
-              <option value="price-low">Giá thấp đến cao</option>
-              <option value="price-high">Giá cao đến thấp</option>
-              <option value="rating">Đánh giá cao nhất</option>
-            </select>
+
+            <div className="price-slider">
+              <div
+                className="price-slider-fill"
+                style={{
+                  left: `${(priceRange[0] / 200000) * 100}%`,
+                  width: `${
+                    ((priceRange[1] - priceRange[0]) / 200000) * 100
+                  }%`
+                }}
+              />
+            </div>
+
+            <div className="price-labels">
+              <span>0đ</span>
+              <span>200,000đ</span>
+            </div>
+          </div>
+        </div>
+
+      </aside>
+
+      {/* Main Content */}
+      <main className="menu-main">
+
+        {/* Toolbar */}
+        <div className="menu-toolbar">
+
+          <div className="search-box">
+            <input
+              type="text"
+              className="search-input"
+              placeholder="Search products..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+
+            <span className="search-icon">🔍</span>
           </div>
 
-          {/* Products Grid */}
-          <div className="products-section">
-            {loading ? (
-              "loading"
-            ) : (
+          <select
+            className="sort-select"
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+          >
+            <option value="name">Sort by Name</option>
+            <option value="price-low">Price: Low to High</option>
+            <option value="price-high">Price: High to Low</option>
+            <option value="rating">Highest Rated</option>
+          </select>
+
+        </div>
+
+        {/* Products Grid */}
+        <div className="products-section">
+
+          {loading ? (
+            <div className="loading-state">
+              Loading...
+            </div>
+          ) : (
             <>
-            {filteredProducts.length > 0 ? (
-              <div className="products-grid">
-                {filteredProducts.map((product: any) => (
-                  <div key={product.id} className="product-card">
-                    {product.badge && (
-                      <span className={`product-badge ${product.badge}`}>
-                        {product.badge === 'new' && 'Mới'}
-                        {product.badge === 'popular' && 'Phổ Biến'}
-                        {product.badge === 'special' && 'Đặc Biệt'}
-                      </span>
-                    )}
-                    
+              {filteredProducts.length > 0 ? (
+                <div className="products-grid">
+
+                  {filteredProducts.map((product: any) => (
                     <div
-                      className="product-image"
-                      style={{ backgroundImage: `url(${product.image})` }}
+                      key={product.id}
+                      className="product-card"
                     >
-                      <button
-                        className={`product-wishlist ${wishlist.includes(product.id) ? 'active' : ''}`}
-                        onClick={() => toggleWishlist(product.id)}
+
+                      {/* Product Badge */}
+                      {product.badge && (
+                        <span
+                          className={`product-badge ${product.badge}`}
+                        >
+                          {product.badge === 'new' && 'New'}
+                          {product.badge === 'popular' && 'Popular'}
+                          {product.badge === 'special' && 'Special'}
+                        </span>
+                      )}
+
+                      {/* Product Image */}
+                      <div
+                        className="product-image"
+                        style={{
+                          backgroundImage: `url(${product.image})`
+                        }}
                       >
-                        {wishlist.includes(product.id) ? '❤️' : '🤍'}
-                      </button>
-                    </div>
-                    <div className="product-content">
-                      <div className="product-category">
-                        {categories.find((cat: any) => cat.id === product.category)?.name}
+                        <button
+                          className={`product-wishlist ${
+                            wishlist.includes(product.id)
+                              ? 'active'
+                              : ''
+                          }`}
+                          onClick={() =>
+                            toggleWishlist(product.id)
+                          }
+                        >
+                          {wishlist.includes(product.id)
+                            ? '❤️'
+                            : '🤍'}
+                        </button>
                       </div>
-                      <h3 className="product-name">{product.name}</h3>
-                      <p className="product-description">{product.description}</p>
-                      <div className="product-details">                      
-                          {product.discount === 0 || product.discount === 'null' ? (
+
+                      {/* Product Content */}
+                      <div className="product-content">
+
+                        <div className="product-category">
+                          {
+                            categories.find(
+                              (cat: any) =>
+                                cat.id === product.category
+                            )?.name
+                          }
+                        </div>
+
+                        <h3 className="product-name">
+                          {product.name}
+                        </h3>
+
+                        <p className="product-description">
+                          {product.description}
+                        </p>
+
+                        <div className="product-details">
+
+                          {/* Product Price */}
+                          {product.discount === 0 ||
+                          product.discount === 'null' ? (
                             <div className="product-price">
-                              <span className="current-price">{formatPrice(product.sizePrices[0].price)}</span>
+                              <span className="current-price">
+                                {formatPrice(
+                                  product.sizePrices[0].price
+                                )}
+                              </span>
                             </div>
                           ) : (
                             <div className="product-price">
-                              <span className="current-price">{formatPrice((100 - product.discount) / 100 * product.sizePrices[0].price)}</span>
+                              <span className="current-price">
+                                {formatPrice(
+                                  ((100 - product.discount) /
+                                    100) *
+                                    product.sizePrices[0].price
+                                )}
+                              </span>
+
                               {product.discount && (
-                                <span className="original-price">{formatPrice(product.sizePrices[0].price)}</span>
+                                <span className="original-price">
+                                  {formatPrice(
+                                    product.sizePrices[0].price
+                                  )}
+                                </span>
                               )}
                             </div>
-                          )}                        
-                        <div className="product-rating">
-                          {renderStars(product.rating)}
-                          <span>({product.rating})</span>
+                          )}
+
+                          {/* Rating */}
+                          <div className="product-rating">
+                            {renderStars(product.rating)}
+                            <span>
+                              ({product.rating})
+                            </span>
+                          </div>
+
+                        </div>
+
+                        {/* Product Actions */}
+                        <div className="product-actions">
+
+                          <button
+                            className="view-detail-btn"
+                            onClick={() =>
+                              handleShowDetail(product)
+                            }
+                          >
+                            View Details
+                          </button>
+
+                          {product.available ? (
+                            <button
+                              className="add-to-cart"
+                              onClick={() =>
+                                addToCart(product, quantity)
+                              }
+                            >
+                              <span>🛒</span>
+                              Add to Cart
+                            </button>
+                          ) : (
+                            <button
+                              className="add-to-cart"
+                              disabled
+                            >
+                              Out of Stock
+                            </button>
+                          )}
+
                         </div>
                       </div>
-                      <div className="product-actions">
-                        <button
-                          className="view-detail-btn"
-                          onClick={() => handleShowDetail(product)}
-                        >
-                          Xem Chi Tiết
-                        </button>
-                        {/* Giữ nguyên nút Add to Cart hiện tại */}
-                        {product.available ? (
-                          <button
-                            className="add-to-cart"
-                            onClick={() => addToCart(product, quantity)}
-                          >
-                            <span>🛒</span>
-                            Thêm Vào Giỏ
-                          </button>
-                        ) : (
-                          <button className="add-to-cart" disabled>
-                            Hết Hàng
-                          </button>
-                        )}
-                      </div>
                     </div>
+                  ))}
+
+                </div>
+              ) : (
+
+                /* Empty State */
+                <div className="empty-state">
+
+                  <div className="empty-icon">
+                    ☕
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="empty-state">
-                <div className="empty-icon">☕</div>
-                <h3 className="empty-title">Không tìm thấy sản phẩm</h3>
-                <p className="empty-description">
-                  Hãy thử điều chỉnh bộ lọc hoặc tìm kiếm với từ khóa khác
-                </p>
-                <button
-                  className="load-more-btn"
-                  onClick={() => {
-                    setSelectedCategory('all');
-                    setSearchTerm('');
-                    setPriceRange([0, 200000]);
-                  }}
-                >
-                  Xóa Bộ Lọc
-                </button>
-              </div>
-            )}
 
-            {/* Load More Button */}
-            {filteredProducts.length > 0 && (
-              <div className="load-more">
-                <button className="load-more-btn">
-                  Xem Thêm Sản Phẩm
-                </button>
-              </div>
-            )}
-            </>  
-            )}
+                  <h3 className="empty-title">
+                    No Products Found
+                  </h3>
 
-            {showDetail && selectedProduct && (
+                  <p className="empty-description">
+                    Try adjusting your filters or searching
+                    for a different keyword.
+                  </p>
+
+                  <button
+                    className="load-more-btn"
+                    onClick={() => {
+                      setSelectedCategory('all');
+                      setSearchTerm('');
+                      setPriceRange([0, 200000]);
+                    }}
+                  >
+                    Clear Filters
+                  </button>
+
+                </div>
+              )}
+
+              {/* Load More */}
+              {filteredProducts.length > 0 && (
+                <div className="load-more">
+                  <button className="load-more-btn">
+                    Load More Products
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+
+          {/* Product Detail Modal */}
+          {showDetail && selectedProduct && (
             <div className="product-detail-modal">
-              <div className="modal-overlay" onClick={handleCloseDetail}></div>
+
+              <div
+                className="modal-overlay"
+                onClick={handleCloseDetail}
+              />
+
               <div className="modal-content">
-                <button className="close-modal" onClick={handleCloseDetail}>
+
+                <button
+                  className="close-modal"
+                  onClick={handleCloseDetail}
+                >
                   ×
                 </button>
-                
+
                 <div className="modal-body">
+
+                  {/* Product Image */}
                   <div className="product-image-section">
-                    <div 
+                    <div
                       className="product-detail-image"
-                      style={{ backgroundImage: `url(${selectedProduct.image})` }}
-                    ></div>
+                      style={{
+                        backgroundImage: `url(${selectedProduct.image})`
+                      }}
+                    />
                   </div>
-                  
+
+                  {/* Product Information */}
                   <div className="product-info-section">
+
                     <div className="product-header">
+
                       <span className="product-category">
                         {selectedProduct.categoryName}
                       </span>
-                      <h2 className="product-title">{selectedProduct.name}</h2>
-                      <p className="product-description">{selectedProduct.description}</p>
-                      
+
+                      <h2 className="product-title">
+                        {selectedProduct.name}
+                      </h2>
+
+                      <p className="product-description">
+                        {selectedProduct.description}
+                      </p>
+
                       <div className="product-rating">
                         {renderStars(selectedProduct.rating)}
-                        <span>({selectedProduct.rating})</span>
+                        <span>
+                          ({selectedProduct.rating})
+                        </span>
                       </div>
+
                     </div>
 
                     {/* Size Selection */}
                     <div className="size-section">
-                      <h3 className="section-title">Chọn Size</h3>
+
+                      <h3 className="section-title">
+                        Select Size
+                      </h3>
+
                       <div className="size-options">
-                        {selectedProduct.sizePrices.map((size: any) => (
-                          <div
-                            key={size.id}
-                            className={`size-option ${selectedSize?.id === size.id ? 'selected' : ''}`}
-                            onClick={() => setSelectedSize(size)}
-                          >
-                            <div className="size-info">
-                              <span className="size-name">{size.size}</span>
+                        {selectedProduct.sizePrices.map(
+                          (size: any) => (
+                            <div
+                              key={size.id}
+                              className={`size-option ${
+                                selectedSize?.id === size.id
+                                  ? 'selected'
+                                  : ''
+                              }`}
+                              onClick={() =>
+                                setSelectedSize(size)
+                              }
+                            >
+
+                              <div className="size-info">
+                                <span className="size-name">
+                                  {size.size}
+                                </span>
+                              </div>
+
+                              <div className="size-price">
+                                {size.discount > 0
+                                  ? `+${formatPrice(
+                                      size.price *
+                                        size.discount
+                                    )}`
+                                  : `+${formatPrice(
+                                      size.price
+                                    )}`}
+                              </div>
+
                             </div>
-                            <div className="size-price">
-                              {size.discount > 0 ? `+${formatPrice(size.price * size.discount)}` : `+${formatPrice(size.price)}`}
-                            </div>
-                          </div>
-                        ))}
+                          )
+                        )}
                       </div>
+
                     </div>
 
                     {/* Quantity Selection */}
                     <div className="quantity-section">
-                      <h3 className="section-title">Số Lượng</h3>
+
+                      <h3 className="section-title">
+                        Quantity
+                      </h3>
+
                       <div className="quantity-selector">
+
                         <button
                           className="quantity-btn"
-                          onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                          onClick={() =>
+                            setQuantity(
+                              Math.max(1, quantity - 1)
+                            )
+                          }
                           disabled={quantity <= 1}
                         >
                           -
                         </button>
-                        <span className="quantity-display">{quantity}</span>
+
+                        <span className="quantity-display">
+                          {quantity}
+                        </span>
+
                         <button
                           className="quantity-btn"
-                          onClick={() => setQuantity(quantity + 1)}
+                          onClick={() =>
+                            setQuantity(quantity + 1)
+                          }
                         >
                           +
                         </button>
+
                       </div>
+
                     </div>
 
                     {/* Price Summary */}
                     <div className="price-summary">
+
                       <div className="price-breakdown">
-                        {selectedProduct.discount > 0 && selectedProduct.discount !== 'null' && (
+
+                        {selectedProduct.discount > 0 &&
+                          selectedProduct.discount !== 'null' && (
+                            <div className="price-row">
+                              <span>Discount:</span>
+
+                              <span>
+                                {formatPrice(
+                                  selectedProduct.discount
+                                )}
+                              </span>
+                            </div>
+                          )}
+
+                        {selectedSize &&
+                          selectedSize.price > 0 && (
+                            <div className="price-row">
+                              <span>
+                                Size {selectedSize.size}:
+                              </span>
+
+                              <span>
+                                {formatPrice(
+                                  selectedSize.price
+                                )}
+                              </span>
+                            </div>
+                          )}
+
                         <div className="price-row">
-                          <span>Giảm giá:</span>
-                          <span>
-                            {formatPrice(selectedProduct.discount)}                          
-                          </span>
-                        </div>              
-                        )}         
-                        {selectedSize && selectedSize.price > 0 && (
-                          <div className="price-row">
-                            <span>Size {selectedSize.size}:</span>
-                            <span>{formatPrice(selectedSize.price)}</span>
-                          </div>
-                        )}
-                        <div className="price-row">
-                          <span>Số lượng:</span>
+                          <span>Quantity:</span>
                           <span>x{quantity}</span>
                         </div>
+
                         <div className="price-row total">
-                          <span>Tổng cộng:</span>
-                          <span className="total-price">{formatPrice((calculateTotalPrice()))}</span>
+                          <span>Total:</span>
+
+                          <span className="total-price">
+                            {formatPrice(
+                              calculateTotalPrice()
+                            )}
+                          </span>
                         </div>
+
                       </div>
                     </div>
 
                     {/* Action Buttons */}
                     <div className="modal-actions">
+
                       <button
                         className="add-to-cart-btn primary"
                         onClick={handleAddToCartFromDetail}
                         disabled={!selectedProduct.available}
                       >
                         <span>🛒</span>
-                        Thêm Vào Giỏ - {formatPrice(calculateTotalPrice())}
+                        Add to Cart -{' '}
+                        {formatPrice(
+                          calculateTotalPrice()
+                        )}
                       </button>
+
                       {!selectedProduct.available && (
                         <div className="out-of-stock-message">
-                          Sản phẩm tạm thời hết hàng
+                          This product is currently out of stock.
                         </div>
                       )}
+
                     </div>
+
                   </div>
                 </div>
               </div>
             </div>
           )}
-          </div>
-        </main>
-      </div>
+
+        </div>
+      </main>
     </div>
-  );
+  </div>
+);
 };
 
 export default Products;

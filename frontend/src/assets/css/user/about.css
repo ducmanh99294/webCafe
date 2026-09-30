@@ -297,6 +297,7 @@
 }
 
 .milestone-content {
+  margin-top:70px;
   flex: 1;
   padding: 30px;
   background: rgba(245, 240, 230, 0.1);
@@ -307,6 +308,7 @@
 
 .milestone-year {
   position: absolute;
+  top: 0;
   left: 50%;
   transform: translateX(-50%);
   background: #D2691E; /* Cam đất */

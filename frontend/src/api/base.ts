@@ -1,4 +1,5 @@
-const LOCAL_API_URL = "https://webcafe-backend.onrender.com";
+// const LOCAL_API_URL = "https://webcafe-backend.onrender.com";
+const LOCAL_API_URL = "http://localhost:8080";
 
 const API_BASE_URL = LOCAL_API_URL || "";
 
@@ -21,6 +22,11 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}) {
       ...(options.headers || {}), 
     },
   };
-
+console.log("========== API REQUEST ==========");
+console.log("URL:", fullUrl);
+console.log("Method:", options?.method || "GET");
+console.log("Headers:", options?.headers);
+console.log("Body:", options?.body);
+console.log("=================================");
   return fetch(fullUrl, finalOptions);
 }

@@ -5,6 +5,7 @@ import com.example.webcafe.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.webcafe.model.Product;
@@ -73,13 +74,15 @@ public class ProductController {
     }
 
     @PutMapping("/admin/available/{id}")
-    public ResponseEntity<Product> updateProductAvailable(@PathVariable String id, @RequestBody Map<String, Object> updates) {
+    public ResponseEntity<Product> updateProductAvailable(
+            @PathVariable("id") String id,
+            @RequestBody Map<String, Object> updates) {
         Product updated = productService.updateProductAvailable(id, updates);
         return ResponseEntity.ok(updated);
     }
-
     @DeleteMapping("/admin/{id}")
     public void deleteProduct(@PathVariable String id) {
         productService.deleteProduct(id);
     }
+
 }

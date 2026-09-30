@@ -1,4 +1,4 @@
-// About.js
+// About.tsx
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import gsap from "gsap";
@@ -6,285 +6,455 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import '../../assets/css/user/about.css';
 
 const About: React.FC = () => {
-  gsap.registerPlugin(ScrollTrigger)
+  gsap.registerPlugin(ScrollTrigger);
+
   const milestones = [
     {
       year: '2015',
-      title: 'Thành lập Café Mộc',
-      description: 'Khai trương chi nhánh đầu tiên tại Quận 1, TP.HCM với triết lý "Mang thiên nhiên vào không gian sống"'
+      title: 'Café Mộc Founded',
+      description:
+        'Opened the first branch in District 1, Ho Chi Minh City with the philosophy "Bringing nature into living spaces."'
     },
     {
       year: '2017',
-      title: 'Mở rộng thương hiệu',
-      description: 'Ra mắt 2 chi nhánh mới tại Quận 3 và Quận Phú Nhuận, khẳng định vị thế trong thị trường cafe'
+      title: 'Brand Expansion',
+      description:
+        'Opened two new branches in District 3 and Phu Nhuan District, strengthening our presence in the coffee market.'
     },
     {
       year: '2019',
-      title: 'Phát triển sản phẩm',
-      description: 'Giới thiệu dòng cà phê đặc sản và trà ướp sen cao cấp, mang đến trải nghiệm vị giác mới lạ'
+      title: 'Product Development',
+      description:
+        'Introduced specialty coffee and premium lotus-infused tea, bringing new and unique flavors to our customers.'
     },
     {
       year: '2021',
-      title: 'Đạt giải thưởng',
-      description: 'Nhận giải "Không gian sáng tạo được yêu thích nhất" và "Cafe có hương vị độc đáo nhất"'
+      title: 'Award Recognition',
+      description:
+        'Received awards for "Most Loved Creative Space" and "Most Unique Coffee Flavor."'
     },
     {
       year: '2023',
-      title: 'Bước ra quốc tế',
-      description: 'Khai trương chi nhánh đầu tiên tại Tokyo, Nhật Bản, mang hương vị cà phê Việt đến bạn bè quốc tế'
+      title: 'Going International',
+      description:
+        'Opened our first international branch in Tokyo, Japan, bringing the flavors of Vietnamese coffee to customers around the world.'
     },
     {
       year: '2024',
-      title: 'Định hướng tương lai',
-      description: 'Tiếp tục mở rộng với kế hoạch 5 chi nhánh mới và phát triển dòng sản phẩm mang về nhà'
+      title: 'Looking Ahead',
+      description:
+        'Continuing to expand with plans for five new branches and the development of a retail product line for customers to enjoy at home.'
     }
   ];
 
   const values = [
     {
       icon: '🌱',
-      title: 'Thân thiện với môi trường',
-      description: 'Chúng tôi sử dụng nguyên liệu hữu cơ, ống hút giấy và bao bì tái chế để bảo vệ môi trường.'
+      title: 'Eco-Friendly',
+      description:
+        'We use organic ingredients, paper straws, and recyclable packaging to help protect the environment.'
     },
     {
       icon: '👨‍👩‍👧‍👦',
-      title: 'Cộng đồng',
-      description: 'Café Mộc là nơi kết nối mọi người, tạo ra không gian chia sẻ và cảm hứng cho cộng đồng.'
+      title: 'Community',
+      description:
+        'Café Mộc is a place where people connect, share experiences, and find inspiration together.'
     },
     {
       icon: '⭐',
-      title: 'Chất lượng',
-      description: 'Mỗi ly cà phê đều được chăm chút tỉ mỉ từ khâu chọn hạt đến kỹ thuật pha chế.'
+      title: 'Quality',
+      description:
+        'Every cup of coffee is carefully crafted, from selecting the beans to perfecting the brewing process.'
     },
     {
       icon: '🎨',
-      title: 'Sáng tạo',
-      description: 'Không ngừng đổi mới trong thiết kế không gian và sáng tạo các loại thức uống độc đáo.'
+      title: 'Creativity',
+      description:
+        'We continuously innovate in our space design and create unique beverages that inspire our customers.'
     },
     {
       icon: '🤝',
-      title: 'Tin cậy',
-      description: 'Xây dựng mối quan hệ tin cậy với khách hàng thông qua sự trung thực và minh bạch.'
+      title: 'Trust',
+      description:
+        'We build lasting relationships with our customers through honesty, transparency, and dedication.'
     },
     {
       icon: '💝',
-      title: 'Đam mê',
-      description: 'Truyền cảm hứng từ tình yêu cà phê và mong muốn mang đến trải nghiệm tuyệt vời nhất.'
+      title: 'Passion',
+      description:
+        'We are inspired by our love for coffee and our passion for creating the best possible experience for every customer.'
     }
   ];
 
-  //---------animation-----------
+  // --------- Animation -----------
+
   useEffect(() => {
-        const tl = gsap.timeline({
-        scrollTrigger: {
+    const tl = gsap.timeline({
+      scrollTrigger: {
         trigger: ".story-section",
         start: "top 50%",
         end: "bottom 100%",
         toggleActions: "play none none reverse",
         scrub: 1.5,
         once: true
-        }
+      }
     });
+
     tl.fromTo(
       ".section-title",
-      {x: 250, opacity: 0},
-      {x: 0, opacity: 1, duration: 3.5, ease: "power3.out"}
-    )    
-    .fromTo(
-      ".section-subtitle",
-      { x: 150, opacity: 0 },
-      { x: 0, opacity: 1, duration: 3.5, ease: "power3.out" },
-       "0.5"
-    )
-    .fromTo(
-      ".story-text",
       { x: 250, opacity: 0 },
-      { x: 0, opacity: 1, duration: 3.5, ease: "power3.out" ,stagger: 0.3},
-       "0.5"
+      {
+        x: 0,
+        opacity: 1,
+        duration: 3.5,
+        ease: "power3.out"
+      }
     )
-    .fromTo(
-      ".story-description",
-      { y: 80, opacity: 0 },
-      { y: 0, opacity: 1, duration: 2.5, ease: "power3.out", stagger: 0.3 },
-    );
+      .fromTo(
+        ".section-subtitle",
+        { x: 150, opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 3.5,
+          ease: "power3.out"
+        },
+        "0.5"
+      )
+      .fromTo(
+        ".story-text",
+        { x: 250, opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 3.5,
+          ease: "power3.out",
+          stagger: 0.3
+        },
+        "0.5"
+      )
+      .fromTo(
+        ".story-description",
+        { y: 80, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 2.5,
+          ease: "power3.out",
+          stagger: 0.3
+        }
+      );
+
     tl.fromTo(
       ".story-image",
-      {y: 250, opacity: 0},
-      {y: 0, opacity: 1, duration: 2.5, ease: "power3.out", stagger: 15}
-    ); 
-  })
+      { y: 250, opacity: 0 },
+      {
+        y: 0,
+        opacity: 1,
+        duration: 2.5,
+        ease: "power3.out",
+        stagger: 15
+      }
+    );
+  }, []);
 
   useEffect(() => {
     const tl = gsap.timeline({
-    scrollTrigger: {
-    trigger: ".values-section",
-    start: "top 50%",
-    end: "bottom 100%",
-    toggleActions: "play none none reverse",
-    scrub: 1.5,
-    once: true
-    }
-});
-tl.fromTo(
-  ".section-title",
-  {x: 250, opacity: 0},
-  {x: 0, opacity: 1, duration: 3.5, ease: "power3.out"}
-)    
-.fromTo(
-  ".section-subtitle",
-  { x: 150, opacity: 0 },
-  { x: 0, opacity: 1, duration: 3.5, ease: "power3.out" },
-   "0.5"
-)
-.fromTo(
-  ".story-text",
-  { x: 250, opacity: 0 },
-  { x: 0, opacity: 1, duration: 3.5, ease: "power3.out" ,stagger: 0.3},
-   "0.5"
-)
-.fromTo(
-  ".story-description",
-  { y: 80, opacity: 0 },
-  { y: 0, opacity: 1, duration: 2.5, ease: "power3.out", stagger: 0.3 },
-);
-tl.fromTo(
-  ".story-image",
-  {y: 250, opacity: 0},
-  {y: 0, opacity: 1, duration: 2.5, ease: "power3.out", stagger: 15}
-); 
-})
+      scrollTrigger: {
+        trigger: ".values-section",
+        start: "top 50%",
+        end: "bottom 100%",
+        toggleActions: "play none none reverse",
+        scrub: 1.5,
+        once: true
+      }
+    });
+
+    tl.fromTo(
+      ".section-title",
+      { x: 250, opacity: 0 },
+      {
+        x: 0,
+        opacity: 1,
+        duration: 3.5,
+        ease: "power3.out"
+      }
+    )
+      .fromTo(
+        ".section-subtitle",
+        { x: 150, opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 3.5,
+          ease: "power3.out"
+        },
+        "0.5"
+      )
+      .fromTo(
+        ".story-text",
+        { x: 250, opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 3.5,
+          ease: "power3.out",
+          stagger: 0.3
+        },
+        "0.5"
+      )
+      .fromTo(
+        ".story-description",
+        { y: 80, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 2.5,
+          ease: "power3.out",
+          stagger: 0.3
+        }
+      );
+
+    tl.fromTo(
+      ".story-image",
+      { y: 250, opacity: 0 },
+      {
+        y: 0,
+        opacity: 1,
+        duration: 2.5,
+        ease: "power3.out",
+        stagger: 15
+      }
+    );
+  }, []);
+
   return (
     <div className="about-container">
+
       {/* Hero Section */}
       <section className="about-hero">
         <div className="about-hero-content">
-          <h1 className="about-hero-title">Câu Chuyện Café Mộc</h1>
+          <h1 className="about-hero-title">
+            The Story of Café Mộc
+          </h1>
+
           <p className="about-hero-subtitle">
-            Hành trình 10 năm kiến tạo không gian thư giãn lý tưởng, 
-            nơi hương vị cà phê hòa quyện cùng vẻ đẹp mộc mạc của thiên nhiên
+            A 10-year journey of creating the perfect space to relax,
+            where the rich flavor of coffee blends with the natural beauty
+            of a warm and rustic atmosphere.
           </p>
         </div>
       </section>
 
       {/* Story Section */}
       <section className="story-section">
+
         <div className="section-header">
-          <h2 className="section-title">Hành Trình Của Chúng Tôi</h2>
+          <h2 className="section-title">
+            Our Journey
+          </h2>
+
           <p className="section-subtitle">
-            Từ ý tưởng nhỏ đến thương hiệu cafe được yêu thích
+            From a small idea to a beloved coffee brand
           </p>
         </div>
 
         <div className="story-content">
+
           <div className="story-text">
-            <h3>Khởi nguồn từ tình yêu cà phê và thiên nhiên</h3>
+
+            <h3>
+              Born from a Love of Coffee and Nature
+            </h3>
+
             <p className="story-description">
-              Năm 2015, Café Mộc được thành lập với mong muốn tạo ra một không gian 
-              thư giãn lý tưởng - nơi mọi người có thể tận hưởng những ly cà phê chất lượng 
-              trong môi trường gần gũi với thiên nhiên. Chúng tôi tin rằng cà phê ngon 
-              không chỉ là hương vị mà còn là trải nghiệm tổng thể.
+              In 2015, Café Mộc was founded with the vision of creating
+              an ideal place to relax — where people could enjoy
+              high-quality coffee in a natural and welcoming environment.
+              We believe that great coffee is not only about flavor,
+              but also about the overall experience.
             </p>
+
             <p className="story-description">
-              Từ chi nhánh đầu tiên nhỏ bé ở Quận 1, qua gần 10 năm phát triển, 
-              Café Mộc đã trở thành điểm đến quen thuộc của hàng ngàn khách hàng 
-              với 8 chi nhánh tại Việt Nam và 1 chi nhánh tại Nhật Bản.
+              From our first small branch in District 1, after nearly
+              10 years of growth, Café Mộc has become a familiar
+              destination for thousands of customers, with 8 branches
+              across Vietnam and 1 branch in Japan.
             </p>
+
             <div className="story-highlight">
               <p className="highlight-text">
-                "Mỗi ly cà phê là một câu chuyện, mỗi không gian là một cảm xúc"
+                "Every cup of coffee tells a story, and every space
+                creates an emotion."
               </p>
             </div>
+
           </div>
+
           <div className="story-image">
-            <img 
-              src="https://images.unsplash.com/photo-1559925393-8be0ec4767c8?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
-              alt="Không gian Café Mộc" 
+            <img
+              src="https://images.unsplash.com/photo-1559925393-8be0ec4767c8?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+              alt="Café Mộc interior"
             />
           </div>
+
         </div>
 
         <div className="story-content">
+
           <div className="story-image">
-            <img 
-              src="https://images.unsplash.com/photo-1447933601403-0c6688de566e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
-              alt="Quy trình rang xay cà phê" 
+            <img
+              src="https://images.unsplash.com/photo-1447933601403-0c6688de566e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+              alt="Coffee roasting process"
             />
           </div>
+
           <div className="story-text">
-            <h3>Cam kết với chất lượng và hương vị</h3>
+
+            <h3>
+              Our Commitment to Quality and Flavor
+            </h3>
+
             <p className="story-description">
-              Chúng tôi tự hào về quy trình khép kín từ lựa chọn hạt cà phê, 
-              rang xay đến pha chế. Mỗi hạt cà phê đều được tuyển chọn kỹ lưỡng 
-              từ các vùng cao nguyên Việt Nam, đảm bảo hương vị đặc trưng và chất lượng ổn định.
+              We take pride in our carefully controlled process,
+              from selecting coffee beans and roasting them to
+              crafting the perfect cup. Every coffee bean is
+              carefully sourced from Vietnam's highlands to ensure
+              distinctive flavors and consistent quality.
             </p>
+
             <p className="story-description">
-              Đội ngũ barista của chúng tôi không ngừng học hỏi và sáng tạo 
-              để mang đến những thức uống độc đáo, kết hợp giữa truyền thống và hiện đại.
+              Our baristas continuously learn and innovate to create
+              unique beverages that combine traditional techniques
+              with modern creativity.
             </p>
+
           </div>
+
         </div>
+
       </section>
 
       {/* Values Section */}
       <section className="values-section">
+
         <div className="section-header">
-          <h2 className="section-title">Giá Trị Cốt Lõi</h2>
+
+          <h2 className="section-title">
+            Our Core Values
+          </h2>
+
           <p className="section-subtitle">
-            Những nguyên tắc định hướng mọi hoạt động của chúng tôi
+            The principles that guide everything we do
           </p>
+
         </div>
 
         <div className="values-grid">
+
           {values.map((value, index) => (
-            <div key={index} className="value-card">
+            <div
+              key={index}
+              className="value-card"
+            >
+
               <div className="value-icon">
                 {value.icon}
               </div>
-              <h3 className="value-title">{value.title}</h3>
-              <p className="value-description">{value.description}</p>
+
+              <h3 className="value-title">
+                {value.title}
+              </h3>
+
+              <p className="value-description">
+                {value.description}
+              </p>
+
             </div>
           ))}
+
         </div>
+
       </section>
 
       {/* Milestones Section */}
       <section className="milestones-section">
+
         <div className="section-header">
-          <h2 className="section-title">Chặng Đường Phát Triển</h2>
+
+          <h2 className="section-title">
+            Our Milestones
+          </h2>
+
           <p className="section-subtitle">
-            Những cột mốc quan trọng trong hành trình của Café Mộc
+            Key milestones throughout the journey of Café Mộc
           </p>
+
         </div>
 
         <div className="milestones-timeline">
+
           {milestones.map((milestone, index) => (
-            <div key={index} className="milestone-item">
-              <div className="milestone-year">{milestone.year}</div>
-              <div className="milestone-content">
-                <h3 className="milestone-title">{milestone.title}</h3>
-                <p className="milestone-description">{milestone.description}</p>
+            <div
+              key={index}
+              className="milestone-item"
+            >
+
+              <div className="milestone-year">
+                {milestone.year}
               </div>
+
+              <div className="milestone-content">
+
+                <h3 className="milestone-title">
+                  {milestone.title}
+                </h3>
+
+                <p className="milestone-description">
+                  {milestone.description}
+                </p>
+
+              </div>
+
             </div>
           ))}
+
         </div>
+
       </section>
 
       {/* CTA Section */}
       <section className="cta-section">
-        <h2 className="cta-title">Sẵn sàng trải nghiệm?</h2>
+
+        <h2 className="cta-title">
+          Ready to Experience It?
+        </h2>
+
         <p className="cta-subtitle">
-          Ghé thăm Café Mộc để cảm nhận không gian ấm cúng và thưởng thức 
-          những ly cà phê được chăm chút tỉ mỉ
+          Visit Café Mộc to enjoy our warm atmosphere and
+          carefully crafted coffee made with passion and dedication.
         </p>
+
         <div className="cta-buttons">
-          <Link to="/menu" className="cta-button primary">
-            Xem Thực Đơn
+
+          <Link
+            to="/products"
+            className="cta-button primary"
+          >
+            View Menu
           </Link>
-          <Link to="/contact" className="cta-button secondary">
-            Liên Hệ Với Chúng Tôi
+
+          <Link
+            to="https://www.facebook.com/ucmanh.986571"
+            className="cta-button secondary"
+          >
+            Contact Us
           </Link>
+
         </div>
+
       </section>
+
     </div>
   );
 };

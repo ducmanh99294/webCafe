@@ -18,85 +18,108 @@ const Register: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  // const api = 'http://localhost:8080';
 
   const handleChange = (e: any) => {
     const { name, value } = e.target;
+
     setFormData((prevState: any) => ({
       ...prevState,
       [name]: value
     }));
-    
+
     // Clear error when user starts typing
     if (errors[name]) {
-      setErrors((prev: any) => ({ ...prev, [name]: '' }));
+      setErrors((prev: any) => ({
+        ...prev,
+        [name]: ''
+      }));
     }
   };
 
-const handleSubmit = async (e: any) => {
-  e.preventDefault();
-  setLoading(true);
-  // kiểm tra hợp lệ đơn giản
-  if (formData.password !== formData.confirmPassword) {
-    setErrors({ confirmPassword: "Mật khẩu không khớp!" });
-    return;
-  }
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    setLoading(true);
 
-  try {
-    const res = await apiFetch(`/api/users/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username: formData.username,
-        email: formData.email,
-        phone: formData.phone,
-        password: formData.password,
-        role: "USER",
-        createAt : new Date(),
-        updateAt : new Date(),
-      }),
-    });
-    
-    const data = await res.json();
-    console.log("Đăng ký thành công:", data);
-    alert("Đăng ký thành công!");
-    navigate("/login");
-  } catch (err) {
-    console.error("Lỗi khi đăng ký:", err);
-    alert("Đăng ký thất bại: " + err);
-  } finally {
-    setLoading(false)
-  }
-};
+    // Simple validation
+    if (formData.password !== formData.confirmPassword) {
+      setErrors({
+        confirmPassword: "Passwords do not match!"
+      });
+      setLoading(false);
+      return;
+    }
 
+    try {
+      const res = await apiFetch(`/api/users/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: formData.username,
+          email: formData.email,
+          phone: formData.phone,
+          password: formData.password,
+          role: "USER",
+          createAt: new Date(),
+          updateAt: new Date(),
+        }),
+      });
+
+      const data = await res.json();
+
+      console.log("Registration successful:", data);
+
+      alert("Registration successful!");
+      navigate("/login");
+
+    } catch (err) {
+      console.error("Registration error:", err);
+      alert("Registration failed: " + err);
+
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="register-container">
       <div className="register-box">
+
         <div className="register-header">
-          <h1 className="register-title">Tạo tài khoản mới</h1>
-          <p className="register-subtitle">Tham gia cùng chúng tôi ngay hôm nay</p>
+          <h1 className="register-title">
+            Create a New Account
+          </h1>
+
+          <p className="register-subtitle">
+            Join us today
+          </p>
         </div>
 
         <form className="register-form" onSubmit={handleSubmit}>
+
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="username" className="form-label">
-                Tên *
+                Name *
               </label>
+
               <input
                 type="text"
                 id="username"
                 name="username"
                 className={`form-input ${errors.username ? 'error' : ''}`}
-                placeholder="Nhập tên của bạn"
+                placeholder="Enter your name"
                 value={formData.username}
                 onChange={handleChange}
                 required
               />
-              {errors.username && <span className="error-message">{errors.username}</span>}
+
+              {errors.username && (
+                <span className="error-message">
+                  {errors.username}
+                </span>
+              )}
             </div>
           </div>
 
@@ -104,69 +127,96 @@ const handleSubmit = async (e: any) => {
             <label htmlFor="email" className="form-label">
               Email *
             </label>
+
             <input
               type="email"
               id="email"
               name="email"
               className={`form-input ${errors.email ? 'error' : ''}`}
-              placeholder="Nhập email của bạn"
+              placeholder="Enter your email"
               value={formData.email}
               onChange={handleChange}
               required
             />
-            {errors.email && <span className="error-message">{errors.email}</span>}
+
+            {errors.email && (
+              <span className="error-message">
+                {errors.email}
+              </span>
+            )}
           </div>
 
           <div className="form-group">
             <label htmlFor="phone" className="form-label">
-              Số điện thoại *
+              Phone Number *
             </label>
+
             <input
               type="tel"
               id="phone"
               name="phone"
               className={`form-input ${errors.phone ? 'error' : ''}`}
-              placeholder="Nhập số điện thoại"
+              placeholder="Enter your phone number"
               value={formData.phone}
               onChange={handleChange}
               required
             />
-            {errors.phone && <span className="error-message">{errors.phone}</span>}
+
+            {errors.phone && (
+              <span className="error-message">
+                {errors.phone}
+              </span>
+            )}
           </div>
 
           <div className="form-group">
             <label htmlFor="password" className="form-label">
-              Mật khẩu *
+              Password *
             </label>
+
             <input
               type="password"
               id="password"
               name="password"
               className={`form-input ${errors.password ? 'error' : ''}`}
-              placeholder="Tạo mật khẩu"
+              placeholder="Create a password"
               value={formData.password}
               onChange={handleChange}
               required
             />
-            {errors.password && <span className="error-message">{errors.password}</span>}
-            <div className="password-requirements">Mật khẩu phải có ít nhất 6 ký tự</div>
+
+            {errors.password && (
+              <span className="error-message">
+                {errors.password}
+              </span>
+            )}
+
+            <div className="password-requirements">
+              Password must be at least 6 characters
+            </div>
           </div>
 
           <div className="form-group">
             <label htmlFor="confirmPassword" className="form-label">
-              Xác nhận mật khẩu *
+              Confirm Password *
             </label>
+
             <input
               type="password"
               id="confirmPassword"
               name="confirmPassword"
               className={`form-input ${errors.confirmPassword ? 'error' : ''}`}
-              placeholder="Nhập lại mật khẩu"
+              placeholder="Re-enter your password"
               value={formData.confirmPassword}
               onChange={handleChange}
               required
             />
-            {errors.confirmPassword && <span className="error-message">{errors.confirmPassword}</span>}
+
+            {errors.confirmPassword && (
+              <span className="error-message">
+                {errors.confirmPassword}
+              </span>
+            )}
           </div>
 
           <div className="terms-group">
@@ -177,26 +227,43 @@ const handleSubmit = async (e: any) => {
               checked={agreeToTerms}
               onChange={(e) => setAgreeToTerms(e.target.checked)}
             />
+
             <label htmlFor="terms" className="terms-label">
-              Tôi đồng ý với <a href="/terms">Điều khoản sử dụng</a> và <a href="/privacy">Chính sách bảo mật</a>
+              I agree to the{' '}
+              <a href="/terms">Terms of Use</a>
+              {' '}and{' '}
+              <a href="/privacy">Privacy Policy</a>
             </label>
           </div>
-          {errors.terms && <span className="error-message" style={{marginLeft: '28px'}}>{errors.terms}</span>}
 
-          <button 
-            type="submit" 
+          {errors.terms && (
+            <span
+              className="error-message"
+              style={{ marginLeft: '28px' }}
+            >
+              {errors.terms}
+            </span>
+          )}
+
+          <button
+            type="submit"
             className="register-button"
-            disabled={!agreeToTerms}
+            disabled={!agreeToTerms || loading}
           >
-            {loading ? "Đang đăng kí" : "Đăng ký"}
+            {loading ? "Creating Account..." : "Create Account"}
           </button>
+
         </form>
 
         <div className="register-footer">
           <div className="login-link">
-            Đã có tài khoản? <a href="/login">Đăng nhập ngay</a>
+            Already have an account?{' '}
+            <a href="/login">
+              Sign In
+            </a>
           </div>
         </div>
+
       </div>
     </div>
   );

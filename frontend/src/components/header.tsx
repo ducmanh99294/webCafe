@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import '../assets/css/header.css';
 import { apiFetch } from '../api/base';
+import logo from '../../logo.jpg';
 
 const Header: React.FC = () => {
   const [showDropdown, setShowDropdown] = useState(false);
@@ -12,7 +13,6 @@ const Header: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   
-  // const api = 'http://localhost:8080'
   const userId = localStorage.getItem("userId");
   const token = localStorage.getItem("token");
 
@@ -40,6 +40,7 @@ const Header: React.FC = () => {
       console.error('Error fetching user data:', error);
     }
   };
+
   const fetchCart = async () => {
     if (!userId) return;
     try {
@@ -82,114 +83,134 @@ const Header: React.FC = () => {
   const userInitial = (user && user.username) ? user.username[0] : 'T';
 
   const navItems = [
-    { path: '/', label: 'Trang chủ' },
-    { path: '/products', label: 'Thực đơn' },
-    { path: '/about', label: 'Về chúng tôi' },
-    { path: '/news', label: 'Tin tức' }
+    { path: '/', label: 'Home' },
+    { path: '/products', label: 'Menu' },
+    { path: '/about', label: 'About Us' },
+    { path: '/news', label: 'News' }
   ];
 
-  return (
-    <header className="header">
-      <div className="header-container">
-        {/* Logo */}
-        <Link to="/" className="logo" onClick={closeMobileMenu}>
-          <span className="logo-icon">☕</span>
-          <span className="logo-text">Cafe nhóm 6</span>
-        </Link>
+return (
+  <header className="header">
+    <div className="header-container">
+      {/* Logo */}
+      <Link to="/" className="logo" onClick={closeMobileMenu}>
+       <span className="logo-icon">
+        <img src={logo} alt="Café Mộc" />
+      </span>       
+      <span className="logo-text">Cafe</span>
+      </Link>
 
-        {/* Navigation */}
-        <nav className={`nav ${mobileMenuOpen ? 'active' : ''}`}>
-          <ul className="nav-links">
-            {navItems.map((item) => (
-              <li key={item.path}>
-                <Link
-                  to={item.path}
-                  className={`nav-link ${location.pathname === item.path ? 'active' : ''}`}
-                  onClick={closeMobileMenu}
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
+      {/* Navigation */}
+      <nav className={`nav ${mobileMenuOpen ? 'active' : ''}`}>
+        <ul className="nav-links">
+          {navItems.map((item) => (
+            <li key={item.path}>
+              <Link
+                to={item.path}
+                className={`nav-link ${
+                  location.pathname === item.path ? 'active' : ''
+                }`}
+                onClick={closeMobileMenu}
+              >
+                {item.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
 
-          {/* User Actions */}
-          <div className="user-actions">
-            {/* Cart Icon */}
-            <div className="cart-icon" onClick={closeMobileMenu} >
-              🛒
-              {totalQuantity > 0 && (
-                <span className="cart-count">{totalQuantity}</span>
-              )}
-            </div>
-
-            {/* Auth Buttons or User Menu */}
-            {!userId ? (
-              <div className="auth-buttons">
-                <Link 
-                  to="/login" 
-                  className="login-btn"
-                  onClick={closeMobileMenu}
-                >
-                  Đăng nhập
-                </Link>
-                <Link 
-                  to="/register" 
-                  className="register-btn"
-                  onClick={closeMobileMenu}
-                >
-                  Đăng ký
-                </Link>
-              </div>
-            ) : (
-              <div className="user-menu">
-                <div 
-                  className="user-avatar"
-                  onClick={toggleDropdown}
-                >
-                  {userInitial}
-                </div>
-                <div className={`dropdown-menu ${showDropdown ? 'show' : ''}`}>
-                  <Link 
-                    to="/profile" 
-                    className="dropdown-item"
-                    onClick={() => setShowDropdown(false)}
-                  >
-                    👤 Hồ sơ
-                  </Link>
-                  <Link 
-                    to="/orders" 
-                    className="dropdown-item"
-                    onClick={() => setShowDropdown(false)}
-                  >
-                    📦 Đơn hàng
-                  </Link>
-                  <div className="dropdown-divider"></div>
-                  <button 
-                    className="dropdown-item"
-                    onClick={handleLogout}
-                    style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left' }}
-                  >
-                    🚪 Đăng xuất
-                  </button>
-                </div>
-              </div>
+        {/* User Actions */}
+        <div className="user-actions">
+          {/* Cart Icon */}
+          <div className="cart-icon" onClick={closeMobileMenu}>
+            🛒
+            {totalQuantity > 0 && (
+              <span className="cart-count">{totalQuantity}</span>
             )}
           </div>
-        </nav>
 
-        {/* Mobile Menu Button */}
-        <button 
-          className={`mobile-menu-btn ${mobileMenuOpen ? 'active' : ''}`}
-          onClick={toggleMobileMenu}
-        >
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-      </div>
-    </header>
-  );
+          {/* Auth Buttons or User Menu */}
+          {!userId ? (
+            <div className="auth-buttons">
+              <Link
+                to="/login"
+                className="login-btn"
+                onClick={closeMobileMenu}
+              >
+                Login
+              </Link>
+
+              <Link
+                to="/register"
+                className="register-btn"
+                onClick={closeMobileMenu}
+              >
+                Sign Up
+              </Link>
+            </div>
+          ) : (
+            <div className="user-menu">
+              <div
+                className="user-avatar"
+                onClick={toggleDropdown}
+              >
+                {userInitial}
+              </div>
+
+              <div
+                className={`dropdown-menu ${
+                  showDropdown ? 'show' : ''
+                }`}
+              >
+                <Link
+                  to="/profile"
+                  className="dropdown-item"
+                  onClick={() => setShowDropdown(false)}
+                >
+                  👤 Profile
+                </Link>
+
+                <Link
+                  to="/orders"
+                  className="dropdown-item"
+                  onClick={() => setShowDropdown(false)}
+                >
+                  📦 Orders
+                </Link>
+
+                <div className="dropdown-divider"></div>
+
+                <button
+                  className="dropdown-item"
+                  onClick={handleLogout}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    width: '100%',
+                    textAlign: 'left'
+                  }}
+                >
+                  🚪 Logout
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </nav>
+
+      {/* Mobile Menu Button */}
+      <button
+        className={`mobile-menu-btn ${
+          mobileMenuOpen ? 'active' : ''
+        }`}
+        onClick={toggleMobileMenu}
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+);
 };
 
 export default Header;

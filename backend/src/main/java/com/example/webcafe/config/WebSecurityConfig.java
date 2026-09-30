@@ -61,16 +61,17 @@ public class WebSecurityConfig {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/actuator/**").permitAll() 
                         .requestMatchers(
-                                "/api/orders/admin",
-                                "/api/products/admin",
-                                "/api/report/admin",
-                                "/api/categories/admin",
-                                "/api/employees/admin",
-                                "/api/tables/admin",
-                                "/api/users/admin")
+                                "/api/orders/admin/**",
+                                "/api/products/admin/**",
+                                "/api/report/admin/**",
+                                "/api/categories/admin/**",
+                                "/api/employees/admin/**",
+                                "/api/tables/admin/**",
+                                "/api/users/admin/**")
                         .hasRole("ADMIN")
                         .requestMatchers("/api/carts/**","/api/orders/{userId}/confirm", "/api/orders/{userId}","/api/users/{id}").hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/products", "/api/products/**","/api/categories","/api/tables").permitAll()
+                        .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated()
                 ).formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable);
@@ -83,8 +84,8 @@ public class WebSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of(
-                "http://localhost:5173",
+        configuration.setAllowedOriginPatterns(List.of(
+                "http://localhost:*",
                 "https://webcafe-frontend.onrender.com",
                 "http://15.134.37.124:3001"
         ));

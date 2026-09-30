@@ -3,6 +3,7 @@ package com.example.webcafe.jwt;
 import com.example.webcafe.model.User;
 import com.example.webcafe.service.UserService;
 import com.example.webcafe.util.JwtUtil;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,43 +21,66 @@ public class JwtAuthentication extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final UserService userService;
 
-    public JwtAuthentication(JwtUtil jwtUtil, UserService userService) {
+    public JwtAuthentication(
+            JwtUtil jwtUtil,
+            UserService userService
+    ) {
         this.jwtUtil = jwtUtil;
         this.userService = userService;
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain chain) throws ServletException, IOException {
-        
-        if (request.getRequestURI().startsWith("/actuator/prometheus")) {
-            chain.doFilter(request, response);
-            return;
-        }
-        
-        final String authHeader = request.getHeader("Authorization");
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain chain
+    ) throws ServletException, IOException {
+
+        final String authHeader =
+                request.getHeader("Authorization");
+
         String email = null;
         String jwt = null;
 
         try {
-            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+
+            if (authHeader != null &&
+                    authHeader.startsWith("Bearer ")) {
+
                 jwt = authHeader.substring(7);
+
                 email = jwtUtil.extractEmail(jwt);
             }
 
-            if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                User userDetails = userService.findByEmail(email);
+            if (email != null &&
+                    SecurityContextHolder
+                            .getContext()
+                            .getAuthentication() == null) {
+
+                User userDetails =
+                        userService.findByEmail(email);
 
                 if (jwtUtil.validateToken(jwt)) {
+
                     UsernamePasswordAuthenticationToken authToken =
                             new UsernamePasswordAuthenticationToken(
-                                    userDetails, null, userDetails.getAuthorities());
-                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                                    userDetails,
+                                    null,
+                                    userDetails.getAuthorities()
+                            );
+
+                    SecurityContextHolder
+                            .getContext()
+                            .setAuthentication(authToken);
                 }
             }
+
         } catch (Exception e) {
-            System.out.println("JWT Filter error: " + e.getMessage());
+
+            System.out.println(
+                    "JWT Filter error: "
+                            + e.getMessage()
+            );
         }
 
         chain.doFilter(request, response);
