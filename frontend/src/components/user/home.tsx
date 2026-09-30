@@ -12,7 +12,6 @@ const Home: React.FC = () => {
   const [_loading, setLoading] = useState(false);
   const [products, setProducts] = useState<any>([])
 
-  // const api = 'http://localhost:8080'
   const userId = localStorage.getItem("userId");
 
 const slides = [
@@ -94,33 +93,42 @@ const events = [
     }
   }
 
-  const addToCart = async (product: any, quantity: any) => {
-    try {
-        const res = await apiFetch(`/api/carts/${userId}/add`, {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json" ,
-          Authorization: `Bearer ${localStorage.getItem("token")}`
-
-        },
-        body: JSON.stringify({
-          userId,                     // id người dùng
-          product,     // id sản phẩm
-          quantity          // số lượng
-        }),
-      });
-      
-      if (product == null) {
-      console.log("Dữ liệu sản phẩm (product) bị thiếu trong request.");
-      }
-
-      if (!res.ok) throw new Error("Không thể thêm sản phẩm vào giỏ");
-      alert("Thêm vào giỏ hàng thành công!");
-    } catch (err) {
-      console.error("Lỗi khi thêm vào giỏ hàng:", err);
-      alert("Thêm vào giỏ hàng thất bại!");
+const addToCart = async (product: any, quantity: number, size?: string) => {
+  try {
+    if (!product?.sizePrices?.length) {
+      alert("Sản phẩm chưa có size/giá.");
+      return;
     }
-  };
+
+    if (!product.available) { alert("Sản phẩm đã hết hàng"); return; }
+
+    const selectedSize = size ?? product.sizePrices[0].size;
+
+    const chosen = product.sizePrices.find((s: any) => s.size === selectedSize);
+
+    const res = await apiFetch(`/api/carts/${userId}/add`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({
+        userId,
+        product: { ...product, selectedSize: chosen },
+        quantity,
+      }),
+    });
+
+    if (!res.ok) {
+      const msg = await res.text(); // message lỗi từ server
+      throw new Error(msg || "Không thể thêm sản phẩm vào giỏ");
+    }
+    alert("Success!");
+  } catch (err) {
+    console.error("Lỗi khi thêm vào giỏ hàng:", err);
+    alert("Failed");
+  }
+};
   
   const formatPrice = (price: any) => {
     return new Intl.NumberFormat('vi-VN', {

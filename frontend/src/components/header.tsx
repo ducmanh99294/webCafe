@@ -19,7 +19,7 @@ const Header: React.FC = () => {
   useEffect(() => {
     fetchUser();
     fetchCart();
-    const interval = setInterval(fetchCart, 2000);
+    const interval = setInterval(fetchCart, 100000);
     return () => clearInterval(interval);
   }, [userId]);
 

@@ -3,6 +3,14 @@ package com.example.webcafe.dto;
 public class CartRequest {
     private String userId;
     private int quantity;
+    public String getSize() {
+        return size;
+    }
+    public void setSize(String size) {
+        this.size = size;
+    }
+
+    private String size;
     private ItemRequest product; // Đối tượng sản phẩm
 
     // Getters & Setters cho CartRequest
