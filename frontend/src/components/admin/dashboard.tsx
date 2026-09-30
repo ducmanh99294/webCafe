@@ -12,7 +12,6 @@ const AdminDashboard = () => {
   
   const totalMonthlyRevenue = monthReports.reduce((sum: any, day: any) => sum + day.totalRevenue, 0);
   const newestOrder = orders.slice(-5).reverse();
-  // const api = 'http://localhost:8080'
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
 
