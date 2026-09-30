@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../assets/css/footer.css';
-import { Facebook, Instagram, MessageCircle } from 'lucide-react';
+import { Facebook, Instagram } from 'lucide-react';
 
 const Footer: React.FC = () => {
   const [showBackToTop, setShowBackToTop] = useState(false);

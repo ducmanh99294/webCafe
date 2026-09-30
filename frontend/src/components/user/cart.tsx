@@ -6,14 +6,14 @@ import { apiFetch } from '../../api/base';
 
 const Cart = () => {
   const navigate = useNavigate();
-  const [hasArrived, setHasArrived] = useState(null);
-  const [cart, setCart] = useState([]);
-  const [tables, setTables] = useState([]);
-  const [roomElements, setRoomElements] = useState([]);
+  const [hasArrived, setHasArrived] = useState<any>(null);
+  const [cart, setCart] = useState<any>([]);
+  const [tables, setTables] = useState<any>([]);
+  const [roomElements, setRoomElements] = useState<any>([]);
 
-  const [selectedTable, setSelectedTable] = useState(null);
-  const [selectedPayment, setSelectedPayment] = useState('');
-  const [specialRequests, setSpecialRequests] = useState('');
+  const [selectedTable, setSelectedTable] = useState<any>(null);
+  const [selectedPayment, setSelectedPayment] = useState<any>('');
+  const [specialRequests, setSpecialRequests] = useState<any>('');
 
   const userId = localStorage.getItem("userId");
   const token = localStorage.getItem("token");
@@ -191,7 +191,7 @@ const Cart = () => {
     }
   };
 
-  const updateQuantity = async (productId, newQuantity) => {
+  const updateQuantity = async (productId: any, newQuantity: any) => {
     try {
       const res = await apiFetch(`/api/carts/${userId}/update`, {
         method: "PUT",
@@ -214,7 +214,7 @@ const Cart = () => {
     }
   };
 
-  const removeFromCart = async (productId) => {
+  const removeFromCart = async (productId: any) => {
     try {
       const res = await apiFetch(`/api/carts/${userId}/remove`, {
         method: "DELETE",
@@ -239,7 +239,7 @@ const Cart = () => {
 
   const getSubtotal = () => {
     return cart.reduce(
-      (total, item) => total + (item.price * item.quantity),
+      (total: any, item: any) => total + (item.price * item.quantity),
       0
     );
   };
@@ -252,7 +252,7 @@ const Cart = () => {
     return getSubtotal() + getServiceFee();
   };
 
-  const formatPrice = (price) => {
+  const formatPrice = (price: any) => {
     return new Intl.NumberFormat('vi-VN', {
       style: 'currency',
       currency: 'VND'
@@ -384,7 +384,7 @@ const Cart = () => {
 
               <div className="cart-items">
 
-                {cart.map((item) => (
+                {cart.map((item: any) => (
                   <div
                     key={item.id}
                     className="cart-item"
@@ -513,7 +513,7 @@ const Cart = () => {
                 >
 
                   {/* Room Elements */}
-                  {roomElements.map(element => (
+                  {roomElements.map((element: any) => (
                     <div
                       key={element.id}
                       className={`room-element ${element.type} ${
@@ -536,7 +536,7 @@ const Cart = () => {
                   {/* Tables */}
                   <div className="tables-grid">
 
-                    {tables.map(seat => (
+                    {tables.map((seat: any) => (
 
                       <div
                         key={seat.id}
@@ -615,7 +615,7 @@ const Cart = () => {
             {/* Order Items */}
             <div className="summary-items">
 
-              {cart.map((item) => (
+              {cart.map((item: any) => (
 
                 <div
                   key={item.id}
