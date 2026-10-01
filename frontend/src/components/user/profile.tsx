@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react';
 import '../../assets/css/user/profile.css';
 import { apiFetch } from '../../api/base'; 
 import { notify } from '../../utils/notify';
+import Loading from '../Loading';
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState('personal');
   const [isEditing, setIsEditing] = useState(false);
   const [user, setUser] = useState<any>({});
+  const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState<any>({
     username: '',
     email: '',
@@ -14,7 +16,6 @@ const Profile = () => {
     image: ''
   });
   const userId = localStorage.getItem("userId");
-  // const api = 'http://localhost:8080'
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -41,7 +42,7 @@ const Profile = () => {
       // setFormData(data);
     } catch (error) {
       console.error('Error fetching user data:', error);
-    }
+    } finally { setLoading(false); }
   };
   const setDataUpdate = (data: any) => {
     setIsEditing(true);
@@ -115,153 +116,154 @@ const Profile = () => {
           Quản lý thông tin tài khoản và tùy chỉnh trải nghiệm của bạn
         </p>
       </div>
+      {loading ? <Loading /> : (
+        <div className="profile-layout">
+          {/* Sidebar */}
+          <aside className="profile-sidebar">
+            {/* User Card */}
+            <div className="user-card">
+              <div className="user-avatar">
+                {user.avatar ? (
+                  <img src={user.avatar} alt="Avatar" className="avatar-image" />
+                ) : (
+                  <div className="avatar-placeholder">
+                    {user.username?.charAt(0).toUpperCase()}
+                  </div>
+                )}
+              </div>
+              <h3 className="user-name">{user.name}</h3>
+              <p className="user-email">{user.email}</p>
+              <p className="user-member-since">
+                Thành viên từ {formatDate(user.createdAt)}
+              </p>
+            </div>
 
-      <div className="profile-layout">
-        {/* Sidebar */}
-        <aside className="profile-sidebar">
-          {/* User Card */}
-          <div className="user-card">
-            <div className="user-avatar">
-              {user.avatar ? (
-                <img src={user.avatar} alt="Avatar" className="avatar-image" />
-              ) : (
-                <div className="avatar-placeholder">
-                  {user.username?.charAt(0).toUpperCase()}
+            {/* Navigation */}
+            <nav className="profile-nav">
+              {navigationItems.map(item => (
+                <div
+                  key={item.id}
+                  className={`nav-item ${activeTab === item.id ? 'active' : ''}`}
+                  onClick={() => setActiveTab(item.id)}
+                >
+                  <span className="nav-icon">{item.icon}</span>
+                  <span className="nav-text">{item.label}</span>
                 </div>
+              ))}
+            </nav>
+          </aside>
+
+          {/* Main Content */}
+          <main className="profile-main">
+            <div className="profile-section">
+            <div className="section-header">
+              <div>
+                <h2 className="section-title">Thông tin cá nhân</h2>
+                <p className="section-subtitle">Quản lý thông tin cá nhân và tài khoản của bạn</p>
+              </div>
+              {!isEditing && (
+                <button className="edit-btn" onClick={() => setDataUpdate(user)}>
+                  Chỉnh sửa
+                </button>
               )}
             </div>
-            <h3 className="user-name">{user.name}</h3>
-            <p className="user-email">{user.email}</p>
-            <p className="user-member-since">
-              Thành viên từ {formatDate(user.createdAt)}
-            </p>
-          </div>
 
-          {/* Navigation */}
-          <nav className="profile-nav">
-            {navigationItems.map(item => (
-              <div
-                key={item.id}
-                className={`nav-item ${activeTab === item.id ? 'active' : ''}`}
-                onClick={() => setActiveTab(item.id)}
-              >
-                <span className="nav-icon">{item.icon}</span>
-                <span className="nav-text">{item.label}</span>
+            {isEditing ? (
+              <form className="profile-form">
+                <div className="form-group full-width">
+                  <label className="form-label">Ảnh đại diện</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                    <div className="user-avatar">
+                      {formData.avatar ? (
+                        <img src={formData.avatar} alt="Avatar" className="avatar-image" />
+                      ) : (
+                        <div className="avatar-placeholder">
+                          {formData.username?.charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                      <label className="avatar-upload" title="Đổi ảnh">
+                        📷
+                        <input
+                          type="file"
+                          accept="image/*"
+                          style={{ display: 'none' }}
+                          onChange={handleAvatarChange}
+                        />
+                      </label>
+                    </div>
+                    <div>
+                      <p style={{ color: '#4B3B2B', marginBottom: '8px' }}>Tải lên ảnh đại diện mới</p>
+                      <p style={{ color: 'rgba(75, 59, 43, 0.7)', fontSize: '0.9rem' }}>
+                        JPG, PNG định dạng được hỗ trợ. Kích thước tối đa 2MB.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Họ và tên</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    name="username"
+                    value={formData.username || ''}
+                    onChange={handleInputChange}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Email</label>
+                  <input
+                    type="email"
+                    className="form-input"
+                    name="email"
+                    value={formData.email || ''}
+                    onChange={handleInputChange}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Số điện thoại</label>
+                  <input
+                    type="tel"
+                    className="form-input"
+                    name="phone"
+                    value={formData.phone || ''}
+                    onChange={handleInputChange}
+                  />
+                </div>
+
+                <div className="form-actions">
+                  <button type="button" className="cancel-btn" onClick={handleCancel}>
+                    Hủy
+                  </button>
+                  <button type="button" className="save-btn" onClick={handleUpdate}>
+                    Lưu thay đổi
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <div className="profile-info">
+                <div style={{ display: 'grid', gap: '20px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '15px', background: '#FDFDFD', borderRadius: '10px' }}>
+                    <span style={{ fontWeight: '500', color: '#4B3B2B' }}>Họ và tên</span>
+                    <span style={{ color: '#4B3B2B' }}>{user.username}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '15px', background: '#FDFDFD', borderRadius: '10px' }}>
+                    <span style={{ fontWeight: '500', color: '#4B3B2B' }}>Email</span>
+                    <span style={{ color: '#4B3B2B' }}>{user.email}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '15px', background: '#FDFDFD', borderRadius: '10px' }}>
+                    <span style={{ fontWeight: '500', color: '#4B3B2B' }}>Số điện thoại</span>
+                    <span style={{ color: '#4B3B2B' }}>{user.phone}</span>
+                  </div>
+                </div>
               </div>
-            ))}
-          </nav>
-        </aside>
-
-        {/* Main Content */}
-        <main className="profile-main">
-          <div className="profile-section">
-          <div className="section-header">
-            <div>
-              <h2 className="section-title">Thông tin cá nhân</h2>
-              <p className="section-subtitle">Quản lý thông tin cá nhân và tài khoản của bạn</p>
-            </div>
-            {!isEditing && (
-              <button className="edit-btn" onClick={() => setDataUpdate(user)}>
-                Chỉnh sửa
-              </button>
             )}
-          </div>
-
-          {isEditing ? (
-            <form className="profile-form">
-              <div className="form-group full-width">
-                <label className="form-label">Ảnh đại diện</label>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                  <div className="user-avatar">
-                    {formData.avatar ? (
-                      <img src={formData.avatar} alt="Avatar" className="avatar-image" />
-                    ) : (
-                      <div className="avatar-placeholder">
-                        {formData.username?.charAt(0).toUpperCase()}
-                      </div>
-                    )}
-                    <label className="avatar-upload" title="Đổi ảnh">
-                      📷
-                      <input
-                        type="file"
-                        accept="image/*"
-                        style={{ display: 'none' }}
-                        onChange={handleAvatarChange}
-                      />
-                    </label>
-                  </div>
-                  <div>
-                    <p style={{ color: '#4B3B2B', marginBottom: '8px' }}>Tải lên ảnh đại diện mới</p>
-                    <p style={{ color: 'rgba(75, 59, 43, 0.7)', fontSize: '0.9rem' }}>
-                      JPG, PNG định dạng được hỗ trợ. Kích thước tối đa 2MB.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Họ và tên</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  name="username"
-                  value={formData.username || ''}
-                  onChange={handleInputChange}
-                />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Email</label>
-                <input
-                  type="email"
-                  className="form-input"
-                  name="email"
-                  value={formData.email || ''}
-                  onChange={handleInputChange}
-                />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Số điện thoại</label>
-                <input
-                  type="tel"
-                  className="form-input"
-                  name="phone"
-                  value={formData.phone || ''}
-                  onChange={handleInputChange}
-                />
-              </div>
-
-              <div className="form-actions">
-                <button type="button" className="cancel-btn" onClick={handleCancel}>
-                  Hủy
-                </button>
-                <button type="button" className="save-btn" onClick={handleUpdate}>
-                  Lưu thay đổi
-                </button>
-              </div>
-            </form>
-          ) : (
-            <div className="profile-info">
-              <div style={{ display: 'grid', gap: '20px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '15px', background: '#FDFDFD', borderRadius: '10px' }}>
-                  <span style={{ fontWeight: '500', color: '#4B3B2B' }}>Họ và tên</span>
-                  <span style={{ color: '#4B3B2B' }}>{user.username}</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '15px', background: '#FDFDFD', borderRadius: '10px' }}>
-                  <span style={{ fontWeight: '500', color: '#4B3B2B' }}>Email</span>
-                  <span style={{ color: '#4B3B2B' }}>{user.email}</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '15px', background: '#FDFDFD', borderRadius: '10px' }}>
-                  <span style={{ fontWeight: '500', color: '#4B3B2B' }}>Số điện thoại</span>
-                  <span style={{ color: '#4B3B2B' }}>{user.phone}</span>
-                </div>
-              </div>
             </div>
-          )}
-          </div>
-        </main>
-      </div>
+          </main>
+        </div>
+      )}
     </div>
   );
 };

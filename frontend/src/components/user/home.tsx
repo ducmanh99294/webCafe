@@ -6,11 +6,12 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { apiFetch } from '../../api/base'; 
 import { notify } from '../../utils/notify';
+import Loading from '../Loading';
 
 const Home: React.FC = () => {
   gsap.registerPlugin(ScrollTrigger);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [_loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState<any>([])
 
   const userId = localStorage.getItem("userId");
@@ -81,18 +82,16 @@ const events = [
     return () => clearInterval(interval);
     }, []);
 
-  const fetchProduct = async () => {
-    setLoading(true)
-    try {
-      const res = await apiFetch(`/api/products`);
-      const data = await res.json();
-      setProducts(data);
-    } catch (err) {
-      console.log(err)
-    } finally {
-      setLoading(false)
-    }
+const fetchProduct = async () => {
+  try {
+    const res = await apiFetch(`/api/products`);
+    setProducts(await res.json());
+  } catch (err) {
+    console.log(err);
+  } finally {
+    setLoading(false);
   }
+};
 
 const addToCart = async (product: any, quantity: number, size?: string) => {
   try {
@@ -312,7 +311,9 @@ return (
           lover.
         </p>
       </div>
-
+      {loading ? <Loading /> : (
+        <div className="products-grid"> ...6 sản phẩm... </div>
+      )}
       <div className="products-grid">
         {products.slice(0, 6).map((product: any) => (
           <div key={product.id} className="product-card">

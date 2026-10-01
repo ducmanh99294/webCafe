@@ -3,12 +3,13 @@ import { useState, useEffect } from 'react';
 import '../../assets/css/admin/order.css';
 import { apiFetch } from '../../api/base'; 
 import { denyAndRedirect, notify } from '../../utils/notify';
+import Loading from '../Loading';
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState<any[]>([]);
   const [filteredOrders, setFilteredOrders] = useState<any[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
-  const [_loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState({
     status: "all",
     type: "all",
@@ -131,6 +132,7 @@ if (role !== 'ADMIN' || !token) {
 
   // console.log(orders)
   return (
+    
     <div className="admin-orders">
         {/* Main Content - Thay đổi phần này để hiển thị orders */}
         <main className="dashboard-main">
@@ -191,6 +193,10 @@ if (role !== 'ADMIN' || !token) {
             </div>
 
             {/* Orders Table */}
+            {loading ? <Loading /> : (
+              <div className="orders-table-container"> ... </div>
+            )}
+
             <div className="orders-table-container">
               <table className="orders-table">
                 <thead>

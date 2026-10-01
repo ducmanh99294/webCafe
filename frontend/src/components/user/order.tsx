@@ -4,11 +4,12 @@ import { Link } from 'react-router-dom';
 import '../../assets/css/user/order.css';
 import { apiFetch } from '../../api/base';
 import { notify } from '../../utils/notify';
+import Loading from '../Loading';
 
 const Orders: React.FC = () => {
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [orders, setOrders] = useState<any>([]);
-
+  const [loading, setLoading] = useState(true);
   const userId = localStorage.getItem("userId");
   const token = localStorage.getItem("token");
 
@@ -69,7 +70,9 @@ const Orders: React.FC = () => {
       }
     } catch (err) {
       console.log(err);
-    }
+    } finally {  
+      setLoading(false)
+    };
   };
 
   const getProgressPercentage = (status: string) => {
@@ -202,7 +205,8 @@ const Orders: React.FC = () => {
         {/* Main Content */}
         <main className="orders-main">
 
-          {orders.length > 0 ? (
+          {loading ? <Loading /> : 
+          orders.length > 0 ? (
             orders.map((order: any) => (
 
               <div

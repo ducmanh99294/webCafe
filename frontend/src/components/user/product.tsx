@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import '../../assets/css/user/product.css';
 import { apiFetch } from '../../api/base'; 
 import { notify } from '../../utils/notify';
+import Loading from '../Loading';
 
 const Products: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('Tất Cả');
@@ -17,39 +18,32 @@ const Products: React.FC = () => {
   const [filteredProducts, setFilteredProducts] = useState(products);
   const [quantity, setQuantity] = useState(1);
   const [showDetail, setShowDetail] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // const api = 'http://localhost:8080'
   const userId = localStorage.getItem("userId");
 
-  useEffect(()=>{
-    fetchCategory();
-    fetchProduct();
-  }, [])
+  useEffect(() => {
+    Promise.all([fetchCategory(), fetchProduct()]).finally(() => setLoading(false));
+  }, []);
 
   const fetchCategory = async () => {
-    setLoading(true)
     try {
       const res = await apiFetch(`/api/categories`);
       const data = await res.json();
       setCategories(data);
     } catch (err) {
       console.log(err)
-    } finally {
-      setLoading(false)
-    }
+    } 
   }
 
   const fetchProduct = async () => {
-    setLoading(true)
     try {
       const res = await apiFetch(`/api/products`);
       const data = await res.json();
       setProducts(data);
     } catch (err) {
       console.log(err)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -350,11 +344,7 @@ return (
         {/* Products Grid */}
         <div className="products-section">
 
-          {loading ? (
-            <div className="loading-state">
-              Loading...
-            </div>
-          ) : (
+          {loading ? <Loading /> : (
             <>
               {filteredProducts.length > 0 ? (
                 <div className="products-grid">

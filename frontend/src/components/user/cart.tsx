@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import '../../assets/css/user/cart.css';
 import { apiFetch } from '../../api/base';
 import { notify } from '../../utils/notify';
+import Loading from '../Loading';
 
 const Cart = () => {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ const Cart = () => {
   const [cart, setCart] = useState<any>([]);
   const [tables, setTables] = useState<any>([]);
   const [roomElements, setRoomElements] = useState<any>([]);
+  const [loading, setLoading] = useState(true);
 
   const [selectedTable, setSelectedTable] = useState<any>(null);
   const [selectedPayment, setSelectedPayment] = useState<any>('');
@@ -106,8 +108,7 @@ const Cart = () => {
     ];
 
     setRoomElements(initialRoomElements);
-    fetchTable();
-    fetchCart();
+    Promise.all([fetchTable(), fetchCart()]).finally(() => setLoading(false));
   }, []);
 
   const paymentMethods = [
@@ -259,6 +260,8 @@ const Cart = () => {
       currency: 'VND'
     }).format(price);
   };
+  
+  if (loading) return <div className="cart-container"><Loading /></div>;
 
   if (cart.length === 0) {
     return (

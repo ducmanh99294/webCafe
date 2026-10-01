@@ -5,28 +5,26 @@ import { apiFetch } from '../../api/base';
 import { denyAndRedirect, notify } from '../../utils/notify';
 
 const AdminReports = () => {
-  const [loading, setLoading] = useState(false);
   const [reports, setReports] = useState<any>([]);
   const [orders, setOrders] = useState<any>([]);
   const [dayReports, setDayReports] = useState<any>([]);
   const [monthReports, setMonthReports] = useState<any>([]);
   const [compareReports, setCompareReports] = useState<any>([]);
   const [productReport, setProductReport] = useState<any>([]);
+  const [loading, setLoading] = useState(true);
   // const api = 'http://localhost:8080'
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role")
 
   useEffect(() => {
-if (role !== 'ADMIN' || !token) {
-  denyAndRedirect();
-  return;
-}
-    fetchReport();
-    fetchTopSellProduct();
-    fetchReportByDay();
-    fetchReportByMonth();
-    fetchCompareReport();
-    fetchOrders();
+    if (role !== 'ADMIN' || !token) {
+      denyAndRedirect();
+      return;
+    }
+    Promise.all([
+      fetchReport(), fetchTopSellProduct(), fetchReportByDay(),
+      fetchReportByMonth(), fetchCompareReport(), fetchOrders(),
+    ]).finally(() => setLoading(false));
   }, []);
 
   const fetchReport = async () => {
@@ -68,7 +66,6 @@ if (role !== 'ADMIN' || !token) {
   }
 
   const fetchReportByDay = async () => {
-    setLoading(true);
     const date = new Date();
     const day = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
     console.log(day)
@@ -77,7 +74,6 @@ if (role !== 'ADMIN' || !token) {
       if(res.ok) {
         const data = await res.json()
         setDayReports(data)
-        setLoading(false)
       }
     } catch (err) {
       console.log(err)
@@ -85,7 +81,6 @@ if (role !== 'ADMIN' || !token) {
   }
 
   const fetchReportByMonth = async () => {
-    setLoading(true);
     const date = new Date();
     const year = date.getFullYear();
     const month = date.getMonth() + 1
@@ -94,8 +89,6 @@ if (role !== 'ADMIN' || !token) {
       if(res.ok) {
         const data = await res.json()
         setMonthReports(data)
-        console.log(data)
-        setLoading(false)
       }
     } catch (err) {
       console.log(err)
@@ -103,7 +96,6 @@ if (role !== 'ADMIN' || !token) {
   }
 
   const fetchOrders = async () => {
-    setLoading(true);
     try {
       const res = await apiFetch(`/api/orders/admin`);
       if (!res.ok) throw new Error("Không thể tải danh sách đơn hàng");
@@ -111,9 +103,7 @@ if (role !== 'ADMIN' || !token) {
       setOrders(data);
     } catch (err) {
       console.error("Lỗi khi lấy đơn hàng:", err);
-    } finally {
-      setLoading(false);
-    }
+    } 
   };
 
   const formatPrice = (price: any) => {
