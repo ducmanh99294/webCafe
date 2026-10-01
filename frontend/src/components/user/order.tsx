@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../../assets/css/user/order.css';
 import { apiFetch } from '../../api/base';
+import { notify } from '../../utils/notify';
 
 const Orders: React.FC = () => {
   const [selectedStatus, setSelectedStatus] = useState('all');
@@ -132,7 +133,7 @@ const Orders: React.FC = () => {
           )
         );
 
-        alert("Order cancelled successfully");
+        notify.success("Order cancelled successfully");
       }
     } catch (err) {
       console.log(err);

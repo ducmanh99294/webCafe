@@ -9,6 +9,8 @@ import AdminReport from './report';
 import AdminEmployee from './employee';
 import AdminManagerUser from './user';
 import { apiFetch } from '../../api/base'; 
+import AdminChat from './chat';
+import { denyAndRedirect } from '../../utils/notify';
 
 const Home: React.FC = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -42,13 +44,14 @@ const Home: React.FC = () => {
     { id: 'reports', label: 'Báo cáo', icon: '📈', badge: null },
     { id: 'users', label: 'khách hàng', icon: '📦', badge: users.length },
     { id: 'employees', label: 'Nhân viên', icon: '👨‍💼', badge: employees.length },
+    { id: 'chat', label: 'Tin nhắn', icon: '💬', badge: null }
   ];
 
   useEffect(() => {
-    if (role !== 'ADMIN' || !token) {
-      alert('Bạn không có quyền truy cập trang này!');
-      window.location.href = '/';
-    };
+if (role !== 'ADMIN' || !token) {
+  denyAndRedirect();
+  return;
+}
     fetchOrders();
     fetchProducts();
     fetchUsers();
@@ -223,6 +226,7 @@ const Home: React.FC = () => {
         {activeNav === 'users' && <AdminManagerUser />}
         {activeNav === 'employees' && <AdminEmployee />}
         {activeNav === 'tables' && <AdminTables />}
+        {activeNav === 'chat' && <AdminChat />}
         </main>
       </div>
     </div>

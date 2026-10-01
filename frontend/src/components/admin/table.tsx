@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import '../../assets/css/admin/table.css';
 import { apiFetch } from '../../api/base'; 
+import { denyAndRedirect } from '../../utils/notify';
 
 const SeatManagement = () => {
   const [roomElements, setRoomElements] = useState<any[]>([]);
@@ -22,10 +23,10 @@ const SeatManagement = () => {
   const role = localStorage.getItem("role");
 
   useEffect(() => {    
-    if (role !== 'ADMIN' || !token) {
-      alert('Bạn không có quyền truy cập trang này!');
-      window.location.href = '/';
-    };
+if (role !== 'ADMIN' || !token) {
+  denyAndRedirect();
+  return;
+}
 
     const initialRoomElements = [
       { id: 'reception1', type: 'reception', x: 50, y: 30, width: 200, height: 60, label: 'QUẦY LỄ TÂN' },
@@ -42,11 +43,6 @@ const SeatManagement = () => {
 
     setRoomElements(initialRoomElements);
     fetchTables();
-
-    if (role !== 'ADMIN' || !token) {
-      alert('Bạn không có quyền truy cập trang này!');
-      window.location.href = '/';
-    };
 
     const timer = setInterval(() => {
       setCurrentTime(new Date());

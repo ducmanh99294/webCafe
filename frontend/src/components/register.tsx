@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import '../assets/css/register.css';
 import { useNavigate } from 'react-router-dom';
 import { apiFetch } from '../api/base';
+import { notify } from '../utils/notify';
 
 const Register: React.FC = () => {
   const [formData, setFormData] = useState<any>({
@@ -70,12 +71,12 @@ const Register: React.FC = () => {
 
       console.log("Registration successful:", data);
 
-      alert("Registration successful!");
+      notify.success("Registration successful!");
       navigate("/login");
 
     } catch (err) {
       console.error("Registration error:", err);
-      alert("Registration failed: " + err);
+      notify.error("Registration failed: " + err);
 
     } finally {
       setLoading(false);

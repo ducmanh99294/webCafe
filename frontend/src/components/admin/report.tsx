@@ -2,6 +2,7 @@
 import  { useState, useEffect } from 'react';
 import '../../assets/css/admin/report.css';
 import { apiFetch } from '../../api/base'; 
+import { denyAndRedirect, notify } from '../../utils/notify';
 
 const AdminReports = () => {
   const [loading, setLoading] = useState(false);
@@ -16,10 +17,10 @@ const AdminReports = () => {
   const role = localStorage.getItem("role")
 
   useEffect(() => {
-    if (role !== 'ADMIN' || !token) {
-      alert('Bạn không có quyền truy cập trang này!');
-      window.location.href = '/';
-    };
+if (role !== 'ADMIN' || !token) {
+  denyAndRedirect();
+  return;
+}
     fetchReport();
     fetchTopSellProduct();
     fetchReportByDay();
@@ -132,7 +133,7 @@ const AdminReports = () => {
 
   const exportReport = () => {
     // In real app, this would generate and download Excel/PDF report
-    alert('Xuất báo cáo thành công!');
+    notify.info('Report export is currently under development.');
   };
 
   const printReport = () => {

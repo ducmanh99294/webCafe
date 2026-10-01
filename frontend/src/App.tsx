@@ -22,6 +22,7 @@ import AdminUsers from "./components/admin/user";
 import AdminTables from "./components/admin/table";
 
 import "./App.css";
+import UserChatWidget from "./components/chat/UserChatWidget";
 
 function AppContent() {
     const location = useLocation();
@@ -57,7 +58,8 @@ function AppContent() {
                 <Route path="/admin/tables" element={<AdminTables />} />
             </Routes>
 
-            {!hideHeaderFooter && <Footer />}
+            {!hideHeaderFooter && <Footer />}{!hideHeaderFooter && <UserChatWidget />}
+            
         </div>
     );
 }

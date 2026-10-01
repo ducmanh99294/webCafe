@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import '../../assets/css/admin/product.css';
 import { apiFetch } from '../../api/base'; 
+import { denyAndRedirect, notify } from '../../utils/notify';
 
 const AdminProducts: React.FC = () => {
   const [products, setProducts] = useState<any[]>([]);
@@ -26,10 +27,10 @@ const AdminProducts: React.FC = () => {
   const role = localStorage.getItem("role");
 
   useEffect(() => {
-    if (role !== 'ADMIN' || !token) {
-      alert('Bạn không có quyền truy cập trang này!');
-      window.location.href = '/';
-    };
+if (role !== 'ADMIN' || !token) {
+  denyAndRedirect();
+  return;
+}
     fetchProducts();
     fetchCategories();
   }, []);
@@ -205,7 +206,7 @@ const AdminProducts: React.FC = () => {
   const removeSizePrice = (index: number) => {
     // Không cho xóa hàng cuối cùng
     if (formData.sizePrices.length <= 1) {
-      alert("Phải có ít nhất một size.");
+      notify.warn("Please choose size.")
       return;
     }
     const newSizePrices = formData.sizePrices.filter((_, i) => i !== index);

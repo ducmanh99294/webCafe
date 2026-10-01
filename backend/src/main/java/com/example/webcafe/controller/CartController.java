@@ -2,7 +2,6 @@ package com.example.webcafe.controller;
 
 import com.example.webcafe.dto.CartRequest;
 import com.example.webcafe.model.Cart;
-import com.example.webcafe.model.Product;
 import com.example.webcafe.service.CartService;
 import com.example.webcafe.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +18,6 @@ public class CartController {
 
     @Autowired
     private CartService cartService;
-
-    @Autowired
-    private ProductService productService;
 
     // Lấy giỏ hàng theo userId
     @GetMapping

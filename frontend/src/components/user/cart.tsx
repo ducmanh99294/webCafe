@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../../assets/css/user/cart.css';
 import { apiFetch } from '../../api/base';
+import { notify } from '../../utils/notify';
 
 const Cart = () => {
   const navigate = useNavigate();
@@ -126,12 +127,12 @@ const Cart = () => {
 
   const handleCheckout = async () => {
     if (!selectedPayment) {
-      alert("Please select a payment method");
+      notify.warn("Please select a payment method");
       return;
     }
 
     if (!hasArrived && !selectedTable) {
-      alert("Please select a table");
+      notify.warn("Please select a table");
       return;
     }
 
@@ -153,7 +154,7 @@ const Cart = () => {
 
       if (!res.ok) throw new Error("Order failed");
 
-      alert("Order placed successfully! Thank you for choosing our cafe.");
+      notify.success("Order placed successfully! Thank you for choosing our cafe.");
       navigate("/");
     } catch (err) {
       console.error("Error placing order:", err);
@@ -554,7 +555,7 @@ const Cart = () => {
                           if (seat.status === 'available') {
                             setSelectedTable(seat);
                           } else {
-                            alert(
+                            notify.warn(
                               'This table is occupied or has already been reserved.'
                             );
                           }

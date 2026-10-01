@@ -67,9 +67,10 @@ public class WebSecurityConfig {
                                 "/api/categories/admin/**",
                                 "/api/employees/admin/**",
                                 "/api/tables/admin/**",
+                                "/api/chat/admin/**",
                                 "/api/users/admin/**")
                         .hasRole("ADMIN")
-                        .requestMatchers("/api/carts/**","/api/orders/{userId}/confirm", "/api/orders/{userId}","/api/users/{id}").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/api/carts/**","/api/orders/{userId}/confirm", "/api/orders/{userId}","/api/users/{id}","/api/users/{id}", "/api/chat/me").hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/products", "/api/products/**","/api/categories","/api/tables").permitAll()
                         .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated()

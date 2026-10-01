@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import '../../assets/css/user/product.css';
 import { apiFetch } from '../../api/base'; 
+import { notify } from '../../utils/notify';
 
 const Products: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('Tất Cả');
@@ -102,8 +103,9 @@ const Products: React.FC = () => {
 
   const addToCart = async (product: any, quantity: any) => {
     if(!userId) {
-      alert("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!");
-      window.location.href = '/login';
+    notify.warn("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!");
+    setTimeout(() => { window.location.href = '/login'; }, 1200);
+
       return;
     }
     let defaultSize = product.sizePrices.find((sp: any) => sp.size === "M");
@@ -133,10 +135,10 @@ const Products: React.FC = () => {
       }
 
       if (!res.ok) throw new Error("Không thể thêm sản phẩm vào giỏ");
-      alert("Thêm vào giỏ hàng thành công!");
+      notify.success("Added to cart successfully!");
     } catch (err) {
       console.error("Lỗi khi thêm vào giỏ hàng:", err);
-      alert("Thêm vào giỏ hàng thất bại!");
+      notify.error("Failed to add to cart!");
     }
   };
 
@@ -168,11 +170,11 @@ const Products: React.FC = () => {
       
       if (!res.ok) throw new Error("Không thể thêm sản phẩm vào giỏ");
       
-      alert("Thêm vào giỏ hàng thành công!");
+      notify.success("Added to cart successfully!");
       handleCloseDetail();
     } catch (err) {
       console.error("Lỗi khi thêm vào giỏ hàng:", err);
-      alert("Thêm vào giỏ hàng thất bại!");
+      notify.error("Failed to add to cart!");
     }
   };
 

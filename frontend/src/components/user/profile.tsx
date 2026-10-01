@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import '../../assets/css/user/profile.css';
 import { apiFetch } from '../../api/base'; 
+import { notify } from '../../utils/notify';
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState('personal');
@@ -74,9 +75,10 @@ const Profile = () => {
       if (res.ok) {
         setUser(formData)
       }
-      alert('Cập nhật thông tin thành công!');
+      notify.success('Information updated successfully!');
     } catch (error) {
       console.error('Error updating user data:', error);
+      notify.error('Information updated failed!');
     }
     setIsEditing(false);
   };

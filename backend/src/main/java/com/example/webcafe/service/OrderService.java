@@ -2,7 +2,9 @@ package com.example.webcafe.service;
 
 import com.example.webcafe.dto.OrderRequest;
 import com.example.webcafe.model.*;
+import com.example.webcafe.model.ChatMessage;
 import com.example.webcafe.repository.CartRepository;
+import com.example.webcafe.repository.ChatMessageRepository;
 import com.example.webcafe.repository.OrderRepository;
 import com.example.webcafe.repository.TableRepository;
 import com.example.webcafe.repository.UserRepository;
@@ -29,6 +31,9 @@ public class OrderService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ChatMessageRepository chatRepository;
 
     // Tạo order mới từ cart
     public Order createOrderFromCart(OrderRequest orderRequest) {
@@ -74,7 +79,12 @@ public class OrderService {
         cartRepository.findByUserId(userId).ifPresent(cartRepository::delete);
 
         // Lưu order
-        return orderRepository.save(order);
+        Order saved = orderRepository.save(order);
+
+        // Tin nhắn hệ thống: xác nhận đã nhận đơn
+        sendSystemMessage(userId, "Quán đã nhận đơn #" + shortId(saved.getId()) + " ✅");
+
+        return saved;
     }
 
     // Lấy tất cả đơn hàng
@@ -91,6 +101,7 @@ public class OrderService {
             map.put("status", order.getStatus());
             map.put("createdAt", order.getCreatedAt());
             map.put("updatedAt", order.getUpdatedAt());
+            map.put("items", order.getItems());
             if (order.getTableId() != null) {
                 tableRepository.findById(order.getTableId())
                         .ifPresentOrElse(
@@ -120,6 +131,7 @@ public class OrderService {
         }
         return list;
     }
+
     // Lấy đơn hàng theo userId
     public List<Order> getOrdersByUser(String userId) {
         return orderRepository.findByUserId(userId);
@@ -129,15 +141,48 @@ public class OrderService {
     public Order updateOrderStatus(String orderId, Order.Status status) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng"));
+
+        Order.Status old = order.getStatus();
         order.setStatus(status);
-        order.setUpdatedAt(java.time.LocalDateTime.now());
+        order.setUpdatedAt(LocalDateTime.now());
+        Order saved = orderRepository.save(order);
 
-        return orderRepository.save(order);
+        // Chỉ gửi tin khi trạng thái thực sự đổi
+        if (old != status) {
+            String code = "#" + shortId(saved.getId());
+            String msg = switch (status) {
+                case processing -> "Your Order " + code + "is being prepared";
+                case completed -> "Your Order " + code + "is ready";
+                case cancelled -> "Your Order " + code + "has been cancelled.";
+                default -> null;
+            };
+            if (msg != null) {
+                sendSystemMessage(saved.getUserId(), msg);
+            }
+        }
 
+        return saved;
     }
 
     // Xóa đơn hàng
     public void deleteOrder(String orderId) {
         orderRepository.deleteById(orderId);
+    }
+
+    // ---------- helpers ----------
+
+    private String shortId(String id) {
+        if (id == null) return "";
+        return id.length() >= 10 ? id.substring(7, 10).toUpperCase() : id;
+    }
+
+    private void sendSystemMessage(String userId, String content) {
+        if (userId == null) return;
+        ChatMessage m = new ChatMessage();
+        m.setConversationId(userId);
+        m.setSenderId("system");
+        m.setSenderRole("ADMIN");
+        m.setContent(content);
+        chatRepository.save(m);
     }
 }

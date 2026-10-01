@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import '../../assets/css/admin/employee.css';
 import { apiFetch } from '../../api/base'; 
+import { denyAndRedirect } from '../../utils/notify';
 
 const AdminEmployee: React.FC = () => {
   const [employees, setEmployees] = useState<any>([]);
@@ -26,9 +27,9 @@ const AdminEmployee: React.FC = () => {
 
   useEffect(() => {
     if (rolee !== 'ADMIN' || !token) {
-      alert('Bạn không có quyền truy cập trang này!');
-      window.location.href = '/';
-    };
+      denyAndRedirect();
+      return;
+    }
     fetchEmployee();
   }, [])
   const filteredEmployees = employees.filter((employee: any) =>
@@ -132,7 +133,7 @@ const AdminEmployee: React.FC = () => {
   } 
 
   const handleDelete = async (id: any) => {
-    window.confirm('Bạn có chắc muốn xóa nhân viên này?')
+    if (!window.confirm('Bạn có chắc muốn xóa ...?')) return;
     try {
       const res = await apiFetch(`/api/employees/admin/${id}`, {
         method: 'DELETE',

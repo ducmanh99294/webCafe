@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../../assets/css/admin/dashboard.css';
 import { apiFetch } from '../../api/base'; 
+import { denyAndRedirect } from '../../utils/notify';
 
 const AdminDashboard = () => {
   const [monthReports, setMonthReports] = useState<any>([]);
@@ -17,9 +18,9 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     if (role !== 'ADMIN' || !token) {
-      alert('Bạn không có quyền truy cập trang này!');
-      window.location.href = '/';
-    };
+      denyAndRedirect();
+      return;
+    }
     fetchReportByMonth();
     fetchTopSellProduct();
     fetchOrders();

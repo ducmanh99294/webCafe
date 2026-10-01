@@ -5,6 +5,7 @@ import '../../assets/css/user/home.css';
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { apiFetch } from '../../api/base'; 
+import { notify } from '../../utils/notify';
 
 const Home: React.FC = () => {
   gsap.registerPlugin(ScrollTrigger);
@@ -96,11 +97,11 @@ const events = [
 const addToCart = async (product: any, quantity: number, size?: string) => {
   try {
     if (!product?.sizePrices?.length) {
-      alert("Sản phẩm chưa có size/giá.");
+      notify.warn("Please choose size");
       return;
     }
 
-    if (!product.available) { alert("Sản phẩm đã hết hàng"); return; }
+    if (!product.available) { notify.warn("Product is out of stock."); return; }
 
     const selectedSize = size ?? product.sizePrices[0].size;
 
@@ -123,10 +124,10 @@ const addToCart = async (product: any, quantity: number, size?: string) => {
       const msg = await res.text(); // message lỗi từ server
       throw new Error(msg || "Không thể thêm sản phẩm vào giỏ");
     }
-    alert("Success!");
+    notify.success("Success!");
   } catch (err) {
     console.error("Lỗi khi thêm vào giỏ hàng:", err);
-    alert("Failed");
+    notify.success("Failed");
   }
 };
   

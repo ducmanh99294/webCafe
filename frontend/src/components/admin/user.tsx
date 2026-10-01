@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import '../../assets/css/admin/user.css';
 import { apiFetch } from '../../api/base'; 
+import { denyAndRedirect } from '../../utils/notify';
 
 const AdminUsers: React.FC = () => {
   const [users, setUsers] = useState<any>([]);
@@ -47,10 +48,10 @@ const AdminUsers: React.FC = () => {
   ];
 
   useEffect(() => {
-    if (role !== 'ADMIN' || !token) {
-      alert('Bạn không có quyền truy cập trang này!');
-      window.location.href = '/';
-    };
+if (role !== 'ADMIN' || !token) {
+  denyAndRedirect();
+  return;
+}
     fetchUser();
   }, []);
 
@@ -224,7 +225,7 @@ const AdminUsers: React.FC = () => {
   };
 
   const handleDeleteUser = async (id: any) => {
-    window.confirm('Bạn có chắc muốn xóa tài khoản này?')
+    if (!window.confirm('Bạn có chắc muốn xóa ...?')) return;
     try {
       const res = await apiFetch(`/api/users/admin/${id}`, {
         method: 'DELETE',

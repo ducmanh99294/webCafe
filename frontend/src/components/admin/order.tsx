@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import '../../assets/css/admin/order.css';
 import { apiFetch } from '../../api/base'; 
+import { denyAndRedirect, notify } from '../../utils/notify';
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState<any[]>([]);
@@ -22,10 +23,10 @@ const AdminOrders = () => {
   const role = localStorage.getItem("role");
 
   useEffect(() => {
-    if (role !== 'ADMIN' || !token) {
-      alert('Bạn không có quyền truy cập trang này!');
-      window.location.href = '/';
-    };
+if (role !== 'ADMIN' || !token) {
+  denyAndRedirect();
+  return;
+}
     fetchOrders();
   }, []);
 
@@ -94,10 +95,10 @@ const AdminOrders = () => {
         )
       );
 
-      alert("Cập nhật trạng thái thành công!");
+      notify.success("Update Success!");
     } catch (err) {
       console.error(err);
-      alert("Cập nhật trạng thái thất bại!");
+      notify.error("Update Failed!");
     }
   };
 
