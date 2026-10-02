@@ -11,16 +11,23 @@ import AdminManagerUser from './user';
 import { apiFetch } from '../../api/base'; 
 import AdminChat from './chat';
 import { denyAndRedirect } from '../../utils/notify';
+import { useSearchParams } from 'react-router-dom';
 
 const Home: React.FC = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [activeNav, setActiveNav] = useState('dashboard');
+  const [searchParams] = useSearchParams();
+  const [activeNav, setActiveNav] = useState(() => searchParams.get('tab') || 'dashboard');
   const [orders, setOrders] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
   const [employees, setEmployees] = useState<any>([]);
   const [tables, setTables] = useState<any[]>([]);
   
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab) setActiveNav(tab);
+  }, [searchParams]);
+
   // const api = 'http://localhost:8080'
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
