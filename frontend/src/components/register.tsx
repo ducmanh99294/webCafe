@@ -69,7 +69,6 @@ const Register: React.FC = () => {
 
       const data = await res.json();
 
-      console.log("Registration successful:", data);
 
       notify.success("Registration successful!");
       navigate("/login");

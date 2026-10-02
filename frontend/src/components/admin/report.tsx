@@ -35,7 +35,6 @@ const AdminReports = () => {
       setReports(data)
     } 
     } catch (err) {
-      console.log(err)
     } 
   }
 
@@ -46,7 +45,6 @@ const AdminReports = () => {
         const data = await res.json()
         setProductReport(data)      }
     } catch (err) {
-      console.log(err)
     }
   }
 
@@ -58,17 +56,14 @@ const AdminReports = () => {
       if(res.ok) {
         const data = await res.json()
         setCompareReports(data);
-        console.log(data)
       }
     } catch (err) {
-      console.log(err)
     }
   }
 
   const fetchReportByDay = async () => {
     const date = new Date();
     const day = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
-    console.log(day)
     try {
       const res = await apiFetch(`/api/report/admin/${day}`)
       if(res.ok) {
@@ -76,7 +71,6 @@ const AdminReports = () => {
         setDayReports(data)
       }
     } catch (err) {
-      console.log(err)
     } 
   }
 
@@ -91,7 +85,6 @@ const AdminReports = () => {
         setMonthReports(data)
       }
     } catch (err) {
-      console.log(err)
     } 
   }
 

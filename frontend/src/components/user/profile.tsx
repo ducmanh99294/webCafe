@@ -63,7 +63,6 @@ const Profile = () => {
   };
 
   const handleUpdate = async () => {
-    console.log(JSON.stringify(formData, null, 2));
     try {
       const res = await apiFetch(`/api/users/${userId}`, {
         method: 'PUT',

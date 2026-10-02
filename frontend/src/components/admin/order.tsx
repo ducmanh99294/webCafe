@@ -79,7 +79,6 @@ if (role !== 'ADMIN' || !token) {
   // 🔹 Cập nhật trạng thái đơn hàng bằng API
   const updateOrderStatus = async (orderId: string, newStatus: string) => {
     try {
-        console.log(JSON.stringify({ status: newStatus }))
       const res = await apiFetch(`/api/orders/admin/${orderId}/status`, {
         method: "PUT",
         body: JSON.stringify({ status: newStatus }),
@@ -130,7 +129,7 @@ if (role !== 'ADMIN' || !token) {
   const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
-  // console.log(orders)
+  // 
   return (
     
     <div className="admin-orders">

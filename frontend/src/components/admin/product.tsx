@@ -46,7 +46,6 @@ if (role !== 'ADMIN' || !token) {
 
       if (!res.ok) throw new Error('Không thể tải danh sách sản phẩm');
       const data = await res.json();
-      console.log(data)
       setProducts(data);
     } catch (err) {
       console.error('Lỗi khi lấy danh sách sản phẩm:', err);
@@ -67,7 +66,6 @@ if (role !== 'ADMIN' || !token) {
   // hàm xử lí
   const handleAddProduct = async (e: any) => {
     e.preventDefault()
-    console.log(JSON.stringify(formData,null,2))
     try {
       const res = await apiFetch(`/api/products/admin`,{
         method: 'POST',
@@ -79,13 +77,11 @@ if (role !== 'ADMIN' || !token) {
         setShowModal(false);
       }
     } catch (err) {
-      console.log(err)
     }
   }
 
   const handleEditProduct = async (e: any) => {
     e.preventDefault()
-    console.log(JSON.stringify(formData,null,2))
     try {
       const res = await apiFetch(`/api/products/admin/${editingProduct.id}`,{
         method: 'PUT',
@@ -97,7 +93,6 @@ if (role !== 'ADMIN' || !token) {
         setShowModal(false);
       }
     } catch (err) {
-      console.log(err)
     }
   }
 

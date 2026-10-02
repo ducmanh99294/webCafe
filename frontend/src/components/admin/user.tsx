@@ -68,7 +68,6 @@ if (role !== 'ADMIN' || !token) {
       setUsers(data);
     }
     } catch (err) {
-      console.log(err)
     }
   }
 
@@ -124,7 +123,6 @@ if (role !== 'ADMIN' || !token) {
       setShowModal(false);
       }
     } catch (err) {
-      console.log(err);
     }
   }
 
@@ -141,14 +139,12 @@ if (role !== 'ADMIN' || !token) {
       });
       if (res.ok) {
       const data = await res.json();
-      console.log("data", data)
       setUsers((pre: any) => 
         pre.map((e: any) => e.id === editingUser.id ? {...e, ...data} : e)
         );
       setShowModal(false);
       }
     } catch (err) {
-      console.log(err);
     }
   }
 
@@ -190,14 +186,12 @@ if (role !== 'ADMIN' || !token) {
       });
       if (res.ok) {
       const data = await res.json();
-      console.log("data", data)
       setUsers((pre: any) => 
         pre.map((e: any) => e.id === id ? {...e, ...data} : e)
         );
       setShowModal(false);
       }
     } catch (err) {
-      console.log(err);
     }
   };
 
@@ -213,14 +207,12 @@ if (role !== 'ADMIN' || !token) {
       });
       if (res.ok) {
       const data = await res.json();
-      console.log("data", data)
       setUsers((pre: any) => 
         pre.map((e: any) => e.id === id ? {...e, ...data} : e)
         );
       setShowModal(false);
       }
     } catch (err) {
-      console.log(err);
     }
   };
 
@@ -238,7 +230,6 @@ if (role !== 'ADMIN' || !token) {
         setUsers((pre: any) => pre.filter((e: any) => e.id !== id));
       }
     } catch (err) {
-      console.log(err)
     }    
   };
 

@@ -33,7 +33,6 @@ const Products: React.FC = () => {
       const data = await res.json();
       setCategories(data);
     } catch (err) {
-      console.log(err)
     } 
   }
 
@@ -43,7 +42,6 @@ const Products: React.FC = () => {
       const data = await res.json();
       setProducts(data);
     } catch (err) {
-      console.log(err)
     }
   }
 
@@ -125,7 +123,6 @@ const Products: React.FC = () => {
       });
       
       if (product == null) {
-      console.log("Dữ liệu sản phẩm (product) bị thiếu trong request.");
       }
 
       if (!res.ok) throw new Error("Không thể thêm sản phẩm vào giỏ");

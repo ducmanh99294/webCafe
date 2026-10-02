@@ -58,7 +58,6 @@ if (role !== 'ADMIN' || !token) {
         setTables(data);
       }
     } catch (err) {
-      console.log('Error fetching tables:', err);
     }
   };
 
@@ -73,7 +72,6 @@ if (role !== 'ADMIN' || !token) {
         setTables((prev) => [...prev, data]);
       }
     } catch (err) {
-      console.log('Error adding table:', err);
     }
   };
 
@@ -95,16 +93,10 @@ if (role !== 'ADMIN' || !token) {
         setTables((prev) => prev.map((t) => (t.id === table.id ? updated : t)));
       }
     } catch (err) {
-      console.log('Error updating table:', err);
     }
   };
 
   const handleUpdateStatusTable = async (table: any, sta: string) => {
-        console.log(JSON.stringify({         number: table.number,
-          seats: table.seats,
-          status: sta,
-          x: table.x,
-          y: table.y  },null,2))
     try {
       const res = await apiFetch(`/api/tables/${table.id}`, {
         method: 'PUT',
@@ -121,22 +113,18 @@ if (role !== 'ADMIN' || !token) {
         setTables((prev) => prev.map((t) => (t.id === table.id ? updated : t)));
       }
     } catch (err) {
-      console.log('Error updating status:', err);
     }
   };
 
   const handleDeleteTable = async (table: any) => {
-    console.log(table)
     try {
       const res = await apiFetch(`/api/tables/admin/${table.id}`, {
         method: 'DELETE',
       });
       if (res.ok) {
         setTables((prev) => prev.filter((t) => t.id !== table.id));
-        console.log("sc")
       }
     } catch (err) {
-      console.log('Error deleting table:', err);
     }
   };
 

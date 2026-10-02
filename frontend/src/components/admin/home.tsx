@@ -126,11 +126,9 @@ const Home: React.FC = () => {
 
       if (res.ok) {
         const data = await res.json();
-        console.log('Tables:', data);
         setTables(data);
       }
     } catch (err) {
-      console.log('Error fetching tables:', err);
     }
   };
 
@@ -143,7 +141,6 @@ const Home: React.FC = () => {
         setEmployees(data);
       }
     } catch (err) {
-      console.log('Error fetching employees:', err);
     }
   };
 

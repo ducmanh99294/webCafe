@@ -57,7 +57,6 @@ const AdminEmployee: React.FC = () => {
         setEmployees(data);
       }
     } catch (err) {
-      console.log(err)
     }
   }
   const handleSetAddEmployee = () => {
@@ -75,7 +74,6 @@ const AdminEmployee: React.FC = () => {
   }
 
   const handleSetEditEmployee = (employee: any) => {
-    console.log(employee)
     setEditingEmployee(employee)
     setFormData({
       name: employee.name,
@@ -92,7 +90,6 @@ const AdminEmployee: React.FC = () => {
 
   const handleAdd = async (e: any) => {
     e.preventDefault();
-    console.log(JSON.stringify(formData ,null, 2))
     try {
       const res = await apiFetch(`/api/employees/admin`, {
         method: "POST",
@@ -104,13 +101,11 @@ const AdminEmployee: React.FC = () => {
         setShowModel(false);
       }
     } catch (err) {
-      console.log(err)
     }
   } 
 
   const handleEdit = async (e: any) => {
     e.preventDefault();
-    console.log(JSON.stringify(formData ,null, 2))
     try {
       const res = await apiFetch(`/api/employees/admin/${editingEmployee.id}`, {
         method: "PUT",
@@ -118,7 +113,6 @@ const AdminEmployee: React.FC = () => {
       });
       if (res.ok) {
       const data = await res.text(); 
-      console.log(data)
       const updatedEmployee = JSON.parse(data);
       setEmployees((prev: any) =>
         prev.map((emp: any) =>
@@ -128,7 +122,6 @@ const AdminEmployee: React.FC = () => {
         setShowModel(false);
       }
     } catch (err) {
-      console.log(err)
     }
   } 
 
@@ -146,7 +139,6 @@ const AdminEmployee: React.FC = () => {
         setEmployees((pre: any) => pre.filter((e: any) => e.id !== id));
       }
     } catch (err) {
-      console.log(err)
     }
   };
 

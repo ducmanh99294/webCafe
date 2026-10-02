@@ -87,7 +87,6 @@ const fetchProduct = async () => {
     const res = await apiFetch(`/api/products`);
     setProducts(await res.json());
   } catch (err) {
-    console.log(err);
   } finally {
     setLoading(false);
   }
@@ -398,9 +397,6 @@ return (
                   {event.description}
                 </p>
 
-                <Link to="/events" className="event-button">
-                  Learn More
-                </Link>
               </div>
             </div>
           ))}

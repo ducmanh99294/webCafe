@@ -11,6 +11,10 @@ RUN chmod +x ./gradlew
 RUN ./gradlew clean build --no-daemon -x test
 
 FROM eclipse-temurin:17-jre-jammy
+
+ENV TZ=Asia/Ho_Chi_Minh
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 WORKDIR /app
 
 COPY --from=build /workspace/build/libs/*.jar app.jar

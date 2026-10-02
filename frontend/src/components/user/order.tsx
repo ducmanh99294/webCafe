@@ -65,11 +65,9 @@ const Orders: React.FC = () => {
 
       if (res.ok) {
         const data = await res.json();
-        console.log(data);
         setOrders(data);
       }
     } catch (err) {
-      console.log(err);
     } finally {  
       setLoading(false)
     };
@@ -139,7 +137,6 @@ const Orders: React.FC = () => {
         notify.success("Order cancelled successfully");
       }
     } catch (err) {
-      console.log(err);
     }
   };
 

@@ -45,7 +45,6 @@ const AdminDashboard = () => {
         setMonthReports(data)
       }
     } catch (err) {
-      console.log(err)
     } 
   }
 
@@ -57,7 +56,6 @@ const AdminDashboard = () => {
         setProductReport(data)      
       }
     } catch (err) {
-      console.log(err)
     }
   }
 
@@ -79,7 +77,6 @@ const AdminDashboard = () => {
   const formatDate = (dateTime: string) =>
     new Date(dateTime).toLocaleString("vi-VN");
 
-  console.log()
   return (
     <div className="admin-dashboard">
         {/* Main Content */}
