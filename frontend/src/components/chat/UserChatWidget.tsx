@@ -1,10 +1,11 @@
 // components/chat/UserChatWidget.tsx
 // Widget chat phía user: nút nổi + badge tin chưa đọc + panel chat mượt mà, responsive.
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import ChatBox from './ChatBox';
 import { apiFetch } from '../../api/base';
+import { subscribeChatEvents, useChatSocketStatus } from './chatSocket';
 
-const SEEN = import.meta.env.SEEN_KEY;
+const SEEN_KEY = 'webcafe_chat_seen_id';
 
 const ChatBubbleIcon = ({ open }: { open: boolean }) => open ? (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -26,35 +27,46 @@ export default function UserChatWidget() {
   const [unread, setUnread] = useState(0);
   const openRef = useRef(open);
   openRef.current = open;
+  const wsUp = useChatSocketStatus(); // true = WebSocket đang nối, badge tự cập nhật qua sự kiện
 
   // Đánh dấu đã xem: khi mở chat, lưu id tin mới nhất
   const markSeen = (id: number | string) => {
     try {
-      localStorage.setItem(SEEN, String(id));
+      localStorage.setItem(SEEN_KEY, String(id));
       setUnread(0);
     } catch { /* ignore */ }
   };
 
-  // Đếm tin chưa đọc khi widget đang đóng (poll nhẹ mỗi 5s)
+  // Đếm tin chưa đọc khi widget đang đóng
+  const check = useCallback(async () => {
+    if (openRef.current) return;
+    try {
+      const res = await apiFetch('/api/chat/me');
+      if (!res.ok) return;
+      const data: any[] = await res.json();
+      const seen = localStorage.getItem(SEEN_KEY);
+      const fresh = data.filter(m => m.senderRole === 'ADMIN' && String(m.id) !== String(seen) &&
+        (seen == null || Number(m.id) > Number(seen)));
+      setUnread(fresh.length);
+    } catch { /* im lặng */ }
+  }, []);
+
+  // poll dự phòng khi WebSocket chưa kết nối
   useEffect(() => {
     if (!allowed) return;
-    let alive = true;
-    const check = async () => {
-      if (openRef.current) return;
-      try {
-        const res = await apiFetch('/api/chat/me');
-        if (!res.ok || !alive) return;
-        const data: any[] = await res.json();
-        const seen = localStorage.getItem(SEEN);
-        const fresh = data.filter(m => m.senderRole === 'ADMIN' && String(m.id) !== String(seen) &&
-          (seen == null || Number(m.id) > Number(seen)));
-        if (alive) setUnread(fresh.length);
-      } catch { /* im lặng */ }
-    };
     check();
-    const t = setInterval(check, 5000);
-    return () => { alive = false; clearInterval(t); };
-  }, [allowed]);
+    if (wsUp) return;
+    const t = setInterval(() => { if (!document.hidden) check(); }, 5000);
+    return () => clearInterval(t);
+  }, [allowed, wsUp, check]);
+
+  // WebSocket: có tin mới từ admin -> kiểm tra badge ngay
+  useEffect(() => {
+    if (!allowed) return;
+    return subscribeChatEvents((e) => {
+      if (e.type === 'chat' && e.event === 'new_message' && e.message?.senderRole === 'ADMIN') check();
+    });
+  }, [allowed, check]);
 
   // ESC để đóng
   useEffect(() => {

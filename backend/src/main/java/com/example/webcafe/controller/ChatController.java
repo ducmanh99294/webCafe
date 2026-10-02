@@ -4,6 +4,8 @@ import com.example.webcafe.model.User;
 import com.example.webcafe.model.ChatMessage;
 import com.example.webcafe.repository.ChatMessageRepository;
 import com.example.webcafe.repository.UserRepository;
+import com.example.webcafe.websocket.ChatWebSocketHandler;
+import com.example.webcafe.websocket.ChatWsTicketService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,15 +17,19 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 // controller/ChatController.java
+// Bản WebSocket: sau khi lưu/xóa/đánh dấu đã đọc -> bắn sự kiện realtime qua ChatWebSocketHandler.
 @RestController
 @RequestMapping("/api/chat")
 public class ChatController {
 
     @Autowired private ChatMessageRepository repo;
     @Autowired private UserRepository userRepository;
+    @Autowired private ChatWebSocketHandler ws;
+    @Autowired private ChatWsTicketService ticketService;
 
     // ---- USER: chỉ chat với admin, conversationId = chính mình ----
     @GetMapping("/me")
@@ -34,7 +40,10 @@ public class ChatController {
     @PostMapping("/me")
     public ResponseEntity<?> sendAsUser(@AuthenticationPrincipal User me,
                                         @RequestBody Map<String, String> body) {
-        return save(me.getId(), me.getId(), "USER", body.get("content"));
+        ChatMessage saved = saveMessage(me.getId(), me.getId(), "USER", body.get("content"));
+        if (saved == null) return ResponseEntity.badRequest().body("Nội dung không hợp lệ");
+        ws.broadcastNewMessage(saved); // realtime -> admin nhận ngay
+        return ResponseEntity.ok(saved);
     }
 
     // ---- ADMIN ----
@@ -76,6 +85,7 @@ public class ChatController {
                 repo.findByConversationIdAndSenderRoleAndReadFalse(userId, "USER");
         unread.forEach(m -> m.setRead(true));
         repo.saveAll(unread);
+        ws.broadcastEvent("read", userId, Map.of()); // tab admin khác cập nhật badge ngay
         return ResponseEntity.ok(Map.of("marked", unread.size()));
     }
 
@@ -83,7 +93,10 @@ public class ChatController {
     public ResponseEntity<?> adminSend(@AuthenticationPrincipal User admin,
                                        @PathVariable String userId,
                                        @RequestBody Map<String, String> body) {
-        return save(userId, admin.getId(), "ADMIN", body.get("content"));
+        ChatMessage saved = saveMessage(userId, admin.getId(), "ADMIN", body.get("content"));
+        if (saved == null) return ResponseEntity.badRequest().body("Nội dung không hợp lệ");
+        ws.broadcastNewMessage(saved); // realtime -> khách + tab admin khác nhận ngay
+        return ResponseEntity.ok(saved);
     }
 
     // ADMIN xóa toàn bộ cuộc trò chuyện với 1 khách
@@ -91,15 +104,34 @@ public class ChatController {
     public ResponseEntity<?> deleteConversation(@PathVariable String userId) {
         List<ChatMessage> all = repo.findByConversationIdOrderByCreatedAtAsc(userId);
         repo.deleteAll(all);
+        ws.broadcastEvent("conversation_deleted", userId, Map.of());
         return ResponseEntity.ok(Map.of("deleted", all.size()));
     }
 
     // ADMIN xóa 1 tin nhắn
     @DeleteMapping("/admin/message/{messageId}")
     public ResponseEntity<?> deleteMessage(@PathVariable String messageId) {
-        if (!repo.existsById(messageId)) return ResponseEntity.notFound().build();
+        Optional<ChatMessage> opt = repo.findById(messageId);
+        if (opt.isEmpty()) return ResponseEntity.notFound().build();
+        String cid = opt.get().getConversationId();
         repo.deleteById(messageId);
+        ws.broadcastEvent("message_deleted", cid, Map.of("messageId", messageId));
         return ResponseEntity.ok(Map.of("deleted", messageId));
+    }
+
+    // ---- WEBSOCKET: cấp ticket dùng 1 lần để mở ws://.../ws/chat?ticket=... ----
+    @GetMapping("/ws-ticket")
+    public Map<String, String> wsTicket(@AuthenticationPrincipal User me) {
+        return Map.of("ticket", ticketService.create(me.getId(), roleOf(me)));
+    }
+
+    private String roleOf(User me) {
+        if (me instanceof org.springframework.security.core.userdetails.UserDetails ud) {
+            boolean admin = ud.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority() != null && a.getAuthority().contains("ADMIN"));
+            return admin ? "ADMIN" : "USER";
+        }
+        return "USER";
     }
 
     // ---- helpers ----
@@ -113,14 +145,13 @@ public class ChatController {
         return repo.findByConversationIdOrderByCreatedAtAsc(cid);
     }
 
-    private ResponseEntity<?> save(String cid, String senderId, String role, String content) {
-        if (content == null || content.isBlank() || content.length() > 1000)
-            return ResponseEntity.badRequest().body("Nội dung không hợp lệ");
+    private ChatMessage saveMessage(String cid, String senderId, String role, String content) {
+        if (content == null || content.isBlank() || content.length() > 1000) return null;
         ChatMessage m = new ChatMessage();
         m.setConversationId(cid);
         m.setSenderId(senderId);
         m.setSenderRole(role);
         m.setContent(content.trim());
-        return ResponseEntity.ok(repo.save(m));
+        return repo.save(m);
     }
 }

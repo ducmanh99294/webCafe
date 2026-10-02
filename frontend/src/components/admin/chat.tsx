@@ -7,6 +7,7 @@ import { useSearchParams } from 'react-router-dom';
 import { apiFetch } from '../../api/base';
 import ChatBox, { ChatMessage } from '../chat/ChatBox';
 import { playChatBeep } from './ChatNotifier';
+import { subscribeChatEvents, useChatSocketStatus } from '../chat/chatSocket';
 
 interface Conv {
   userId: string;
@@ -77,6 +78,7 @@ export default function AdminChat() {
   const knownIds = useRef(new Set<string>());
   const selectedRef = useRef(selected);
   selectedRef.current = selected;
+  const wsUp = useChatSocketStatus(); // true = WebSocket đang nối, danh sách tự cập nhật qua sự kiện
 
   const totalUnread = convs.reduce((s, c) => s + (c.unread || 0), 0);
   const selectedConv = convs.find(c => c.userId === selected);
@@ -85,7 +87,7 @@ export default function AdminChat() {
     ? convs.filter(c => c.username.toLowerCase().includes(needle) || c.lastMessage.toLowerCase().includes(needle))
     : convs;
 
-  /* ---------- tải danh sách hội thoại (poll 5s) ---------- */
+  /* ---------- tải danh sách hội thoại (poll dự phòng khi WS chưa kết nối) ---------- */
   const loadConvs = useCallback(async () => {
     try {
       const res = await apiFetch('/api/chat/admin/conversations');
@@ -94,9 +96,20 @@ export default function AdminChat() {
   }, []);
   useEffect(() => {
     loadConvs();
-    const t = setInterval(loadConvs, 5000);
-    return () => clearInterval(t);
-  }, [loadConvs]);
+    if (wsUp) return;
+    const t = setInterval(() => { if (!document.hidden) loadConvs(); }, 5000);
+    const onVisible = () => { if (!document.hidden) loadConvs(); };
+    window.addEventListener('focus', onVisible);
+    document.addEventListener('visibilitychange', onVisible);
+    return () => {
+      clearInterval(t);
+      window.removeEventListener('focus', onVisible);
+      document.removeEventListener('visibilitychange', onVisible);
+    };
+  }, [loadConvs, wsUp]);
+
+  /* ---------- WebSocket: có sự kiện chat -> tải lại danh sách ngay ---------- */
+  useEffect(() => subscribeChatEvents(() => { loadConvs(); }), [loadConvs]);
 
   /* Rời trang chat -> báo không còn xem hội thoại nào */
   useEffect(() => () => setViewing(null), []);
@@ -192,12 +205,13 @@ export default function AdminChat() {
         .conv-row:hover .conv-del { opacity: 1; }
       `}</style>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr', height: '72vh', minHeight: 480,
+      <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gridTemplateRows: 'minmax(0, 1fr)',
+        height: '72vh', minHeight: 480,
         background: '#fff', borderRadius: 16, overflow: 'hidden', border: `1px solid ${C.line}`,
         boxShadow: '0 4px 20px rgba(75,59,43,.06)' }}>
 
         {/* ===== Cột trái: danh sách hội thoại ===== */}
-        <div style={{ borderRight: `1px solid ${C.line}`, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+        <div style={{ borderRight: `1px solid ${C.line}`, display: 'flex', flexDirection: 'column', minWidth: 0, minHeight: 0 }}>
           <div style={{ padding: '12px 14px 8px', borderBottom: `1px solid ${C.line}` }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
               <div style={{ fontWeight: 800, fontSize: 16, color: C.coffee, display: 'flex', alignItems: 'center', gap: 8 }}>

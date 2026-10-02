@@ -5,6 +5,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { apiFetch } from '../../api/base';
+import { subscribeChatEvents, useChatSocketStatus } from '../chat/chatSocket';
 
 interface Conv {
   userId: string;
@@ -55,6 +56,8 @@ export default function ChatNotifier() {
   const prevUnread = useRef(new Map<string, number>());
   const viewingRef = useRef<string | null>(null); // hội thoại admin đang mở xem
   const navigate = useNavigate();
+  const wsUp = useChatSocketStatus(); // true = WebSocket đang nối, sự kiện tới là xử lý ngay
+  const pollRef = useRef<() => void>(() => {});
 
   // Theo dõi quyền admin (khi login/logout không reload trang)
   useEffect(() => {
@@ -84,7 +87,8 @@ export default function ChatNotifier() {
     if (soundOn()) playChatBeep();
   };
 
-  /* Poll nhẹ mỗi 10s, phát hiện tin nhắn mới qua số lượng unread tăng */
+  /* Poll dự phòng khi WebSocket chưa kết nối (phát hiện tin nhắn mới qua số lượng unread tăng).
+     Khi WS đã nối, mỗi sự kiện sẽ gọi poll() ngay nên không cần poll định kỳ. */
   useEffect(() => {
     if (!isAdmin) return;
     let alive = true;
@@ -117,9 +121,26 @@ export default function ChatNotifier() {
       } catch { /* im lặng */ }
     };
     seed();
-    const t = setInterval(poll, 10000);
-    return () => { alive = false; clearInterval(t); };
+    pollRef.current = poll;
+    if (wsUp) return () => { alive = false; }; // WS đang chạy -> không poll định kỳ
+    const t = setInterval(() => { if (!document.hidden) poll(); }, 5000);
+    const onVisible = () => { if (!document.hidden) poll(); };
+    window.addEventListener('focus', onVisible);
+    document.addEventListener('visibilitychange', onVisible);
+    return () => {
+      alive = false;
+      clearInterval(t);
+      window.removeEventListener('focus', onVisible);
+      document.removeEventListener('visibilitychange', onVisible);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAdmin, wsUp]);
+
+  /* WebSocket: có sự kiện chat -> kiểm tra ngay qua API,
+     tái dùng logic phát hiện unread tăng (toast/âm thanh/browser notification) sẵn có */
+  useEffect(() => {
+    if (!isAdmin) return;
+    return subscribeChatEvents(() => { pollRef.current(); });
   }, [isAdmin]);
 
   /* Đếm tin chưa đọc trên tiêu đề tab (giữ nguyên tiêu đề gốc của trang) */

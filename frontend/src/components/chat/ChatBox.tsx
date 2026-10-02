@@ -4,6 +4,7 @@
 // Tương thích ngược: <ChatBox path mine /> vẫn chạy như cũ (không header).
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { apiFetch } from '../../api/base';
+import { subscribeChatEvents, useChatSocketStatus, ChatWsEvent } from './chatSocket';
 
 export interface ChatMessage {
   id: number | string;
@@ -109,6 +110,7 @@ export default function ChatBox({ path, mine, title, subtitle, onClose, onLatest
   const unreadSet = useMemo(() => new Set((unreadIds ?? []).map(String)), [unreadIds]);
 
   const showHeader = Boolean(title || onClose);
+  const wsUp = useChatSocketStatus(); // true = WebSocket đang nối, không cần poll
 
   /* ---------- load ---------- */
   const load = async (silent = true) => {
@@ -132,6 +134,7 @@ export default function ChatBox({ path, mine, title, subtitle, onClose, onLatest
     finally { if (!silent) setLoading(false); }
   };
 
+  /* ---------- load lần đầu khi đổi hội thoại ---------- */
   useEffect(() => {
     setLoading(true);
     setMsgs([]);
@@ -139,10 +142,56 @@ export default function ChatBox({ path, mine, title, subtitle, onClose, onLatest
       // lần đầu: nhảy thẳng xuống cuối, không animation
       requestAnimationFrame(() => scrollRef.current?.scrollTo({ top: 1e9 }));
     });
-    const t = setInterval(() => load(true), 3000);
-    return () => clearInterval(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [path]);
+
+  /* ---------- poll dự phòng: chỉ chạy khi WebSocket chưa kết nối ---------- */
+  useEffect(() => {
+    if (wsUp) return;
+    const t = setInterval(() => { if (!document.hidden) load(true); }, 3000);
+    const onVisible = () => { if (!document.hidden) load(true); };
+    window.addEventListener('focus', onVisible);
+    document.addEventListener('visibilitychange', onVisible);
+    return () => {
+      clearInterval(t);
+      window.removeEventListener('focus', onVisible);
+      document.removeEventListener('visibilitychange', onVisible);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [path, wsUp]);
+
+  /* ---------- nhận tin nhắn realtime qua WebSocket ---------- */
+  useEffect(() => {
+    const convId = path.startsWith('/api/chat/admin/')
+      ? path.slice('/api/chat/admin/'.length).split('/')[0].split('?')[0]
+      : null;
+    return subscribeChatEvents((e: ChatWsEvent) => {
+      if (e.type !== 'chat') return;
+      if (e.event === 'new_message' && e.message) {
+        // admin: đúng hội thoại đang mở; user: tin nhắn từ admin (user chỉ có 1 cuộc trò chuyện)
+        const forMe = mine === 'ADMIN' ? e.conversationId === convId : e.message.senderRole === 'ADMIN';
+        if (!forMe) return;
+        const incoming: ChatMessage = { ...e.message };
+        let added = false;
+        setMsgs(prev => {
+          if (prev.some(m => String(m.id) === String(incoming.id))) return prev; // chống trùng
+          added = true;
+          // thay tin optimistic (đang gửi) bằng tin thật từ server
+          const cleaned = prev.filter(m => !(m._temp && m.senderRole === incoming.senderRole && m.content === incoming.content));
+          return [...cleaned, incoming].sort((a, b) =>
+            (toDate(a.createdAt)?.getTime() ?? 0) - (toDate(b.createdAt)?.getTime() ?? 0));
+        });
+        if (added) {
+          if (onMessagesRef.current) onMessagesRef.current([incoming]); // admin: highlight tin mới ngay
+          if (onLatestIdRef.current) onLatestIdRef.current(incoming.id); // widget: cập nhật badge ngay
+        }
+      } else if (e.event === 'message_deleted' || e.event === 'conversation_deleted') {
+        const forMe = mine === 'ADMIN' ? e.conversationId === convId : true;
+        if (forMe) load(true);
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [path, mine]);
 
   /* ---------- smart auto-scroll ---------- */
   const prevLen = useRef(0);
@@ -298,7 +347,8 @@ export default function ChatBox({ path, mine, title, subtitle, onClose, onLatest
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', fontFamily: 'inherit', color: C.text, position: 'relative' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, minWidth: 0,
+      fontFamily: 'inherit', color: C.text, position: 'relative' }}>
       <style>{`
         @keyframes chatMsgIn { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: none; } }
         @keyframes chatSkeleton { 0% { background-position: -200px 0; } 100% { background-position: 200px 0; } }
