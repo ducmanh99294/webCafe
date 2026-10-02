@@ -26,7 +26,7 @@ type StatusListener = (connected: boolean) => void;
 const WS_BASE_OVERRIDE = '';
 
 function wsBase(): string {
-  if (WS_BASE_OVERRIDE) return WS_BASE_OVERRIDE.replace(/\/+$/, '');
+  if (WS_BASE_OVERRIDE.length >0) return WS_BASE_OVERRIDE.replace(/\/+$/, '');
   const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
   return `${proto}//${window.location.host}`;
 }
