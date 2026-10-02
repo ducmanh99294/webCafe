@@ -126,12 +126,10 @@ public class ChatController {
     }
 
     private String roleOf(User me) {
-        if (me instanceof org.springframework.security.core.userdetails.UserDetails ud) {
-            boolean admin = ud.getAuthorities().stream()
-                    .anyMatch(a -> a.getAuthority() != null && a.getAuthority().contains("ADMIN"));
-            return admin ? "ADMIN" : "USER";
-        }
-        return "USER";
+        // User đã implements UserDetails nên gọi getAuthorities() trực tiếp
+        boolean admin = me.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority() != null && a.getAuthority().contains("ADMIN"));
+        return admin ? "ADMIN" : "USER";
     }
 
     // ---- helpers ----
