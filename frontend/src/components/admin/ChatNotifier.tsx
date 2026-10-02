@@ -81,7 +81,7 @@ export default function ChatNotifier() {
       setToasts(prev => [...prev.slice(-3), { id, userId: c.userId, username: c.username, text: c.lastMessage }]);
       setTimeout(() => setToasts(prev => prev.filter(x => x.id !== id)), 7000);
       if (document.hidden && 'Notification' in window && Notification.permission === 'granted') {
-        try { new Notification(`Tin nhắn mới từ ${c.username}`, { body: c.lastMessage }); } catch { /* ignore */ }
+        try { new Notification(`New message from ${c.username}`, { body: c.lastMessage }); } catch { /* ignore */ }
       }
     }
     if (soundOn()) playChatBeep();
@@ -172,10 +172,10 @@ export default function ChatNotifier() {
               {(t.username || '?')[0].toUpperCase()}
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: C.coffee }}>Tin nhắn mới từ {t.username}</div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: C.coffee }}>New message from {t.username}</div>
               <div style={{ fontSize: 13, color: C.text, overflow: 'hidden', textOverflow: 'ellipsis',
                 display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{t.text}</div>
-              <div style={{ fontSize: 11, color: C.sienna, marginTop: 4, fontWeight: 600 }}>Bấm để mở hội thoại →</div>
+              <div style={{ fontSize: 11, color: C.sienna, marginTop: 4, fontWeight: 600 }}>Tap to open the conversation →</div>
             </div>
             <button onClick={e => { e.stopPropagation(); setToasts(prev => prev.filter(x => x.id !== t.id)); }}
               style={{ border: 'none', background: 'transparent', color: C.muted, cursor: 'pointer', fontSize: 16, padding: 0 }}>×</button>

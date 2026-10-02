@@ -1,4 +1,10 @@
 // components/chat/chatSocket.ts
+// Quản lý DUY NHẤT 1 kết nối WebSocket cho toàn bộ trang.
+// - Lấy ticket dùng 1 lần qua API đã xác thực (GET /api/chat/ws-ticket),
+//   rồi mở ws://<host>/ws/chat?ticket=... (trình duyệt không gắn được header Authorization nên dùng ticket).
+// - Tự kết nối lại (backoff) khi rớt mạng / server restart.
+// - Các component đăng ký nhận sự kiện qua subscribeChatEvents(),
+//   kiểm tra trạng thái qua useChatSocketStatus() để bật/tắt poll dự phòng.
 import { useEffect, useState } from 'react';
 import { apiFetch } from '../../api/base';
 
@@ -20,7 +26,7 @@ type StatusListener = (connected: boolean) => void;
 const WS_BASE_OVERRIDE = '';
 
 function wsBase(): string {
-  if (WS_BASE_OVERRIDE.length > 0) return WS_BASE_OVERRIDE.replace(/\/+$/, '');
+  if (WS_BASE_OVERRIDE) return WS_BASE_OVERRIDE.replace(/\/+$/, '');
   const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
   return `${proto}//${window.location.host}`;
 }

@@ -99,8 +99,8 @@ export default function UserChatWidget() {
           <ChatBox
             path="/api/chat/me"
             mine="USER"
-            title="Hỗ trợ WebCafe"
-            subtitle="Đang hoạt động • Thường trả lời trong vài phút"
+            title="WebCafe Support"
+            subtitle="Online • Usually replies in a few minutes"
             onClose={() => setOpen(false)}
             onLatestId={markSeen}
           />
@@ -109,7 +109,7 @@ export default function UserChatWidget() {
 
       <button
         onClick={() => setOpen(o => !o)}
-        aria-label={open ? 'Đóng chat' : 'Mở chat hỗ trợ'}
+        aria-label={open ? 'Close chat' : 'Open support chat'}
         style={{
           position: 'fixed', bottom: 20, right: 20, zIndex: 1100,
           width: 58, height: 58, borderRadius: '50%', border: 'none', cursor: 'pointer',

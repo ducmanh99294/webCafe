@@ -34,8 +34,8 @@ function fmtLastAt(v: any): string {
   if (!d) return '';
   const today = new Date(); today.setHours(0, 0, 0, 0);
   const day = new Date(d); day.setHours(0, 0, 0, 0);
-  if (day.getTime() === today.getTime()) return d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
-  return d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' });
+  if (day.getTime() === today.getTime()) return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  return d.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' });
 }
 
 /* Báo cho ChatNotifier biết admin đang mở xem hội thoại nào (để khỏi toast trùng) */
@@ -179,8 +179,8 @@ export default function AdminChat() {
       if (res.ok) {
         setConvs(prev => prev.filter(c => c.userId !== userId));
         if (selectedRef.current === userId) { setSelected(null); setViewing(null); setUnreadIds([]); }
-      } else alert('Không xóa được cuộc trò chuyện');
-    } catch { alert('Không xóa được cuộc trò chuyện'); }
+      } else alert("Couldn't delete the conversation");
+    } catch { alert("Couldn't delete the conversation"); }
     setConfirmDel(null);
   };
 
@@ -190,11 +190,11 @@ export default function AdminChat() {
     if (res.ok) {
       setUnreadIds(prev => prev.filter(x => x !== String(id)));
       setRefreshKey(k => k + 1); // reload ChatBox
-    } else alert('Không xóa được tin nhắn');
+    } else alert("Couldn't delete the message");
   };
 
   const enableNotif = async () => {
-    if (!('Notification' in window)) { alert('Trình duyệt không hỗ trợ thông báo'); return; }
+    if (!('Notification' in window)) { alert('This browser does not support notifications'); return; }
     try { setNotifPerm(await Notification.requestPermission()); } catch { /* ignore */ }
   };
 
@@ -215,7 +215,7 @@ export default function AdminChat() {
           <div style={{ padding: '12px 14px 8px', borderBottom: `1px solid ${C.line}` }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
               <div style={{ fontWeight: 800, fontSize: 16, color: C.coffee, display: 'flex', alignItems: 'center', gap: 8 }}>
-                Tin nhắn
+                Messages
                 {totalUnread > 0 && (
                   <span style={{ background: C.danger, color: '#fff', fontSize: 11, fontWeight: 700,
                     borderRadius: 999, padding: '2px 9px' }}>{totalUnread}</span>
@@ -223,19 +223,19 @@ export default function AdminChat() {
               </div>
               <div style={{ display: 'flex', gap: 4 }}>
                 <button onClick={() => { const v = !soundOn; setSoundOn(v); try { localStorage.setItem('webcafe_chat_sound', v ? 'on' : 'off'); } catch {} if (v) playChatBeep(); }}
-                  title={soundOn ? 'Tắt âm báo (áp dụng mọi trang)' : 'Bật âm báo (áp dụng mọi trang)'}
+                  title={soundOn ? 'Mute sound (applies site-wide)' : 'Unmute sound (applies site-wide)'}
                   style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: soundOn ? C.sienna : C.muted, padding: 6, borderRadius: 8 }}>
                   <SoundIcon off={!soundOn} />
                 </button>
                 <button onClick={enableNotif}
-                  title={notifPerm === 'granted' ? 'Đã bật thông báo trình duyệt' : notifPerm === 'denied' ? 'Trình duyệt đã chặn thông báo' : 'Bật thông báo trình duyệt'}
+                  title={notifPerm === 'granted' ? 'Browser notifications enabled' : notifPerm === 'denied' ? 'Browser notifications blocked' : 'Enable browser notifications'}
                   style={{ border: 'none', background: notifPerm === 'granted' ? C.cream : 'transparent', cursor: 'pointer',
                     color: notifPerm === 'granted' ? C.sienna : C.muted, padding: 6, borderRadius: 8 }}>
                   <BellIcon off={notifPerm !== 'granted'} />
                 </button>
               </div>
             </div>
-            <input value={q} onChange={e => setQ(e.target.value)} placeholder="Tìm theo tên / nội dung…"
+            <input value={q} onChange={e => setQ(e.target.value)} placeholder="Search by name / content…"
               style={{ width: '100%', boxSizing: 'border-box', padding: '8px 12px', borderRadius: 10,
                 border: `1px solid ${C.line}`, fontSize: 13, outline: 'none', background: C.creamLight }} />
           </div>
@@ -243,7 +243,7 @@ export default function AdminChat() {
           <div style={{ flex: 1, overflowY: 'auto' }}>
             {filtered.length === 0 && (
               <div style={{ padding: 24, textAlign: 'center', color: C.muted, fontSize: 13 }}>
-                {q ? 'Không tìm thấy hội thoại nào' : 'Chưa có cuộc trò chuyện nào'}
+                {q ? 'No conversations found' : 'No conversations yet'}
               </div>
             )}
             {filtered.map(c => {
@@ -282,15 +282,15 @@ export default function AdminChat() {
                   </div>
                   {confirmDel === c.userId ? (
                     <div style={{ display: 'flex', gap: 4, flexShrink: 0 }} onClick={e => e.stopPropagation()}>
-                      <button onClick={() => delConv(c.userId)} title="Xác nhận xóa"
+                      <button onClick={() => delConv(c.userId)} title="Confirm delete"
                         style={{ border: 'none', background: C.danger, color: '#fff', borderRadius: 8,
-                          padding: '5px 10px', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>Xóa</button>
-                      <button onClick={() => setConfirmDel(null)} title="Hủy"
+                          padding: '5px 10px', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>Delete</button>
+                      <button onClick={() => setConfirmDel(null)} title="Cancel"
                         style={{ border: `1px solid ${C.line}`, background: '#fff', color: C.text, borderRadius: 8,
-                          padding: '5px 10px', fontSize: 12, cursor: 'pointer' }}>Hủy</button>
+                          padding: '5px 10px', fontSize: 12, cursor: 'pointer' }}>Cancel</button>
                     </div>
                   ) : (
-                    <button className="conv-del" title="Xóa cuộc trò chuyện"
+                    <button className="conv-del" title="Delete conversation"
                       onClick={e => { e.stopPropagation(); setConfirmDel(c.userId); }}
                       style={{ border: 'none', background: 'transparent', color: C.muted, cursor: 'pointer',
                         padding: 6, borderRadius: 8, flexShrink: 0 }}>
@@ -309,8 +309,8 @@ export default function AdminChat() {
             key={`${selected}:${refreshKey}`}
             path={`/api/chat/admin/${selected}`}
             mine="ADMIN"
-            title={selectedConv?.username || 'Khách hàng'}
-            subtitle="Cuộc trò chuyện với khách"
+            title={selectedConv?.username || 'Customer'}
+            subtitle="Conversation with customer"
             unreadIds={unreadIds}
             onMessages={handleMessages}
             onDeleteMessage={delMsg}
@@ -318,8 +318,8 @@ export default function AdminChat() {
         ) : (
           <div style={{ margin: 'auto', textAlign: 'center', color: C.muted }}>
             <div style={{ fontSize: 44, marginBottom: 8 }}>💬</div>
-            <div style={{ fontWeight: 600, color: C.coffee }}>Chọn một cuộc trò chuyện</div>
-            <div style={{ fontSize: 13, marginTop: 4 }}>Tin nhắn mới từ khách sẽ báo ở mọi trang</div>
+            <div style={{ fontWeight: 600, color: C.coffee }}>Select a conversation</div>
+            <div style={{ fontSize: 13, marginTop: 4 }}>New customer messages will notify you on every page</div>
           </div>
         )}
       </div>

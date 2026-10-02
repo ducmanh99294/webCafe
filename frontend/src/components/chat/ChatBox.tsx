@@ -40,7 +40,7 @@ function toDate(v: any): Date | null {
 }
 const fmtTime = (v: any) => {
   const d = toDate(v);
-  return d ? d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) : '';
+  return d ? d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '';
 };
 function dayLabel(v: any): string {
   const d = toDate(v);
@@ -48,9 +48,9 @@ function dayLabel(v: any): string {
   const today = new Date(); today.setHours(0, 0, 0, 0);
   const day = new Date(d); day.setHours(0, 0, 0, 0);
   const diff = Math.round((today.getTime() - day.getTime()) / 86400000);
-  if (diff === 0) return 'Hôm nay';
-  if (diff === 1) return 'Hôm qua';
-  return d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  if (diff === 0) return 'Today';
+  if (diff === 1) return 'Yesterday';
+  return d.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 
 /* ---------- icons (SVG inline, không phụ thuộc thư viện) ---------- */
@@ -285,7 +285,7 @@ export default function ChatBox({ path, mine, title, subtitle, onClose, onLatest
         <div key={m.id}
           className="chat-msg"
           onClick={() => m._failed && doSend(m.content, m)}
-          title={m._failed ? 'Gửi thất bại — bấm để thử lại' : undefined}
+          title={m._failed ? 'Failed to send — tap to retry' : undefined}
           style={{
             position: 'relative',
             alignSelf: isMine ? 'flex-end' : 'flex-start',
@@ -295,10 +295,10 @@ export default function ChatBox({ path, mine, title, subtitle, onClose, onLatest
             opacity: m._temp && !m._failed ? 0.75 : 1,
           }}>
           {canDelete && (
-            <button className="chat-del" title="Xóa tin nhắn"
+            <button className="chat-del" title="Delete message"
               onClick={async e => {
                 e.stopPropagation();
-                if (!window.confirm('Xóa tin nhắn này?')) return;
+                if (!window.confirm('Delete this message?')) return;
                 try { await onDeleteMessageRef.current?.(m.id); } catch { /* parent báo lỗi */ }
               }}
               style={{ position: 'absolute', top: -9, right: -9, width: 22, height: 22, borderRadius: '50%',
@@ -318,7 +318,7 @@ export default function ChatBox({ path, mine, title, subtitle, onClose, onLatest
             {hl && (
               <div style={{ marginBottom: 3, textAlign: 'left' }}>
                 <span style={{ fontSize: 10, fontWeight: 800, color: '#fff', background: '#E8A33D',
-                  padding: '2px 8px', borderRadius: 999, letterSpacing: '.4px' }}>MỚI</span>
+                  padding: '2px 8px', borderRadius: 999, letterSpacing: '.4px' }}>NEW</span>
               </div>
             )}
             <div style={{
@@ -334,10 +334,10 @@ export default function ChatBox({ path, mine, title, subtitle, onClose, onLatest
               ...(m._failed ? { border: `1px dashed ${C.danger}` } : {}),
             }}>
               {m.content}
-              {m._failed && <div style={{ fontSize: 11, color: C.danger, marginTop: 4 }}>⚠ Không gửi được — bấm để thử lại</div>}
+              {m._failed && <div style={{ fontSize: 11, color: C.danger, marginTop: 4 }}>⚠ Failed to send — tap to retry</div>}
             </div>
             <div style={{ fontSize: 10.5, color: C.muted, marginTop: 3, textAlign: isMine ? 'right' : 'left', padding: '0 4px' }}>
-              {m._temp && !m._failed ? 'Đang gửi…' : fmtTime(m.createdAt)}
+              {m._temp && !m._failed ? 'Sending…' : fmtTime(m.createdAt)}
             </div>
           </div>
         </div>
@@ -365,14 +365,14 @@ export default function ChatBox({ path, mine, title, subtitle, onClose, onLatest
             <CoffeeIcon />
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontWeight: 700, fontSize: 15 }}>{title || 'Hỗ trợ trực tuyến'}</div>
+            <div style={{ fontWeight: 700, fontSize: 15 }}>{title || 'Live support'}</div>
             <div style={{ fontSize: 12, opacity: 0.85, display: 'flex', alignItems: 'center', gap: 5 }}>
               <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#4ADE80', display: 'inline-block' }} />
-              {subtitle || 'Đang hoạt động • Thường trả lời trong vài phút'}
+              {subtitle || 'Online • Usually replies in a few minutes'}
             </div>
           </div>
           {onClose && (
-            <button onClick={onClose} aria-label="Đóng chat"
+            <button onClick={onClose} aria-label="Close chat"
               style={{ background: 'rgba(255,255,255,.12)', border: 'none', color: '#fff', width: 32, height: 32,
                 borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <CloseIcon />
@@ -397,8 +397,8 @@ export default function ChatBox({ path, mine, title, subtitle, onClose, onLatest
               display: 'flex', alignItems: 'center', justifyContent: 'center', color: C.sienna }}>
               <CoffeeIcon />
             </div>
-            <div style={{ fontWeight: 700, color: C.coffee, fontSize: 15, marginBottom: 4 }}>Xin chào!</div>
-            <div style={{ fontSize: 13 }}>Bạn cần hỗ trợ gì hôm nay?<br />Hãy gửi tin nhắn cho chúng tôi nhé.</div>
+            <div style={{ fontWeight: 700, color: C.coffee, fontSize: 15, marginBottom: 4 }}>Hello!</div>
+            <div style={{ fontSize: 13 }}>How can we help you today?<br />Send us a message below.</div>
           </div>
         ) : renderMsgs()}
       </div>
@@ -410,7 +410,7 @@ export default function ChatBox({ path, mine, title, subtitle, onClose, onLatest
             background: C.coffee, color: '#fff', border: 'none', borderRadius: 999, padding: '7px 14px',
             fontSize: 12, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6,
             boxShadow: '0 4px 14px rgba(0,0,0,.25)', animation: 'chatMsgIn .2s ease', zIndex: 5, whiteSpace: 'nowrap' }}>
-          <DownIcon /> Tin nhắn mới
+          <DownIcon /> New messages
         </button>
       )}
 
@@ -423,14 +423,14 @@ export default function ChatBox({ path, mine, title, subtitle, onClose, onLatest
           value={text}
           onChange={onInput}
           onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } }}
-          placeholder="Nhập tin nhắn… (Enter để gửi)"
+          placeholder="Type a message… (Enter to send)"
           style={{ flex: 1, resize: 'none', padding: '10px 14px', borderRadius: 20, border: `1px solid ${C.line}`,
             fontSize: 14, fontFamily: 'inherit', outline: 'none', maxHeight: 120, background: C.creamLight,
             color: C.text }}
           onFocus={e => (e.target.style.borderColor = C.sienna)}
           onBlur={e => (e.target.style.borderColor = C.line)}
         />
-        <button onClick={send} disabled={!text.trim() || sending} aria-label="Gửi tin nhắn"
+        <button onClick={send} disabled={!text.trim() || sending} aria-label="Send message"
           style={{ width: 42, height: 42, borderRadius: '50%', border: 'none', cursor: text.trim() && !sending ? 'pointer' : 'default',
             background: text.trim() && !sending ? `linear-gradient(135deg, ${C.sienna}, ${C.siennaDark})` : '#D8CFBE',
             color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
