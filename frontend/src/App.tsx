@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { useState } from "react";
 
 import Login from "./components/login";
 import Register from "./components/register";
@@ -20,12 +21,17 @@ import AdminProducts from "./components/admin/product";
 import AdminReports from "./components/admin/report";
 import AdminUsers from "./components/admin/user";
 import AdminTables from "./components/admin/table";
+import ChatNotifier from "./components/admin/ChatNotifier";
 
 import "./App.css";
 import UserChatWidget from "./components/chat/UserChatWidget";
 
 function AppContent() {
     const location = useLocation();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [isAdmin] = useState(() => {
+        try { return localStorage.getItem("role") === "ADMIN"; } catch { return false; }
+    });
 
     const noHeaderFooterPaths = ["/login", "/register"];
 
@@ -59,7 +65,9 @@ function AppContent() {
             </Routes>
 
             {!hideHeaderFooter && <Footer />}{!hideHeaderFooter && <UserChatWidget />}
-            
+            {/* Thông báo tin nhắn mới cho admin trên MỌI trang */}
+            {isAdmin && <ChatNotifier />}
+
         </div>
     );
 }

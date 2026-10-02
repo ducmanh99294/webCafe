@@ -28,7 +28,7 @@ public class ChatController {
     // ---- USER: chỉ chat với admin, conversationId = chính mình ----
     @GetMapping("/me")
     public List<ChatMessage> myMessages(@AuthenticationPrincipal User me) {
-        return load(me.getId(), "ADMIN");
+        return load(me.getId(), "ADMIN", true);
     }
 
     @PostMapping("/me")
@@ -62,9 +62,21 @@ public class ChatController {
           .toList();
     }
 
+    // ADMIN xem tin nhắn — KHÔNG tự đánh dấu đã đọc (để frontend highlight tin chưa đọc).
+    // Frontend gọi POST /admin/{userId}/read khi đã hiển thị cho admin xem.
     @GetMapping("/admin/{userId}")
     public List<ChatMessage> adminGet(@PathVariable String userId) {
-        return load(userId, "USER");
+        return repo.findByConversationIdOrderByCreatedAtAsc(userId);
+    }
+
+    // ADMIN đánh dấu đã đọc toàn bộ tin nhắn của khách trong cuộc trò chuyện
+    @PostMapping("/admin/{userId}/read")
+    public ResponseEntity<?> markRead(@PathVariable String userId) {
+        List<ChatMessage> unread =
+                repo.findByConversationIdAndSenderRoleAndReadFalse(userId, "USER");
+        unread.forEach(m -> m.setRead(true));
+        repo.saveAll(unread);
+        return ResponseEntity.ok(Map.of("marked", unread.size()));
     }
 
     @PostMapping("/admin/{userId}")
@@ -74,12 +86,30 @@ public class ChatController {
         return save(userId, admin.getId(), "ADMIN", body.get("content"));
     }
 
+    // ADMIN xóa toàn bộ cuộc trò chuyện với 1 khách
+    @DeleteMapping("/admin/{userId}")
+    public ResponseEntity<?> deleteConversation(@PathVariable String userId) {
+        List<ChatMessage> all = repo.findByConversationIdOrderByCreatedAtAsc(userId);
+        repo.deleteAll(all);
+        return ResponseEntity.ok(Map.of("deleted", all.size()));
+    }
+
+    // ADMIN xóa 1 tin nhắn
+    @DeleteMapping("/admin/message/{messageId}")
+    public ResponseEntity<?> deleteMessage(@PathVariable String messageId) {
+        if (!repo.existsById(messageId)) return ResponseEntity.notFound().build();
+        repo.deleteById(messageId);
+        return ResponseEntity.ok(Map.of("deleted", messageId));
+    }
+
     // ---- helpers ----
-    private List<ChatMessage> load(String cid, String otherSide) {
-        List<ChatMessage> unread =
-                repo.findByConversationIdAndSenderRoleAndReadFalse(cid, otherSide);
-        unread.forEach(m -> m.setRead(true));
-        repo.saveAll(unread);
+    private List<ChatMessage> load(String cid, String otherSide, boolean markRead) {
+        if (markRead) {
+            List<ChatMessage> unread =
+                    repo.findByConversationIdAndSenderRoleAndReadFalse(cid, otherSide);
+            unread.forEach(m -> m.setRead(true));
+            repo.saveAll(unread);
+        }
         return repo.findByConversationIdOrderByCreatedAtAsc(cid);
     }
 

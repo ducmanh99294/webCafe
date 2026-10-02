@@ -1,21 +1,128 @@
 // components/chat/UserChatWidget.tsx
-import { useState } from 'react';
+// Widget chat phía user: nút nổi + badge tin chưa đọc + panel chat mượt mà, responsive.
+import { useEffect, useRef, useState } from 'react';
 import ChatBox from './ChatBox';
+import { apiFetch } from '../../api/base';
+
+const SEEN = import.meta.env.SEEN_KEY;
+
+const ChatBubbleIcon = ({ open }: { open: boolean }) => open ? (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+    <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+  </svg>
+) : (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+  </svg>
+);
 
 export default function UserChatWidget() {
+  const [allowed] = useState(() => {
+    try {
+      return Boolean(localStorage.getItem('userId')) && localStorage.getItem('role') !== 'ADMIN';
+    } catch { return false; }
+  });
   const [open, setOpen] = useState(false);
-  if (!localStorage.getItem('userId') || localStorage.getItem('role') === 'ADMIN') return null;
+  const [unread, setUnread] = useState(0);
+  const openRef = useRef(open);
+  openRef.current = open;
+
+  // Đánh dấu đã xem: khi mở chat, lưu id tin mới nhất
+  const markSeen = (id: number | string) => {
+    try {
+      localStorage.setItem(SEEN, String(id));
+      setUnread(0);
+    } catch { /* ignore */ }
+  };
+
+  // Đếm tin chưa đọc khi widget đang đóng (poll nhẹ mỗi 5s)
+  useEffect(() => {
+    if (!allowed) return;
+    let alive = true;
+    const check = async () => {
+      if (openRef.current) return;
+      try {
+        const res = await apiFetch('/api/chat/me');
+        if (!res.ok || !alive) return;
+        const data: any[] = await res.json();
+        const seen = localStorage.getItem(SEEN);
+        const fresh = data.filter(m => m.senderRole === 'ADMIN' && String(m.id) !== String(seen) &&
+          (seen == null || Number(m.id) > Number(seen)));
+        if (alive) setUnread(fresh.length);
+      } catch { /* im lặng */ }
+    };
+    check();
+    const t = setInterval(check, 5000);
+    return () => { alive = false; clearInterval(t); };
+  }, [allowed]);
+
+  // ESC để đóng
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  if (!allowed) return null;
 
   return (
     <>
+      <style>{`
+        @keyframes chatPanelIn { from { opacity: 0; transform: translateY(18px) scale(.98); } to { opacity: 1; transform: none; } }
+        @keyframes chatFabPulse { 0% { box-shadow: 0 6px 20px rgba(75,59,43,.35), 0 0 0 0 rgba(160,82,45,.55); } 70% { box-shadow: 0 6px 20px rgba(75,59,43,.35), 0 0 0 14px rgba(160,82,45,0); } 100% { box-shadow: 0 6px 20px rgba(75,59,43,.35), 0 0 0 0 rgba(160,82,45,0); } }
+        @keyframes chatBadgePop { 0% { transform: scale(.4); } 60% { transform: scale(1.25); } 100% { transform: scale(1); } }
+      `}</style>
+
       {open && (
-        <div style={{ position: 'fixed', bottom: 80, right: 20, width: 340, height: 440, background: '#fff',
-          borderRadius: 12, boxShadow: '0 8px 30px rgba(0,0,0,.2)', zIndex: 1100, overflow: 'hidden' }}>
-          <ChatBox path="/api/chat/me" mine="USER" />
+        <div style={{
+          position: 'fixed', bottom: 92, right: 20, zIndex: 1100,
+          width: 'min(380px, calc(100vw - 32px))',
+          height: 'min(600px, calc(100dvh - 150px))',
+          background: '#fff', borderRadius: 18, overflow: 'hidden',
+          boxShadow: '0 20px 60px rgba(59,47,37,.28)',
+          border: '1px solid #EAE3D5',
+          animation: 'chatPanelIn .28s cubic-bezier(.2,.9,.3,1.2)',
+          display: 'flex', flexDirection: 'column',
+        }}>
+          <ChatBox
+            path="/api/chat/me"
+            mine="USER"
+            title="Hỗ trợ WebCafe"
+            subtitle="Đang hoạt động • Thường trả lời trong vài phút"
+            onClose={() => setOpen(false)}
+            onLatestId={markSeen}
+          />
         </div>
       )}
-      <button onClick={() => setOpen(!open)} style={{ position: 'fixed', bottom: 20, right: 70, width: 48, height: 48,
-        borderRadius: '50%', background: '#4B3B2B', color: '#fff', border: 'none', fontSize: 20, cursor: 'pointer', zIndex: 1100 }}>💬</button>
+
+      <button
+        onClick={() => setOpen(o => !o)}
+        aria-label={open ? 'Đóng chat' : 'Mở chat hỗ trợ'}
+        style={{
+          position: 'fixed', bottom: 20, right: 20, zIndex: 1100,
+          width: 58, height: 58, borderRadius: '50%', border: 'none', cursor: 'pointer',
+          background: 'linear-gradient(135deg, #4B3B2B, #6B4E33)', color: '#fff',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          boxShadow: '0 6px 20px rgba(75,59,43,.35)',
+          animation: unread > 0 && !open ? 'chatFabPulse 1.8s infinite' : 'none',
+          transition: 'transform .2s',
+        }}
+        onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.08)')}
+        onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
+      >
+        <ChatBubbleIcon open={open} />
+        {unread > 0 && !open && (
+          <span style={{
+            position: 'absolute', top: -4, right: -4, minWidth: 24, height: 24,
+            borderRadius: 999, background: '#E74C3C', color: '#fff',
+            fontSize: 12, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: '0 6px', border: '2px solid #fff',
+            animation: 'chatBadgePop .3s ease',
+          }}>
+            {unread > 99 ? '99+' : unread}
+          </span>
+        )}
+      </button>
     </>
   );
 }

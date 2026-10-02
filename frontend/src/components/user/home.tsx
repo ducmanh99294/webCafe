@@ -312,59 +312,58 @@ return (
         </p>
       </div>
       {loading ? <Loading /> : (
-        <div className="products-grid"> ...6 sản phẩm... </div>
-      )}
-      <div className="products-grid">
-        {products.slice(0, 6).map((product: any) => (
-          <div key={product.id} className="product-card">
-            <div
-              className="product-image"
-              style={{ backgroundImage: `url(${product.image})` }}
-            />
+        <div className="products-grid">
+          {products.slice(0, 6).map((product: any) => (
+            <div key={product.id} className="product-card">
+              <div
+                className="product-image"
+                style={{ backgroundImage: `url(${product.image})` }}
+              />
 
-            <div className="product-content">
-              <h3 className="product-name">{product.name}</h3>
+              <div className="product-content">
+                <h3 className="product-name">{product.name}</h3>
 
-              <p className="product-description">
-                {product.description}
-              </p>
+                <p className="product-description">
+                  {product.description}
+                </p>
 
-              <div className="product-price">
-                <div>
-                  {product.discount > 0 ? (
-                    <>
-                      <span className="price">
-                        {formatPrice(
-                          (product.sizePrices[0].price *
-                            (100 - product.discount)) /
-                            100
-                        )}
-                      </span>
-
-                      {product.sizePrices[0].price && (
-                        <span className="original-price">
-                          {formatPrice(product.sizePrices[0].price)}
+                <div className="product-price">
+                  <div>
+                    {product.discount > 0 ? (
+                      <>
+                        <span className="price">
+                          {formatPrice(
+                            (product.sizePrices[0].price *
+                              (100 - product.discount)) /
+                              100
+                          )}
                         </span>
-                      )}
-                    </>
-                  ) : (
-                    <span className="price">
-                      {formatPrice(product.sizePrices[0].price)}
-                    </span>
-                  )}
-                </div>
 
-                <button
-                  className="add-to-cart"
-                  onClick={() => addToCart(product, 1)}
-                >
-                  Add to Cart
-                </button>
+                        {product.sizePrices[0].price && (
+                          <span className="original-price">
+                            {formatPrice(product.sizePrices[0].price)}
+                          </span>
+                        )}
+                      </>
+                    ) : (
+                      <span className="price">
+                        {formatPrice(product.sizePrices[0].price)}
+                      </span>
+                    )}
+                  </div>
+
+                  <button
+                    className="add-to-cart"
+                    onClick={() => addToCart(product, 1)}
+                  >
+                    Add to Cart
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </section>
 
     {/* Events Section */}
